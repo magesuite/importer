@@ -1,0 +1,55 @@
+<?php $steps = $block->getSteps(); ?>
+
+<div class="page-main-actions">
+    <div class="page-actions-placeholder"></div>
+    <div class="page-actions" data-ui-id="page-actions-toolbar-content-header">
+        <div class="page-actions-inner">
+            <div class="page-actions-buttons">
+                <button id="back" title="Back" type="button" class="action- scalable back" onclick="setLocation('<?= $block->getUrl('*/*/index') ?>')" data-ui-id="back-button">
+                    <span>Back</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<table class="data-grid">
+    <thead>
+    <tr>
+        <th class="data-grid-th  no-link "><span><?=__('Step identifier')?></span></th>
+        <th class="data-grid-th  no-link "><span><?=__('Started at')?></span></th>
+        <th class="data-grid-th  no-link "><span><?=__('Finished at')?></span></th>
+        <th class="data-grid-th  no-link "><span><?=__('Status')?></span></th>
+        <th class="data-grid-th col-date last no-link"><span><?=__('Output')?></span></th>
+    </tr>
+    </thead>
+
+    <tbody>
+
+    <?php foreach ($steps as $step): ?>
+    <tr data-role="row" title="#" class="even _clickable">
+        <td class="a-left indexer-title col-indexer_title  ">
+            <?= $step->getIdentifier() ?>
+        </td>
+        <td class="a-left indexer-title col-indexer_title  ">
+            <?= $step->getStartedAt() ?>
+        </td>
+        <td class="a-left indexer-title col-indexer_title  ">
+            <?= $step->getFinishedAt() ?>
+        </td>
+        <td class="a-left indexer-title col-indexer_title  ">
+            <span class="<?= $block->getSeverityClass($step->getStatus()) ?>">
+                <?= $step->getReadableStatus() ?>
+            </span>
+        </td>
+        <td class="a-left indexer-title col-indexer_title  ">
+            <?php if ($step->getStatus() == \MageSuite\Importer\Model\ImportStep::STATUS_ERROR): ?>
+                <?= nl2br($step->getError()) ?>
+            <?php elseif ($step->getStatus() == \MageSuite\Importer\Model\ImportStep::STATUS_DONE): ?>
+                <?= nl2br($step->getOutput()) ?>
+            <?php endif; ?>
+        </td>
+    </tbody>
+    <?php endforeach; ?>
+
+</table>

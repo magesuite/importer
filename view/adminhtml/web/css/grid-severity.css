@@ -1,0 +1,11 @@
+.grid-in-progress {
+    background-color: #e6f6fe;
+    border-color: #65b4e8;
+    color: #168adc;
+}
+
+.grid-pending {
+    background-color: #fffbbe;
+    border-color: #f29d66;
+    color: #e9571e;
+}

@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="magesuite" translate="label" sortOrder="300">
+            <label>MageSuite</label>
+        </tab>
+        <section id="trans_email" translate="label" type="text" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="1">
+            <class>separator-top</class>
+            <label>Store Email Addresses</label>
+            <tab>general</tab>
+            <resource>Magento_Backend::trans_email</resource>
+            <group id="importer_email" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Importer E-mail</label>
+                <field id="name" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Sender Name</label>
+                    <backend_model>Magento\Config\Model\Config\Backend\Email\Sender</backend_model>
+                    <validate>validate-emailSender</validate>
+                </field>
+                <field id="email" translate="label" type="textarea" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Additional Emails</label>
+                    <backend_model>MageSuite\Importer\Config\Backend\Validation\EmailAddresses</backend_model>
+                </field>
+            </group>
+        </section>
+        <section id="importer" translate="label" type="text" sortOrder="250" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Importer</label>
+            <tab>magesuite</tab>
+            <resource>Magento_ImportExport::import</resource>
+            <group id="configuration" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Configuration</label>
+                <field id="failed_import_threshold" translate="label" type="text" sortOrder="1" showInDefault="1">
+                    <label>Failed import execution time threshold</label>
+                    <comment>Set how long it takes (in hours) to mark running import as failed.</comment>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

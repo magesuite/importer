@@ -1,0 +1,30 @@
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="catalog_product_import_bunch_save_after">
+        <observer name="catalog_product_after_save"
+                  instance="MageSuite\Importer\Observer\AfterProductsBunchSaveObserver"/>
+    </event>
+
+    <event name="catalog_product_import_bunch_processing_before">
+        <observer name="catalog_product_import_process_one_to_many_values"
+                  instance="MageSuite\Importer\Observer\ImportProductsBunchObserver"/>
+    </event>
+
+    <event name="import_command_executes">
+        <observer name="command_executes_observer"
+                  instance="MageSuite\Importer\Observer\Command\CommandExecutesObserver"/>
+    </event>
+
+    <event name="import_command_done">
+        <observer name="command_done_observer" instance="MageSuite\Importer\Observer\Command\CommandDoneObserver"/>
+    </event>
+
+    <event name="import_command_error">
+        <observer name="command_error_observer"
+                  instance="MageSuite\Importer\Observer\Command\CommandErrorObserver"/>
+        <observer name="command_error_mail_observer"
+                  instance="MageSuite\Importer\Observer\Command\CommandErrorMailObserver"/>
+        <observer name="command_error_indexer_observer"
+                  instance="MageSuite\Importer\Observer\Command\CommandErrorIndexerObserver"/>
+    </event>
+</config>

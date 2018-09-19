@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\Framework\Console\CommandList">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="importer_import_run_step" xsi:type="object">MageSuite\Importer\Console\Command\RunStep</item>
+                <item name="importer_import_schedule" xsi:type="object">MageSuite\Importer\Console\Command\ScheduleImport</item>
+                <item name="importer_import_dispatch" xsi:type="object">MageSuite\Importer\Console\Command\Dispatcher</item>
+                <item name="importer_import_detect_failed" xsi:type="object">MageSuite\Importer\Console\Command\DetectFailedImports</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="Magento\Indexer\Model\Processor">
+        <plugin name="disable_indexer" type="MageSuite\Importer\Plugin\DisableIndexer" sortOrder="1" />
+    </type>
+
+    <preference for="MageSuite\Importer\Api\ImportRunnerStateInterface"
+                type="MageSuite\Importer\Services\Import\RunnerState" />
+
+    <preference for="\Magento\ImportExport\Model\ResourceModel\Import\Data"
+                type="\MageSuite\Importer\Model\ResourceModel\Import\Data" />
+
+    <preference for="Magento\AdvancedPricingImportExport\Model\Import\AdvancedPricing"
+                type="MageSuite\Importer\Model\Import\Magento\AdvancedPricing" />
+
+    <preference for="Magento\CatalogImportExport\Model\Import\Product\SkuProcessor"
+                type="MageSuite\Importer\Model\Import\Magento\Product\SkuProcessor" />
+
+    <preference for="Magento\CatalogImportExport\Model\Import\Product\CategoryProcessor"
+                type="MageSuite\Importer\Model\Import\Magento\Product\CategoryProcessor" />
+
+    <preference for="MageSuite\Importer\Repository\ImportConfiguration"
+                type="MageSuite\Importer\Repository\GenericImportConfiguration" />
+
+    <preference for="Magento\CatalogImportExport\Model\Import\Uploader"
+                type="MageSuite\Importer\Model\Import\Magento\Uploader" />
+
+    <preference for="MageSuite\Importer\Api\ImportRepositoryInterface"
+                type="MageSuite\Importer\Repository\ImportRepository" />
+
+    <preference for="MageSuite\Importer\Command\CommandFactory"
+                type="MageSuite\Importer\Services\Command\Factory" />
+
+    <virtualType name="MageSuiteImporterGirdFilterPool" type="Magento\Framework\View\Element\UiComponent\DataProvider\FilterPool">
+        <arguments>
+            <argument name="appliers" xsi:type="array">
+                <item name="regular" xsi:type="object">Magento\Framework\View\Element\UiComponent\DataProvider\RegularFilter</item>
+                <item name="fulltext" xsi:type="object">Magento\Framework\View\Element\UiComponent\DataProvider\FulltextFilter</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="MageSuiteImporterLogsGridDataProvider" type="Magento\Framework\View\Element\UiComponent\DataProvider\DataProvider">
+        <arguments>
+            <argument name="collection" xsi:type="object" shared="false">MageSuite\Importer\Model\Collections\Log</argument>
+            <argument name="filterPool" xsi:type="object" shared="false">MageSuiteImporterGirdFilterPool</argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+        <arguments>
+            <argument name="collections" xsi:type="array">
+                <item name="MageSuite_Importer_log_listing_data_source" xsi:type="string">MageSuite\Importer\Model\Collections\Log</item>
+            </argument>
+        </arguments>
+    </type>
+</config>
