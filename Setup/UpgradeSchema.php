@@ -15,11 +15,11 @@ class UpgradeSchema implements \Magento\Framework\Setup\UpgradeSchemaInterface
     ) {
         $setup->startSetup();
 
-        if (version_compare($context->getVersion(), '0.0.2') < 0) {
+        if (version_compare($context->getVersion(), '1.0.2') < 0) {
 
             $tableName = $setup->getTable('import_log');
 
-            if ($setup->getConnection()->isTableExists($tableName) == true) {
+            if ($setup->tableExists($tableName) == true) {
                 $columns = [
                     'status' => [
                         'type' => \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
@@ -33,7 +33,7 @@ class UpgradeSchema implements \Magento\Framework\Setup\UpgradeSchemaInterface
                 $connection = $setup->getConnection();
 
                 foreach ($columns as $name => $definition) {
-                    if($connection->tableColumnExists($tableName, $name)){
+                    if(!$connection->tableColumnExists($tableName, $name)){
                         $connection->addColumn($tableName, $name, $definition);
                     }
                 }
@@ -41,11 +41,11 @@ class UpgradeSchema implements \Magento\Framework\Setup\UpgradeSchemaInterface
             }
         }
 
-        if (version_compare($context->getVersion(), '0.0.3') < 0) {
+        if (version_compare($context->getVersion(), '1.0.3') < 0) {
 
             $tableName = $setup->getTable('import_log');
 
-            if ($setup->getConnection()->isTableExists($tableName) == true) {
+            if ($setup->tableExists($tableName) == true) {
                 $columns = [
                     'import_identifier' => [
                         'type' => \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
@@ -58,7 +58,7 @@ class UpgradeSchema implements \Magento\Framework\Setup\UpgradeSchemaInterface
                 $connection = $setup->getConnection();
 
                 foreach ($columns as $name => $definition) {
-                    if($connection->tableColumnExists($tableName, $name)) {
+                    if(!$connection->tableColumnExists($tableName, $name)) {
                         $connection->addColumn($tableName, $name, $definition);
                     }
                 }
@@ -66,7 +66,7 @@ class UpgradeSchema implements \Magento\Framework\Setup\UpgradeSchemaInterface
             }
         }
 
-        if (version_compare($context->getVersion(), '0.0.5') < 0) {
+        if (version_compare($context->getVersion(), '1.0.5') < 0) {
             if (!$setup->tableExists('images_metadata')) {
                 $table = $setup->getConnection()->newTable($setup->getTable('images_metadata'));
 
