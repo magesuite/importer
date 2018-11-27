@@ -7,7 +7,9 @@
     ],
     "require": {
         "php": "~5.5.0|~5.6.0|~7.0.0|~7.1.0",
-        "creativestyle/fastsimpleimport": "dev-feature-1.0.0-php71"
+        "creativestyle/fastsimpleimport": "dev-feature-1.0.0-php71",
+        "creativestyle/lftp": "dev-develop-m2.2",
+        "creativestyle/csv": "dev-develop-m2.2"
     },
     "autoload": {
         "files": [
