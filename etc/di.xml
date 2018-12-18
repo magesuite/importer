@@ -15,6 +15,9 @@
         <plugin name="disable_indexer" type="MageSuite\Importer\Plugin\DisableIndexer" sortOrder="1" />
     </type>
 
+    <preference for="Magento\CatalogImportExport\Model\Import\Product\Validator"
+                type="MageSuite\Importer\Model\Import\Product\Validator" />
+
     <preference for="MageSuite\Importer\Api\ImportRunnerStateInterface"
                 type="MageSuite\Importer\Services\Import\RunnerState" />
 

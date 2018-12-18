@@ -23,7 +23,7 @@ class FileImporter extends \FireGento\FastSimpleImport\Model\Importer
         $this->importData();
 
         if($this->importModel->getErrorAggregator()->hasToBeTerminated()) {
-            throw new \Exception($this->getErrorMessage());
+            $this->importModel->addLogComment($this->getErrorMessages());
         }
 
         return $this->importModel->getFormatedLogTrace();
