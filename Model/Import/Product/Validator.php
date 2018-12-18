@@ -2,9 +2,6 @@
 
 namespace MageSuite\Importer\Model\Import\Product;
 
-use Magento\CatalogImportExport\Model\Import\Product\RowValidatorInterface;
-use Magento\CatalogImportExport\Model\Import\Product;
-
 /**
  * Class was overwritten because protected and private methods had to be modified to include custom error messages
  * @package MageSuite\Importer\Model\Import\Product
@@ -39,7 +36,7 @@ class Validator extends \Magento\CatalogImportExport\Model\Import\Product\Valida
                 [
                     sprintf(
                         $this->context->retrieveMessageTemplate(
-                            RowValidatorInterface::ERROR_VALUE_IS_REQUIRED
+                            \Magento\CatalogImportExport\Model\Import\Product\RowValidatorInterface::ERROR_VALUE_IS_REQUIRED
                         ),
                         $attrCode
                     )
@@ -77,7 +74,7 @@ class Validator extends \Magento\CatalogImportExport\Model\Import\Product\Valida
                 $val = trim($rowData[$attrCode]);
                 $valid = strtotime($val) !== false;
                 if (!$valid) {
-                    $this->_addMessages([RowValidatorInterface::ERROR_INVALID_ATTRIBUTE_TYPE]);
+                    $this->_addMessages([\Magento\CatalogImportExport\Model\Import\Product\RowValidatorInterface::ERROR_INVALID_ATTRIBUTE_TYPE]);
                 }
                 break;
             default:
@@ -87,11 +84,11 @@ class Validator extends \Magento\CatalogImportExport\Model\Import\Product\Valida
 
         if ($valid && !empty($attrParams['is_unique'])) {
             if (isset($this->_uniqueAttributes[$attrCode][$rowData[$attrCode]])
-                && ($this->_uniqueAttributes[$attrCode][$rowData[$attrCode]] != $rowData[Product::COL_SKU])) {
-                $this->_addMessages([RowValidatorInterface::ERROR_DUPLICATE_UNIQUE_ATTRIBUTE]);
+                && ($this->_uniqueAttributes[$attrCode][$rowData[$attrCode]] != $rowData[\Magento\CatalogImportExport\Model\Import\Product::COL_SKU])) {
+                $this->_addMessages([\Magento\CatalogImportExport\Model\Import\Product\RowValidatorInterface::ERROR_DUPLICATE_UNIQUE_ATTRIBUTE]);
                 return false;
             }
-            $this->_uniqueAttributes[$attrCode][$rowData[$attrCode]] = $rowData[Product::COL_SKU];
+            $this->_uniqueAttributes[$attrCode][$rowData[$attrCode]] = $rowData[\Magento\CatalogImportExport\Model\Import\Product::COL_SKU];
         }
 
         if (!$valid) {
@@ -136,9 +133,9 @@ class Validator extends \Magento\CatalogImportExport\Model\Import\Product\Valida
     {
         $val = $this->string->cleanString($this->_rowData[$attrCode]);
         if ($type == 'text') {
-            $valid = $this->string->strlen($val) < Product::DB_MAX_TEXT_LENGTH;
+            $valid = $this->string->strlen($val) < \Magento\CatalogImportExport\Model\Import\Product::DB_MAX_TEXT_LENGTH;
         } else {
-            $valid = $this->string->strlen($val) < Product::DB_MAX_VARCHAR_LENGTH;
+            $valid = $this->string->strlen($val) < \Magento\CatalogImportExport\Model\Import\Product::DB_MAX_VARCHAR_LENGTH;
         }
         if (!$valid) {
             $this->_addMessages([sprintf(
