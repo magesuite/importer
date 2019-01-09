@@ -11,6 +11,7 @@ class Validator extends \Magento\CatalogImportExport\Model\Import\Product\Valida
     const INVALID_OPTION_VALUE_ERROR_MESSAGE = "Value for '%s' attribute contains incorrect value '%s' for product with SKU '%s', see acceptable values on settings specified for Admin";
     const INVALID_VALUE_LENGTH_ERROR_MESSAGE = "Attribute '%s' exceeded max length for product with SKU '%s'";
     const INVALID_NUMERIC_VALUE_ERROR_MESSAGE = "Value '%s' for '%s' attribute contains non numeric value for product with SKU: '%s'";
+    const VALUE_IS_REQUIRED_MESSAGE_WITH_SKU = "Please make sure attribute '%s' is not empty for product with SKU: '%s'.";
 
     /**
      * @param string $attrCode
@@ -32,16 +33,29 @@ class Validator extends \Magento\CatalogImportExport\Model\Import\Product\Valida
 
         if (!$this->isRequiredAttributeValid($attrCode, $attrParams, $rowData)) {
             $valid = false;
-            $this->_addMessages(
-                [
-                    sprintf(
-                        $this->context->retrieveMessageTemplate(
-                            \Magento\CatalogImportExport\Model\Import\Product\RowValidatorInterface::ERROR_VALUE_IS_REQUIRED
-                        ),
-                        $attrCode
-                    )
-                ]
-            );
+            if(isset($rowData['sku']) and !empty($rowData['sku'])) {
+                $this->_addMessages(
+                    [
+                        sprintf(
+                            self::VALUE_IS_REQUIRED_MESSAGE_WITH_SKU,
+                            $attrCode,
+                            $rowData['sku']
+                        )
+                    ]
+                );
+            } else {
+                $this->_addMessages(
+                    [
+                        sprintf(
+                            $this->context->retrieveMessageTemplate(
+                                \Magento\CatalogImportExport\Model\Import\Product\RowValidatorInterface::ERROR_VALUE_IS_REQUIRED
+                            ),
+                            $attrCode
+                        )
+                    ]
+                );
+            }
+
             return $valid;
         }
 
