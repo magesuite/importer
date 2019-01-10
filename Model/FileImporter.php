@@ -13,16 +13,27 @@ class FileImporter extends \FireGento\FastSimpleImport\Model\Importer
     {
         $this->importModel = $this->createImportModel();
 
-        if (!$this->validateData($filePath) AND $this->importModel->getErrorAggregator()->hasToBeTerminated()) {
+        if (!$this->validateData($filePath) and
+            (
+                $this->importModel->getErrorAggregator()->getValidationStrategy() == \Magento\ImportExport\Model\Import\ErrorProcessing\ProcessingErrorAggregatorInterface::VALIDATION_STRATEGY_STOP_ON_ERROR and
+                $this->importModel->getErrorAggregator()->hasFatalExceptions()
+            )
+        ) {
             $message = $this->getLogTrace() . PHP_EOL;
-            $message .= $this->getErrorMessage();
 
             throw new \Exception($message);
         }
 
         $this->importData();
 
-        if($this->importModel->getErrorAggregator()->hasToBeTerminated()) {
+        if ($this->importModel->getErrorAggregator()->hasToBeTerminated()) {
+            $this->importModel->addLogComment($this->getErrorMessages());
+        }
+
+        if (
+            $this->importModel->getErrorAggregator()->getValidationStrategy() == \Magento\ImportExport\Model\Import\ErrorProcessing\ProcessingErrorAggregatorInterface::VALIDATION_STRATEGY_SKIP_ERRORS and
+            $this->importModel->getErrorAggregator()->hasFatalExceptions()
+        ) {
             $this->importModel->addLogComment($this->getErrorMessages());
         }
 
