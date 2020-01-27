@@ -7,25 +7,21 @@ class Dispatcher extends \Symfony\Component\Console\Command\Command
     /**
      * @var \Magento\Framework\App\State
      */
-    private $state;
+    protected $state;
 
     /**
-     * @var \MageSuite\Importer\Services\Command\Dispatcher
+     * @var \MageSuite\Importer\Services\Command\DispatcherFactory
      */
-    private $commandDispatcher;
+    protected $commandDispatcherFactory;
 
-    /**
-     * @param \Magento\Framework\App\State $state
-     */
     public function __construct(
         \Magento\Framework\App\State $state,
-        \MageSuite\Importer\Services\Command\Dispatcher $commandDispatcher
-    )
-    {
+        \MageSuite\Importer\Services\Command\DispatcherFactory $commandDispatcherFactory
+    ) {
         parent::__construct();
 
         $this->state = $state;
-        $this->commandDispatcher = $commandDispatcher;
+        $this->commandDispatcherFactory = $commandDispatcherFactory;
     }
 
     protected function configure()
@@ -38,14 +34,14 @@ class Dispatcher extends \Symfony\Component\Console\Command\Command
     protected function execute(
         \Symfony\Component\Console\Input\InputInterface $input,
         \Symfony\Component\Console\Output\OutputInterface $output
-    )
-    {
-        $this->state->setAreaCode('frontend');
+    ) {
+        $this->state->setAreaCode(\Magento\Framework\App\Area::AREA_FRONTEND);
 
-        while(true) {
-            $this->commandDispatcher->dispatch();
+        $commandDispatcher = $this->commandDispatcherFactory->create();
+
+        while (true) {
+            $commandDispatcher->dispatch();
             sleep(5);
         }
     }
-
 }

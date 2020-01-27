@@ -7,34 +7,28 @@ class RunStep extends \Symfony\Component\Console\Command\Command
     /**
      * @var \Magento\Framework\App\State
      */
-    private $state;
-    /**
-     * @var \MageSuite\Importer\Services\Command\Runner
-     */
-    private $commandRunner;
-    /**
-     * @var \MageSuite\Importer\Model\Import
-     */
-    private $import;
-    /**
-     * @var \MageSuite\Importer\Api\ImportRepositoryInterface
-     */
-    private $importRepository;
+    protected $state;
 
     /**
-     * @param \Magento\Framework\App\State $state
+     * @var \MageSuite\Importer\Services\Command\RunnerFactory
      */
+    protected $commandRunnerFactory;
+
+    /**
+     * @var \MageSuite\Importer\Api\ImportRepositoryInterfaceFactory
+     */
+    protected $importRepositoryFactory;
+
     public function __construct(
         \Magento\Framework\App\State $state,
-        \MageSuite\Importer\Services\Command\Runner $commandRunner,
-        \MageSuite\Importer\Api\ImportRepositoryInterface $importRepository
-    )
-    {
+        \MageSuite\Importer\Services\Command\RunnerFactory $commandRunnerFactory,
+        \MageSuite\Importer\Api\ImportRepositoryInterfaceFactory $importRepositoryFactory
+    ) {
         parent::__construct();
 
         $this->state = $state;
-        $this->commandRunner = $commandRunner;
-        $this->importRepository = $importRepository;
+        $this->commandRunnerFactory = $commandRunnerFactory;
+        $this->importRepositoryFactory = $importRepositoryFactory;
     }
 
     protected function configure()
@@ -59,21 +53,22 @@ class RunStep extends \Symfony\Component\Console\Command\Command
     protected function execute(
         \Symfony\Component\Console\Input\InputInterface $input,
         \Symfony\Component\Console\Output\OutputInterface $output
-    )
-    {
-        $this->state->setAreaCode('frontend');
+    ) {
+        $this->state->setAreaCode(\Magento\Framework\App\Area::AREA_FRONTEND);
 
         $importId = $input->getArgument('import_id');
         $importIdentifier = $this->getImportIdentifier($importId);
         $stepIdentifier = $input->getArgument('step_identifier');
 
-        $this->commandRunner->runCommand($importId, $importIdentifier, $stepIdentifier);
+        $commandRunnerFactory = $this->commandRunnerFactory->create();
+        $commandRunnerFactory->runCommand($importId, $importIdentifier, $stepIdentifier);
     }
 
-    protected function getImportIdentifier($importId) {
-        $import = $this->importRepository->getById($importId);
+    protected function getImportIdentifier($importId)
+    {
+        $importRepository = $this->importRepositoryFactory->create();
+        $import = $importRepository->getById($importId);
 
         return $import->getImportIdentifier();
     }
-
 }

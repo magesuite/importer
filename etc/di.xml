@@ -53,16 +53,37 @@
             </argument>
         </arguments>
     </virtualType>
+
     <virtualType name="MageSuiteImporterLogsGridDataProvider" type="Magento\Framework\View\Element\UiComponent\DataProvider\DataProvider">
         <arguments>
             <argument name="collection" xsi:type="object" shared="false">MageSuite\Importer\Model\Collections\Log</argument>
             <argument name="filterPool" xsi:type="object" shared="false">MageSuiteImporterGirdFilterPool</argument>
         </arguments>
     </virtualType>
+
     <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
         <arguments>
             <argument name="collections" xsi:type="array">
                 <item name="MageSuite_Importer_log_listing_data_source" xsi:type="string">MageSuite\Importer\Model\Collections\Log</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="MageSuite\Importer\Command\CommandFactory">
+        <arguments>
+            <argument name="stepTypeMap" xsi:type="array">
+                <item name="download" xsi:type="object">MageSuite\Importer\Command\File\Download</item>
+                <item name="download_newest" xsi:type="object">MageSuite\Importer\Command\File\DownloadNewest</item>
+                <item name="sync" xsi:type="object">MageSuite\Importer\Command\File\Sync</item>
+                <item name="parse" xsi:type="object">MageSuite\Importer\Command\Import\Parse</item>
+                <item name="map_images" xsi:type="object">MageSuite\Importer\Command\Import\MapImages</item>
+                <item name="import" xsi:type="object">MageSuite\Importer\Command\Import\Import</item>
+                <item name="create_directories" xsi:type="object">MageSuite\Importer\Command\File\CreateDirectories</item>
+                <item name="disable_indexers" xsi:type="object">MageSuite\Importer\Command\Magento\DisableIndexers</item>
+                <item name="enable_indexers" xsi:type="object">MageSuite\Importer\Command\Magento\EnableIndexers</item>
+                <item name="copy" xsi:type="object">MageSuite\Importer\Command\File\Copy</item>
+                <item name="move" xsi:type="object">MageSuite\Importer\Command\File\Move</item>
+                <item name="delete" xsi:type="object">MageSuite\Importer\Command\File\Delete</item>
             </argument>
         </arguments>
     </type>

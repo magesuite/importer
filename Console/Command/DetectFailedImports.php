@@ -17,8 +17,7 @@ class DetectFailedImports extends \Symfony\Component\Console\Command\Command
     public function __construct(
         \Magento\Framework\App\State $state,
         \MageSuite\Importer\Services\Import\FailedImportDetectorFactory $failedImportDetectorFactory
-    )
-    {
+    ) {
         parent::__construct();
 
         $this->failedImportDetectorFactory = $failedImportDetectorFactory;
@@ -35,16 +34,15 @@ class DetectFailedImports extends \Symfony\Component\Console\Command\Command
     protected function execute(
         \Symfony\Component\Console\Input\InputInterface $input,
         \Symfony\Component\Console\Output\OutputInterface $output
-    )
-    {
+    ) {
         try {
-            $this->state->setAreaCode('frontend');
+            $this->state->setAreaCode(\Magento\Framework\App\Area::AREA_FRONTEND);
+        } catch (\Exception $e) {
+
         }
-        catch(\Exception $e) {}
 
         $failedImportDetector = $this->failedImportDetectorFactory->create();
 
         $failedImportDetector->markFailedImports();
     }
-
 }

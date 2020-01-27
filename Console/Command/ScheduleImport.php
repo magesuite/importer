@@ -5,35 +5,24 @@ namespace MageSuite\Importer\Console\Command;
 class ScheduleImport extends \Symfony\Component\Console\Command\Command
 {
     /**
-     * @var \Magento\Framework\ObjectManagerInterface
-     */
-    private $objectManager;
-    /**
      * @var \Magento\Framework\App\State
      */
-    private $state;
-    /**
-     * @var \MageSuite\Importer\Services\Import\Scheduler
-     */
-    private $scheduler;
+    protected $state;
 
     /**
-     * ImportFile constructor.
-     * @param \Magento\Framework\ObjectManagerInterface $objectManager
-     * @param \Magento\Framework\App\State $state
+     * @var \MageSuite\Importer\Services\Import\SchedulerFactory
      */
+    protected $schedulerFactory;
+
     public function __construct(
-        \Magento\Framework\ObjectManagerInterface $objectManager,
         \Magento\Framework\App\State $state,
-        \MageSuite\Importer\Services\Import\Scheduler $scheduler
-    )
-    {
+        \MageSuite\Importer\Services\Import\SchedulerFactory $schedulerFactory
+    ) {
 
         parent::__construct();
 
-        $this->objectManager = $objectManager;
         $this->state = $state;
-        $this->scheduler = $scheduler;
+        $this->schedulerFactory = $schedulerFactory;
     }
 
     protected function configure()
@@ -52,13 +41,12 @@ class ScheduleImport extends \Symfony\Component\Console\Command\Command
     protected function execute(
         \Symfony\Component\Console\Input\InputInterface $input,
         \Symfony\Component\Console\Output\OutputInterface $output
-    )
-    {
-        $this->state->setAreaCode('frontend');
+    ) {
+        $this->state->setAreaCode(\Magento\Framework\App\Area::AREA_FRONTEND);
 
         $importIdentifier = $input->getArgument('import_id');
 
-        $this->scheduler->scheduleImport($importIdentifier);
+        $scheduler = $this->schedulerFactory->create();
+        $scheduler->scheduleImport($importIdentifier);
     }
-
 }
