@@ -344,7 +344,13 @@ class Product extends \Magento\CatalogImportExport\Model\Import\Product
 
         $baseFilePath = strtolower(basename($fileName));
         $filePath = \Magento\Framework\File\Uploader::getDispretionPath($baseFilePath) . '/' . $baseFilePath;
-        $uploadedFilePath = BP . '/' . $this->_getUploader()->getTmpDir() . '/' . $fileName;
+
+        if(strpos($this->_getUploader()->getTmpDir(), BP) !== 0){
+            $uploadedFilePath = BP . '/' . $this->_getUploader()->getTmpDir() . '/' . $fileName;
+        }else{
+            $uploadedFilePath = $this->_getUploader()->getTmpDir() . '/' . $fileName;
+        }
+
         $fileSize = filesize($uploadedFilePath);
 
         if ($imageManager->wasImagePreviouslyUploaded($filePath, $fileSize)) {
