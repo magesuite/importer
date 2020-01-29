@@ -73,7 +73,6 @@ class ProductTest extends \PHPUnit\Framework\TestCase
      */
     public function testItReplacesCategories()
     {
-        $this->markTestSkipped('Disabled test for now, due to changes in magento 2.3.');
         $productSku = 'simple';
 
         $productData = $this->getProductImportArray($productSku, [
