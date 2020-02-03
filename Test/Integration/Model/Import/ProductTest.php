@@ -328,6 +328,11 @@ class ProductTest extends \PHPUnit\Framework\TestCase
         $imageData = $this->imageMapper->getImagesByProductSku($productSku, $this->directoryWithImages);
         $additionalFields = array_merge($additionalFields, $imageData);
 
+        $this->ensureImageDoesntExist('/n/e/new_product.jpeg');
+        $this->ensureImageDoesntExist('/n/e/new_product_small.jpeg');
+        $this->ensureImageDoesntExist('/n/e/new_product_additional_0.jpeg');
+        $this->ensureImageDoesntExist('/n/e/new_product_additional_1.jpeg');
+
         $productData = $this->getProductImportArray($productSku, $additionalFields);
 
         $this->simpleProductImporter->importProductsFromData($productData);
