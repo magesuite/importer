@@ -357,7 +357,7 @@ class Product extends \Magento\CatalogImportExport\Model\Import\Product
             return $filePath;
         }
 
-        $return = parent::uploadMediaFiles($fileName, $renameFileOff);
+        $return = parent::uploadMediaFiles($fileName, true);
 
         $imageManager->insertImageMetadata($filePath, $fileSize);
 
