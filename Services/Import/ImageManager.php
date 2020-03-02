@@ -4,6 +4,9 @@ namespace MageSuite\Importer\Services\Import;
 
 class ImageManager
 {
+    const IMAGE_IDENTICAL = 1;
+    const IMAGE_DOESNT_EXIST = 2;
+    const IMAGE_DIFFERENT_SIZE = 3;
     /**
      * @var \Magento\Framework\DB\Adapter\AdapterInterface
      */
@@ -18,7 +21,15 @@ class ImageManager
 
     public function wasImagePreviouslyUploaded($path, $size)
     {
-        return isset($this->getUploadedImages()[$path]) and $this->getUploadedImages()[$path] == $size;
+        if (!isset($this->getUploadedImages()[$path])) {
+            return self::IMAGE_DOESNT_EXIST;
+        }
+
+        if ($this->getUploadedImages()[$path] != $size) {
+            return self::IMAGE_DIFFERENT_SIZE;
+        }
+
+        return self::IMAGE_IDENTICAL;
     }
 
     public function insertImageMetadata($path, $size)
