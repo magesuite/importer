@@ -11,6 +11,11 @@ class Product extends \Magento\CatalogImportExport\Model\Import\Product
      */
     protected $imageManager = null;
 
+    /**
+     * @var \MageSuite\ThumbnailRemove\Service\ThumbnailRemover
+     */
+    protected $thumbnailRemover = null;
+
     protected function getExistingImages($bunch)
     {
         $this->_eventManager->dispatch(
@@ -351,10 +356,15 @@ class Product extends \Magento\CatalogImportExport\Model\Import\Product
             $uploadedFilePath = $this->_getUploader()->getTmpDir() . '/' . $fileName;
         }
 
-        $fileSize = filesize($uploadedFilePath);
+        $fileSize = @filesize($uploadedFilePath);
+        $imagePreviouslyUploaded = $imageManager->wasImagePreviouslyUploaded($filePath, $fileSize);
 
-        if ($imageManager->wasImagePreviouslyUploaded($filePath, $fileSize)) {
+        if ($imagePreviouslyUploaded == \MageSuite\Importer\Services\Import\ImageManager::IMAGE_IDENTICAL) {
             return $filePath;
+        }
+
+        if ($imagePreviouslyUploaded == \MageSuite\Importer\Services\Import\ImageManager::IMAGE_DIFFERENT_SIZE) {
+            $this->getThumbnailRemover()->removeByImageFileName($filePath);
         }
 
         $return = parent::uploadMediaFiles($fileName, true);
@@ -375,5 +385,18 @@ class Product extends \Magento\CatalogImportExport\Model\Import\Product
         }
 
         return $this->imageManager;
+    }
+
+    /**
+     * @return mixed
+     */
+    protected function getThumbnailRemover()
+    {
+        if ($this->thumbnailRemover == null) {
+            $this->thumbnailRemover = \Magento\Framework\App\ObjectManager::getInstance()
+                ->get(\MageSuite\ThumbnailRemove\Service\ThumbnailRemover::class);
+        }
+
+        return $this->thumbnailRemover;
     }
 }

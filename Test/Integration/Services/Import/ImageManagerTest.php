@@ -35,9 +35,9 @@ class ImageManagerTest extends \PHPUnit\Framework\TestCase
      */
     public function testItProperlyGetsInformationIfImageWasUploaded()
     {
-        $this->assertTrue($this->imageManager->wasImagePreviouslyUploaded('uploaded_image.png', 100));
-        $this->assertFalse($this->imageManager->wasImagePreviouslyUploaded('uploaded_image.png', 200));
-        $this->assertFalse($this->imageManager->wasImagePreviouslyUploaded('not_uploaded_image.png', 100));
+        $this->assertEquals(\MageSuite\Importer\Services\Import\ImageManager::IMAGE_IDENTICAL, $this->imageManager->wasImagePreviouslyUploaded('uploaded_image.png', 100));
+        $this->assertEquals(\MageSuite\Importer\Services\Import\ImageManager::IMAGE_DIFFERENT_SIZE, $this->imageManager->wasImagePreviouslyUploaded('uploaded_image.png', 200));
+        $this->assertEquals(\MageSuite\Importer\Services\Import\ImageManager::IMAGE_DOESNT_EXIST, $this->imageManager->wasImagePreviouslyUploaded('not_uploaded_image.png', 100));
     }
 
     /**
@@ -45,18 +45,18 @@ class ImageManagerTest extends \PHPUnit\Framework\TestCase
      */
     public function testItProperlyAddsInformationAboutUploadedImage() {
         $this->imageManager->insertImageMetadata('new_uploaded_image.png', 200);
-        $this->assertTrue($this->imageManager->wasImagePreviouslyUploaded('new_uploaded_image.png', 200));
-        $this->assertFalse($this->imageManager->wasImagePreviouslyUploaded('new_uploaded_image.png', 100));
+        $this->assertEquals(\MageSuite\Importer\Services\Import\ImageManager::IMAGE_IDENTICAL, $this->imageManager->wasImagePreviouslyUploaded('new_uploaded_image.png', 200));
+        $this->assertEquals(\MageSuite\Importer\Services\Import\ImageManager::IMAGE_DIFFERENT_SIZE, $this->imageManager->wasImagePreviouslyUploaded('new_uploaded_image.png', 100));
     }
 
     /**
      * @magentoDbIsolation enabled
      */
     public function testItProperlyUpdatesInformationAboutUploadedImage() {
-        $this->assertTrue($this->imageManager->wasImagePreviouslyUploaded('uploaded_image.png', 100));
+        $this->assertEquals(\MageSuite\Importer\Services\Import\ImageManager::IMAGE_IDENTICAL, $this->imageManager->wasImagePreviouslyUploaded('uploaded_image.png', 100));
         $this->imageManager->insertImageMetadata('uploaded_image.png', 200);
         $this->imageManager->resetUploadedImagesData();
-        $this->assertTrue($this->imageManager->wasImagePreviouslyUploaded('uploaded_image.png', 200));
+        $this->assertEquals(\MageSuite\Importer\Services\Import\ImageManager::IMAGE_IDENTICAL, $this->imageManager->wasImagePreviouslyUploaded('uploaded_image.png', 200));
     }
 
     public function setUploadedImages() {
