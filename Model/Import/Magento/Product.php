@@ -364,7 +364,7 @@ class Product extends \Magento\CatalogImportExport\Model\Import\Product
         }
 
         if ($imagePreviouslyUploaded == \MageSuite\Importer\Services\Import\ImageManager::IMAGE_DIFFERENT_SIZE) {
-            //$this->getThumbnailRemover()->removeByImageFileName($filePath);
+            $this->getThumbnailRemover()->removeByImageFileName($baseFilePath);
         }
 
         $return = parent::uploadMediaFiles($fileName, true);
