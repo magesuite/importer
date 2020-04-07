@@ -5,6 +5,11 @@ namespace MageSuite\Importer\Block\Adminhtml\Import;
 class Steps extends \Magento\Backend\Block\Template
 {
     /**
+     * @var \Magento\Framework\Stdlib\DateTime\TimezoneInterface
+     */
+    protected $timezone;
+
+    /**
      * @var \Magento\Framework\Registry
      */
     private $registry;
@@ -12,11 +17,14 @@ class Steps extends \Magento\Backend\Block\Template
     public function __construct(
         \Magento\Backend\Block\Template\Context $context,
         \Magento\Framework\Registry $registry,
+        \Magento\Framework\Stdlib\DateTime\TimezoneInterface $timezone,
         array $data
     )
     {
         parent::__construct($context, $data);
+
         $this->registry = $registry;
+        $this->timezone = $timezone;
     }
 
     public function getSteps() {
@@ -32,5 +40,9 @@ class Steps extends \Magento\Backend\Block\Template
         ];
 
         return $statuses[$status];
+    }
+
+    public function getDate($date) {
+        return $this->timezone->date($date)->format('d-m-Y H:i:s');
     }
 }
