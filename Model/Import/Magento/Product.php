@@ -148,8 +148,12 @@ class Product extends \Magento\CatalogImportExport\Model\Import\Product
             // Insert rows
             if (!empty($stockData)) {
                 $this->_connection->insertOnDuplicate($entityTable, array_values($stockData));
-            }
 
+                $this->_eventManager->dispatch(
+                    'catalog_product_import_stock_item_save_after',
+                    ['adapter' => $this, 'bunch' => $bunch, 'stock_data' => $stockData]
+                );
+            }
         }
 
         if (!$indexer->isScheduled()) {

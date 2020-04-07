@@ -135,6 +135,25 @@ class RunnerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * @expectedException \Exception
+     */
+    public function testItRetriesMultipleTimesWhenErrorOccurs() {
+        $importId = 'import_id';
+        $importIdentifier = 'import_identifier';
+
+        $importStep = $this->prepareDoublesForEventTest($importId, $importIdentifier);
+
+        $exceptionThrown = new \Exception('exception');
+
+        $this->commandMock
+            ->expects($this->exactly(5))
+            ->method('execute')
+            ->will($this->throwException($exceptionThrown));
+
+        $this->commandRunner->runCommand($importId, $importIdentifier, 'download');
+    }
+
+    /**
      * @expectedException \InvalidArgumentException
      */
     public function testItThrowsExceptionWhenThereAreNoStepsToRun() {
