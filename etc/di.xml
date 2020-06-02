@@ -85,6 +85,7 @@
                 <item name="move" xsi:type="object">MageSuite\Importer\Command\File\Move</item>
                 <item name="delete" xsi:type="object">MageSuite\Importer\Command\File\Delete</item>
                 <item name="clean_cache" xsi:type="object">MageSuite\Importer\Command\Magento\CleanCache</item>
+                <item name="reindex" xsi:type="object">MageSuite\Importer\Command\Magento\Reindex</item>
             </argument>
         </arguments>
     </type>
