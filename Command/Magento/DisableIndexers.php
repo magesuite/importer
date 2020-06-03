@@ -5,7 +5,7 @@ namespace MageSuite\Importer\Command\Magento;
 class DisableIndexers implements \MageSuite\Importer\Command\Command
 {
     /**
-     * @var \MageSuite\Importer\Model\KillIndexers
+     * @var \MageSuite\Importer\Model\Command\KillIndexers
      */
     protected $killIndexers;
 
@@ -21,7 +21,7 @@ class DisableIndexers implements \MageSuite\Importer\Command\Command
     public function __construct(
         \Magento\Framework\App\Config\Storage\WriterInterface $configWriter,
         \Magento\Framework\App\Cache\TypeListInterface $cacheTypeList,
-        \MageSuite\Importer\Model\KillIndexers $killIndexers
+        \MageSuite\Importer\Model\Command\KillIndexers $killIndexers
     )
     {
         $this->configWriter = $configWriter;

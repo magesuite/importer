@@ -1,6 +1,6 @@
 <?php
 
-namespace MageSuite\Importer\Model;
+namespace MageSuite\Importer\Model\Command;
 
 class KillIndexers
 {

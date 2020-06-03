@@ -5,7 +5,7 @@ namespace MageSuite\Importer\Services\Import;
 class Scheduler
 {
     /**
-     * @var \MageSuite\Importer\Model\KillIndexers
+     * @var \MageSuite\Importer\Model\Command\KillIndexers
      */
     protected $killIndexers;
 
@@ -28,7 +28,7 @@ class Scheduler
         \MageSuite\Importer\Model\ImportFactory $importFactory,
         \MageSuite\Importer\Model\ImportStepFactory $importStepFactory,
         \MageSuite\Importer\Api\ImportRepositoryInterface $importRepository,
-        \MageSuite\Importer\Model\KillIndexers $killIndexers
+        \MageSuite\Importer\Model\Command\KillIndexers $killIndexers
     )
     {
         $this->importFactory = $importFactory;

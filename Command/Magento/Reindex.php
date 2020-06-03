@@ -17,8 +17,7 @@ class Reindex implements \MageSuite\Importer\Command\Command
     public function __construct(
         \Magento\Indexer\Model\IndexerFactory $indexerFactory,
         \Magento\Indexer\Model\Indexer\CollectionFactory $indexerCollectionFactory
-    )
-    {
+    ) {
         $this->indexerFactory = $indexerFactory;
         $this->indexerCollectionFactory = $indexerCollectionFactory;
     }
@@ -29,7 +28,7 @@ class Reindex implements \MageSuite\Importer\Command\Command
 
         $output = '';
 
-        foreach($indexes as $indexId) {
+        foreach ($indexes as $indexId) {
             $indexer = $this->indexerFactory->create();
 
             $indexer->load($indexId);
@@ -43,7 +42,7 @@ class Reindex implements \MageSuite\Importer\Command\Command
 
             $elapsed = microtime(true) - $startTime;
 
-            $output .= $indexer->getTitle() . ' index has been rebuilt successfully in ' . gmdate('H:i:s', $elapsed).PHP_EOL;
+            $output .= $indexer->getTitle() . ' index has been rebuilt successfully in ' . gmdate('H:i:s', $elapsed) . PHP_EOL;
         }
 
         return $output;
