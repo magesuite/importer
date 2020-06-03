@@ -14,7 +14,8 @@ class KillIndexers
         $this->connection = $resourceConnection->getConnection();
     }
 
-    public function execute() {
+    public function execute()
+    {
         $this->killAll('group=index');
 
         $this->connection->update(
@@ -35,24 +36,24 @@ class KillIndexers
         );
     }
 
-    protected function killAll($match) {
+    protected function killAll($match)
+    {
         $match = escapeshellarg($match);
 
         exec("ps x|grep $match|grep -v grep|awk '{print $1}'", $pids, $ret);
 
-        if($ret) {
+        if ($ret) {
             return '';
         }
 
-        if(empty($pids)) {
+        if (empty($pids)) {
             return '';
         }
 
-        foreach($pids as $pid) {
-            if(preg_match('/^([0-9]+)/', $pid, $r)) {
+        foreach ($pids as $pid) {
+            if (preg_match('/^([0-9]+)/', $pid, $r)) {
                 system('kill -9 '. $r[1], $k);
             }
         }
     }
-
 }

@@ -29,8 +29,7 @@ class Scheduler
         \MageSuite\Importer\Model\ImportStepFactory $importStepFactory,
         \MageSuite\Importer\Api\ImportRepositoryInterface $importRepository,
         \MageSuite\Importer\Model\Command\KillIndexers $killIndexers
-    )
-    {
+    ) {
         $this->importFactory = $importFactory;
         $this->importStepFactory = $importStepFactory;
         $this->importRepository = $importRepository;
