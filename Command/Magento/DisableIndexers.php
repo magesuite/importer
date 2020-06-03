@@ -5,6 +5,11 @@ namespace MageSuite\Importer\Command\Magento;
 class DisableIndexers implements \MageSuite\Importer\Command\Command
 {
     /**
+     * @var \MageSuite\Importer\Model\Command\KillIndexers
+     */
+    protected $killIndexers;
+
+    /**
      * @var \Magento\Framework\App\Config\Storage\WriterInterface
      */
     private $configWriter;
@@ -15,11 +20,13 @@ class DisableIndexers implements \MageSuite\Importer\Command\Command
 
     public function __construct(
         \Magento\Framework\App\Config\Storage\WriterInterface $configWriter,
-        \Magento\Framework\App\Cache\TypeListInterface $cacheTypeList
+        \Magento\Framework\App\Cache\TypeListInterface $cacheTypeList,
+        \MageSuite\Importer\Model\Command\KillIndexers $killIndexers
     )
     {
         $this->configWriter = $configWriter;
         $this->cacheTypeList = $cacheTypeList;
+        $this->killIndexers = $killIndexers;
     }
 
     /**
@@ -29,6 +36,8 @@ class DisableIndexers implements \MageSuite\Importer\Command\Command
      */
     public function execute($configuration)
     {
+        $this->killIndexers->execute();
+
         $this->configWriter->save(\MageSuite\Importer\Plugin\DisableIndexer::INDEXER_ENABLED_XML_PATH, '0');
         $this->cacheTypeList->cleanType('config');
     }
