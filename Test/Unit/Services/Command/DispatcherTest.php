@@ -61,8 +61,8 @@ class CommandDispatcherTest extends \PHPUnit\Framework\TestCase
         ]);
 
         $this->shellMock->expects($this->exactly(2))->method('execute')->withConsecutive(
-            [BP.'/bin/magento importer:import:run_step %s %s &', [1, 'download']],
-            [BP.'/bin/magento importer:import:run_step %s %s &', [1, 'download_images']]
+            [BP.'/bin/magento importer:import:run_step %s %s > /dev/null &', [1, 'download']],
+            [BP.'/bin/magento importer:import:run_step %s %s > /dev/null &', [1, 'download_images']]
         );
 
         $this->importRepositoryStub

@@ -4,7 +4,7 @@ namespace MageSuite\Importer\Services\Command;
 
 class Dispatcher
 {
-    const STEP_COMMAND = BP . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'magento importer:import:run_step %s %s &';
+    const STEP_COMMAND = BP . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'magento importer:import:run_step %s %s > /dev/null &';
 
     /**
      * @var \MageSuite\Importer\Api\ImportRepositoryInterface

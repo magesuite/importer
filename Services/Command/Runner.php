@@ -6,6 +6,16 @@ class Runner
 {
     const DEFAULT_AMOUNT_OF_RETRIES = 5;
 
+    /**
+     * @var \Magento\Framework\Lock\LockManagerInterface
+     */
+    protected $lockManager;
+
+    /**
+     * @var \Psr\Log\LoggerInterface
+     */
+    protected $logger;
+
     private $configuration;
 
     private $steps;
@@ -32,12 +42,16 @@ class Runner
     public function __construct(
         \MageSuite\Importer\Command\CommandFactory $commandFactory,
         \MageSuite\Importer\Api\ImportRepositoryInterface $importRepository,
-        \Magento\Framework\Event\ManagerInterface $eventManager
+        \Magento\Framework\Event\ManagerInterface $eventManager,
+        \Magento\Framework\Lock\LockManagerInterface $lockManager,
+        \Psr\Log\LoggerInterface $logger
     )
     {
         $this->commandFactory = $commandFactory;
         $this->importRepository = $importRepository;
         $this->eventManager = $eventManager;
+        $this->lockManager = $lockManager;
+        $this->logger = $logger;
     }
 
     public function runCommand($importId, $importIdentifier, $stepIdentifier)
@@ -65,6 +79,15 @@ class Runner
      */
     private function runStepCommand($step)
     {
+        $lockName = sprintf('import_step_%s',  $step->getId());
+
+        if($this->lockManager->isLocked($lockName)) {
+            $this->logger->debug(sprintf('Import step %s tried to execute concurrently.', $step->getIdentifier()));
+            return;
+        }
+
+        $this->lockManager->lock($lockName);
+
         $stepDefinition = $this->configuration['steps'][$step->getIdentifier()];
 
         $commandType = $stepDefinition['type'];
@@ -87,11 +110,17 @@ class Runner
 
                 $this->eventManager->dispatch('import_command_done', ['step' => $step, 'output' => $output]);
 
+                $this->lockManager->unlock($lockName);
+
                 break;
             } catch (\Exception $e) {
-                $this->eventManager->dispatch('import_command_error', ['step' => $step, 'error' => $e->getMessage()]);
+                $wasFinalAttempt = (bool)($attempt == $this->getAmountOfRetries($stepConfiguration));
 
-                if($attempt == $this->getAmountOfRetries($stepConfiguration)) {
+                $this->eventManager->dispatch('import_command_error', ['attempt' => $attempt, 'step' => $step, 'error' => $e->getMessage(), 'was_final_attempt' => $wasFinalAttempt]);
+
+                if($wasFinalAttempt) {
+                    $this->lockManager->unlock($lockName);
+
                     throw $e;
                 }
 

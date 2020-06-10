@@ -4,7 +4,7 @@
         <job name="detect_failed_imports" instance="MageSuite\Importer\Cron\FailedImportDetector" method="execute">
             <schedule>*/10 * * * *</schedule>
         </job>
-        <job name="dispatch_commands" instance="MageSuite\Importer\Cron\Dispatcher" method="execute">
+        <job name="dispatch_steps" instance="MageSuite\Importer\Cron\Dispatcher" method="execute">
             <schedule>* * * * *</schedule>
         </job>
     </group>

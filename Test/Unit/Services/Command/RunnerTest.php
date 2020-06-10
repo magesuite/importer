@@ -30,6 +30,16 @@ class RunnerTest extends \PHPUnit\Framework\TestCase
      */
     private $eventManagerMock;
 
+    /**
+     * @var \PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $lockManagerMock;
+
+    /**
+     * @var \PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $loggerMock;
+
     public function setUp() {
         $this->commandFactoryStub = $this
             ->getMockBuilder(\MageSuite\Importer\Command\CommandFactory::class)
@@ -41,10 +51,16 @@ class RunnerTest extends \PHPUnit\Framework\TestCase
 
         $this->eventManagerMock = $this->getMockBuilder(\Magento\Framework\Event\ManagerInterface::class)->getMock();
 
+        $this->lockManagerMock = $this->getMockBuilder(\Magento\Framework\Lock\LockManagerInterface::class)->getMock();
+
+        $this->loggerMock = $this->getMockBuilder(\Psr\Log\LoggerInterface::class)->getMock();
+
         $this->commandRunner = new \MageSuite\Importer\Services\Command\Runner(
             $this->commandFactoryStub,
             $this->importRepositoryStub,
-            $this->eventManagerMock
+            $this->eventManagerMock,
+            $this->lockManagerMock,
+            $this->loggerMock
         );
     }
 
@@ -53,8 +69,8 @@ class RunnerTest extends \PHPUnit\Framework\TestCase
         $importId = 'import_id';
 
         $importSteps = $this->createImportSteps([
-            [\MageSuite\Importer\Model\ImportStep::STATUS_DONE, 'download'],
-            [\MageSuite\Importer\Model\ImportStep::STATUS_PENDING, 'validate']
+            [\MageSuite\Importer\Model\ImportStep::STATUS_DONE, 'download', 1],
+            [\MageSuite\Importer\Model\ImportStep::STATUS_PENDING, 'validate', 2]
         ]);
 
         $this->importRepositoryStub->method('getConfigurationById')->with($importIdentifier)->willReturn([
@@ -78,7 +94,39 @@ class RunnerTest extends \PHPUnit\Framework\TestCase
         $this->commandRunner->runCommand($importId, $importIdentifier, 'validate');
     }
 
+    public function testItDoesNotRunCommandWhenItsLocked() {
+        $importIdentifier = 'import_identifier';
+        $importId = 'import_id';
 
+        $importSteps = $this->createImportSteps([
+            [\MageSuite\Importer\Model\ImportStep::STATUS_DONE, 'download', 1],
+        ]);
+
+        $this->importRepositoryStub->method('getConfigurationById')->with($importIdentifier)->willReturn([
+            'steps' => [
+                'download' => ['type' => 'download'],
+            ]
+        ]);
+
+        $this->importRepositoryStub->method('getStepsByImportId')->with($importId)->willReturn($importSteps);
+
+        $this->lockManagerMock->method('isLocked')->with('import_step_1')->willReturn(true);
+
+        $this->loggerMock->expects($this->exactly(1))
+            ->method('debug')
+            ->with('Import step download tried to execute concurrently.');
+
+        $this->commandFactoryStub
+            ->method('create')
+            ->with('download')
+            ->willReturn($this->commandMock);
+
+        $this->commandMock
+            ->expects($this->exactly(0))
+            ->method('execute');
+
+        $this->commandRunner->runCommand($importId, $importIdentifier, 'download');
+    }
 
     public function testItThrowsEventWhenCommandRunningStarts() {
         $importId = 'import_id';
@@ -129,7 +177,12 @@ class RunnerTest extends \PHPUnit\Framework\TestCase
         $this->eventManagerMock
             ->expects($this->at(1))
             ->method('dispatch')
-            ->with('import_command_error', ['step' => $importStep, 'error' => 'exception']);
+            ->with('import_command_error', [
+                'step' => $importStep,
+                'error' => 'exception',
+                'was_final_attempt' => false,
+                'attempt' => 1
+            ]);
 
         $this->commandRunner->runCommand($importId, $importIdentifier, 'download');
     }
@@ -179,7 +232,7 @@ class RunnerTest extends \PHPUnit\Framework\TestCase
         $importIdentifier = 'import_identifier';
 
         $importSteps = $this->createImportSteps([
-            [\MageSuite\Importer\Model\ImportStep::STATUS_PENDING, 'validate']
+            [\MageSuite\Importer\Model\ImportStep::STATUS_PENDING, 'validate', 1]
         ]);
 
         $this->importRepositoryStub->method('getConfigurationById')->with($importIdentifier)->willReturn([
@@ -198,9 +251,10 @@ class RunnerTest extends \PHPUnit\Framework\TestCase
     /**
      * @return \MageSuite\Importer\Model\ImportStep
      */
-    private function createImportStepObject($status, $identifier) {
+    private function createImportStepObject($status, $identifier, $id) {
         return \Magento\TestFramework\ObjectManager::getInstance()
             ->create(\MageSuite\Importer\Model\ImportStep::class)
+            ->setId($id)
             ->setStatus($status)
             ->setIdentifier($identifier);
     }
@@ -209,7 +263,7 @@ class RunnerTest extends \PHPUnit\Framework\TestCase
         $importSteps = [];
 
         foreach($steps as $step) {
-            $importSteps[] = $this->createImportStepObject($step[0], $step[1]);
+            $importSteps[] = $this->createImportStepObject($step[0], $step[1], $step[2]);
         }
 
         return $importSteps;
@@ -222,7 +276,7 @@ class RunnerTest extends \PHPUnit\Framework\TestCase
     private function prepareDoublesForEventTest($importId, $importIdentifier)
     {
         $importStep = $this->createImportStepObject(\MageSuite\Importer\Model\ImportStep::STATUS_PENDING,
-            'download');
+            'download', 1);
 
         $this->importRepositoryStub->method('getConfigurationById')->with($importIdentifier)->willReturn([
             'steps' => [
