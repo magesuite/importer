@@ -12,11 +12,19 @@ class CommandErrorObserver extends AbstractCommandResultObserver  implements \Ma
     {
         /** @var \MageSuite\Importer\Model\ImportStep $step */
         $step = $observer->getData('step');
+        $attempt = $observer->getData('attempt') ?? 1;
         $error = $observer->getData('error');
+        $wasFinalAttempt = $observer->getData('was_final_attempt');
 
-        $step->setStatus(\MageSuite\Importer\Model\ImportStep::STATUS_ERROR);
-        $step->setFinishedAt(time());
-        $step->setError($error);
+        $existingError = $step->getError();
+        $newError = sprintf("%s\n Error at attempt #%s: \n %s", $existingError, $attempt, $error);
+
+        $step->setError($newError);
+
+        if($wasFinalAttempt) {
+            $step->setStatus(\MageSuite\Importer\Model\ImportStep::STATUS_ERROR);
+            $step->setFinishedAt(time());
+        }
 
         $this->importRepository->saveStep($step);
 

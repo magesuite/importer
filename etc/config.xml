@@ -20,6 +20,7 @@
         <importer>
             <configuration>
                 <failed_import_threshold>4</failed_import_threshold>
+                <use_cron_to_run_steps>0</use_cron_to_run_steps>
             </configuration>
         </importer>
     </default>

@@ -33,6 +33,11 @@
                     <label>Failed import execution time threshold</label>
                     <comment>Set how long it takes (in hours) to mark running import as failed.</comment>
                 </field>
+                <field id="use_cron_to_run_steps" translate="label" type="select" sortOrder="1" showInDefault="1">
+                    <label>Use crons to run steps</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Importer will use cron jobs that runs every minute to execute import steps. Enable this for multi node environments.</comment>
+                </field>
             </group>
         </section>
     </system>

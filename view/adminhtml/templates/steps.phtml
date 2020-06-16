@@ -21,6 +21,7 @@
         <th class="data-grid-th  no-link "><span><?=__('Finished at')?></span></th>
         <th class="data-grid-th  no-link "><span><?=__('Status')?></span></th>
         <th class="data-grid-th col-date last no-link"><span><?=__('Output')?></span></th>
+        <th class="data-grid-th col-date last no-link"><span><?=__('Errors')?></span></th>
     </tr>
     </thead>
 
@@ -47,11 +48,10 @@
             </span>
         </td>
         <td class="a-left indexer-title col-indexer_title  ">
-            <?php if ($step->getStatus() == \MageSuite\Importer\Model\ImportStep::STATUS_ERROR): ?>
-                <?= nl2br($step->getError()) ?>
-            <?php elseif ($step->getStatus() == \MageSuite\Importer\Model\ImportStep::STATUS_DONE): ?>
                 <?= nl2br($step->getOutput()) ?>
-            <?php endif; ?>
+        </td>
+        <td class="a-left indexer-title col-indexer_title  ">
+                <?= nl2br($step->getError()) ?>
         </td>
     </tbody>
     <?php endforeach; ?>

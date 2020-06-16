@@ -56,7 +56,7 @@ class FailedImportDetector
                 continue;
             }
 
-            $this->eventManager->dispatch('import_command_error', ['step' => $step, 'error' => __(self::ERROR_MESSAGE)]);
+            $this->eventManager->dispatch('import_command_error', ['step' => $step, 'error' => __(self::ERROR_MESSAGE), 'was_final_attempt' => true, 'attempt' => 1]);
         }
     }
 
