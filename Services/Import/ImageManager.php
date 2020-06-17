@@ -14,6 +14,11 @@ class ImageManager
 
     protected $uploadedImages = null;
 
+    /**
+     * @var array
+     */
+    protected $imagesFileSizes = [];
+
     public function __construct(\Magento\Framework\App\ResourceConnection $resourceConnection)
     {
         $this->connection = $resourceConnection->getConnection();
@@ -37,6 +42,28 @@ class ImageManager
         $this->connection->insertOnDuplicate('images_metadata', ['path' => $path, 'size' => $size], ['size']);
 
         $this->uploadedImages[$path] = $size;
+    }
+
+    public function addImageFileSizeForUpdate($path, $size) {
+        $this->imagesFileSizes[$path] = $size;
+    }
+
+    public function updateImageFileSizes() {
+        if(empty($this->imagesFileSizes)) {
+            return;
+        }
+
+        $table = $this->connection->getTableName('catalog_product_entity_media_gallery');
+
+        foreach($this->imagesFileSizes as $path => $fileSize) {
+            $this->connection->update(
+                $table,
+                ['file_size' => $fileSize],
+                ['value = ?' => $path]
+            );
+        }
+
+        $this->imagesFileSizes = [];
     }
 
     public function resetUploadedImagesData() {

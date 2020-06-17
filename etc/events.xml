@@ -3,6 +3,9 @@
     <event name="catalog_product_import_bunch_save_after">
         <observer name="catalog_product_after_save"
                   instance="MageSuite\Importer\Observer\AfterProductsBunchSaveObserver"/>
+
+        <observer name="update_image_file_sizes"
+                  instance="MageSuite\Importer\Observer\UpdateImageFileSizes"/>
     </event>
 
     <event name="catalog_product_import_bunch_processing_before">
