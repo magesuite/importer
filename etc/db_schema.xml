@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="catalog_product_entity_media_gallery">
+        <column xsi:type="int" name="file_size" unsigned="true" nullable="false" default="0" comment="Image file size in bytes"/>
+    </table>
+</schema>
