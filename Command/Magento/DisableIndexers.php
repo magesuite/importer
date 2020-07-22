@@ -39,6 +39,5 @@ class DisableIndexers implements \MageSuite\Importer\Command\Command
         $this->killIndexers->execute();
 
         $this->configWriter->save(\MageSuite\Importer\Plugin\DisableIndexer::INDEXER_ENABLED_XML_PATH, '0');
-        $this->cacheTypeList->cleanType('config');
     }
 }

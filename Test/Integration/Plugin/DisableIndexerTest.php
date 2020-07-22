@@ -43,8 +43,9 @@ class DisableIndexerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * @magentoDbIsolation disabled
      * @expectedException \Exception
-     * @magentoAdminConfigFixture indexer/indexing/enabled 0
+     * @magentoDataFixture disableIndexerFixture
      */
     public function testAroundUpdateMviewIndexerIsDisabled() {
         $this->plugin->aroundUpdateMview($this->indexerProcessorDummy, function() {});
@@ -64,11 +65,27 @@ class DisableIndexerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * @magentoDbIsolation disabled
      * @expectedException \Exception
-     * @magentoAdminConfigFixture indexer/indexing/enabled 0
+     * @magentoDataFixture disableIndexerFixture
      */
     public function testReindexAllInvalidIndexerIsDisabled() {
         $this->plugin->aroundReindexAllInvalid($this->indexerProcessorDummy, function() {});
     }
 
+    public static function disableIndexerFixture()
+    {
+        $objectManager = \Magento\TestFramework\ObjectManager::getInstance();
+        $configWriter = $objectManager->get(\Magento\Framework\App\Config\Storage\WriterInterface::class);
+
+        $configWriter->save(\MageSuite\Importer\Plugin\DisableIndexer::INDEXER_ENABLED_XML_PATH, '0');
+    }
+
+    public static function disableIndexerFixtureRollback()
+    {
+        $objectManager = \Magento\TestFramework\ObjectManager::getInstance();
+        $configWriter = $objectManager->get(\Magento\Framework\App\Config\Storage\WriterInterface::class);
+
+        $configWriter->save(\MageSuite\Importer\Plugin\DisableIndexer::INDEXER_ENABLED_XML_PATH, '1');
+    }
 }
