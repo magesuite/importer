@@ -75,17 +75,19 @@ class DisableIndexerTest extends \PHPUnit\Framework\TestCase
 
     public static function disableIndexerFixture()
     {
-        $objectManager = \Magento\TestFramework\ObjectManager::getInstance();
-        $configWriter = $objectManager->get(\Magento\Framework\App\Config\Storage\WriterInterface::class);
-
+        $configWriter = self::getConfigWriter();
         $configWriter->save(\MageSuite\Importer\Plugin\DisableIndexer::INDEXER_ENABLED_XML_PATH, '0');
     }
 
     public static function disableIndexerFixtureRollback()
     {
-        $objectManager = \Magento\TestFramework\ObjectManager::getInstance();
-        $configWriter = $objectManager->get(\Magento\Framework\App\Config\Storage\WriterInterface::class);
-
+        $configWriter = self::getConfigWriter();
         $configWriter->save(\MageSuite\Importer\Plugin\DisableIndexer::INDEXER_ENABLED_XML_PATH, '1');
+    }
+
+    protected static function getConfigWriter()
+    {
+        $objectManager = \Magento\TestFramework\ObjectManager::getInstance();
+        return $objectManager->get(\Magento\Framework\App\Config\Storage\WriterInterface::class);
     }
 }
