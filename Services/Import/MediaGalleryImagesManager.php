@@ -4,29 +4,39 @@ namespace MageSuite\Importer\Services\Import;
 
 class MediaGalleryImagesManager
 {
-    private $keysContainingImageChanges = [
+    protected $keysContainingImageChanges = [
         'base_image',
         'small_image',
         'thumbnail_image',
         'additional_images'
     ];
 
-    private $attributeCodesToImportArrayMappings = [
+    protected $attributeCodesToImportArrayMappings = [
         'image' => 'base_image',
         'small_image' => 'small_image',
         'thumbnail' => 'thumbnail_image'
     ];
 
-    private $attributesIdsToCodes;
+    protected $attributesIdsToCodes;
 
     /**
      * @var \Magento\Framework\DB\Adapter\AdapterInterface
      */
-    private $connection;
+    protected $connection;
 
+    /**
+     * @var \Magento\Framework\EntityManager\MetadataPool
+     */
+    protected $metadataPool;
 
-    public function __construct(\Magento\Framework\App\ResourceConnection $resourceConnection) {
+    protected $productEntityLinkField;
+
+    public function __construct(
+        \Magento\Framework\App\ResourceConnection $resourceConnection,
+        \Magento\Framework\EntityManager\MetadataPool $metadataPool
+    ) {
         $this->connection = $resourceConnection->getConnection();
+        $this->metadataPool = $metadataPool;
 
         $this->attributesIdsToCodes = $this->getAttributesIdsToCodes();
     }
@@ -60,7 +70,7 @@ class MediaGalleryImagesManager
      * @param $productIds
      * @return array
      */
-    private function getAllProductImages($productIds)
+    protected function getAllProductImages($productIds)
     {
         $productImages = [];
 
@@ -74,18 +84,18 @@ class MediaGalleryImagesManager
                 'cpemg.value_id = cpemgv.value_id',
                 ['*']
             )
-            ->where('entity_id IN (?)', $productIds);
+            ->where($this->getProductEntityLinkCondition(), $productIds);
 
         $currentProductImages = $this->connection->fetchAll($select);
 
         foreach ($currentProductImages as $image) {
-            $productImages[$image['entity_id']][$image['value']] = $image['value_id'];
+            $productImages[$image[$this->getProductEntityLinkField()]][$image['value']] = $image['value_id'];
         }
 
         return $productImages;
     }
 
-    private function getAttributesIdsToCodes()
+    protected function getAttributesIdsToCodes()
     {
         $select = $this->connection->select()
             ->from(
@@ -108,7 +118,7 @@ class MediaGalleryImagesManager
      * @param $productIds
      * @return array
      */
-    private function getExistingSpecialImages($productIds)
+    protected function getExistingSpecialImages($productIds)
     {
         $select = $this->connection->select()
             ->from(
@@ -116,7 +126,7 @@ class MediaGalleryImagesManager
                 ['*']
             )
             ->where('attribute_id IN (?)', array_keys($this->attributesIdsToCodes))
-            ->where('entity_id IN (?)', $productIds);
+            ->where($this->getProductEntityLinkCondition(), $productIds);
 
         $images = $this->connection->fetchAll($select);
 
@@ -125,7 +135,7 @@ class MediaGalleryImagesManager
         foreach ($images as $image) {
             $attributeCode = $this->attributesIdsToCodes[ $image['attribute_id'] ];
             $specialImageType = $this->attributeCodesToImportArrayMappings[ $attributeCode ];
-            $productId = $image['entity_id'];
+            $productId = $image[$this->getProductEntityLinkField()];
 
             $specialImages[$productId][$specialImageType] = $image['value'];
         }
@@ -161,7 +171,7 @@ class MediaGalleryImagesManager
      * @param $productImagesIds
      * @return array
      */
-    private function getSpecialImagesToDelete(
+    protected function getSpecialImagesToDelete(
         $imagesChanges,
         $existingSpecialImages,
         $productImagesIds
@@ -194,7 +204,7 @@ class MediaGalleryImagesManager
         return $imagesIdsToDelete;
     }
 
-    private function getAdditionalImagesToDelete($imagesChanges, $existingAdditionalImages)
+    protected function getAdditionalImagesToDelete($imagesChanges, $existingAdditionalImages)
     {
         $imagesIdsToDelete = [];
 
@@ -207,7 +217,7 @@ class MediaGalleryImagesManager
         return $imagesIdsToDelete;
     }
 
-    private function deleteSpecialImagesAttributes($imagesChanges)
+    protected function deleteSpecialImagesAttributes($imagesChanges)
     {
         $importArrayToAttributeCodesMapping = array_flip($this->attributeCodesToImportArrayMappings);
 
@@ -227,7 +237,7 @@ class MediaGalleryImagesManager
             $this->connection->delete(
                 'catalog_product_entity_varchar',
                 [
-                    'entity_id IN (?)' => $productIds,
+                    $this->getProductEntityLinkCondition() => $productIds,
                     'attribute_id = ?' => array_search($importArrayToAttributeCodesMapping[$specialImageType], $this->attributesIdsToCodes)
                 ]
             );
@@ -235,7 +245,7 @@ class MediaGalleryImagesManager
 
     }
 
-    private function deleteImagesFromDatabase($imagesIds)
+    protected function deleteImagesFromDatabase($imagesIds)
     {
         $this->connection->delete(
             'catalog_product_entity_media_gallery',
@@ -246,5 +256,20 @@ class MediaGalleryImagesManager
             'catalog_product_entity_media_gallery_value',
             ['value_id IN (?)' => $imagesIds]
         );
+    }
+
+    protected function getProductEntityLinkCondition()
+    {
+        return sprintf('%s IN (?)', $this->getProductEntityLinkField());
+    }
+
+    protected function getProductEntityLinkField()
+    {
+        if (!$this->productEntityLinkField) {
+            $this->productEntityLinkField = $this->metadataPool
+                ->getMetadata(\Magento\Catalog\Api\Data\ProductInterface::class)
+                ->getLinkField();
+        }
+        return $this->productEntityLinkField;
     }
 }

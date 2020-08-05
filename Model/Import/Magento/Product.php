@@ -16,6 +16,8 @@ class Product extends \Magento\CatalogImportExport\Model\Import\Product
      */
     protected $thumbnailRemover = null;
 
+    protected $productEntityLinkField;
+
     protected function getExistingImages($bunch)
     {
         $this->_eventManager->dispatch(
@@ -44,9 +46,10 @@ class Product extends \Magento\CatalogImportExport\Model\Import\Product
 
         $skus = array_unique($skus);
 
+        $linkField = $this->getProductEntityLinkField();
         $select = $this->getConnection()->select()->from(
             ['e' => $this->getResource()->getTable('catalog_product_entity')],
-            ['sku', 'entity_id']
+            ['sku', $linkField]
         )->where(
             'sku IN(?)',
             $skus
@@ -62,7 +65,7 @@ class Product extends \Magento\CatalogImportExport\Model\Import\Product
                 foreach ($attributes as $attributeId => $storeValues) {
                     foreach ($storeValues as $storeId => $storeValue) {
                         $tableData[] = [
-                            'entity_id' => $linkId,
+                            $linkField => $linkId,
                             'attribute_id' => $attributeId,
                             'store_id' => $storeId,
                             'value' => $storeValue,
@@ -92,9 +95,6 @@ class Product extends \Magento\CatalogImportExport\Model\Import\Product
         while ($bunch = $this->_dataSourceModel->getNextBunch()) {
             $stockData = [];
             // Format bunch to stock data rows
-
-            $websiteId = $this->stockConfiguration->getDefaultScopeId();
-
             $productIdsToGetStockItems = [];
 
             foreach ($bunch as $rowNum => $rowData) {
@@ -207,141 +207,6 @@ class Product extends \Magento\CatalogImportExport\Model\Import\Product
         return $stockItems;
     }
 
-    /**
-     * Optimized version of _saveLinks method
-     *
-     * @param array $attributesData
-     * @return $this
-     */
-    protected function _saveLinks()
-    {
-        $resource = $this->_linkFactory->create();
-        $mainTable = $resource->getMainTable();
-        $positionAttrId = [];
-        $nextLinkId = $this->_resourceHelper->getNextAutoincrement($mainTable);
-
-        // pre-load 'position' attributes ID for each link type once
-        foreach ($this->_linkNameToId as $linkName => $linkId) {
-            $select = $this->_connection->select()->from(
-                $resource->getTable('catalog_product_link_attribute'),
-                ['id' => 'product_link_attribute_id']
-            )->where(
-                'link_type_id = :link_id AND product_link_attribute_code = :position'
-            );
-            $bind = [':link_id' => $linkId, ':position' => 'position'];
-            $positionAttrId[$linkId] = $this->_connection->fetchOne($select, $bind);
-        }
-        while ($bunch = $this->_dataSourceModel->getNextBunch()) {
-            $productIds = [];
-            $linkRows = [];
-            $positionRows = [];
-
-            $productLinkKeys = [];
-            $productIdsToLoadLinks = [];
-
-            foreach ($bunch as $rowNum => $rowData) {
-                $sku = $rowData[self::COL_SKU];
-
-                $productId = $this->skuProcessor->getNewSku($sku)['entity_id'];
-
-                $productIdsToLoadLinks[] = $productId;
-            }
-
-            $select = $this->_connection->select()->from(
-                $resource->getTable('catalog_product_link'),
-                ['id' => 'link_id', 'linked_id' => 'linked_product_id', 'link_type_id' => 'link_type_id']
-            )->where(
-                'product_id IN (?)', $productIdsToLoadLinks
-            );
-
-            foreach ($this->_connection->fetchAll($select, $bind) as $linkData) {
-                $linkKey = "{$productId}-{$linkData['linked_id']}-{$linkData['link_type_id']}";
-                $productLinkKeys[$linkKey] = $linkData['id'];
-            }
-
-            foreach ($bunch as $rowNum => $rowData) {
-                if (!$this->isRowAllowedToImport($rowData, $rowNum)) {
-                    continue;
-                }
-
-                $sku = $rowData[self::COL_SKU];
-
-                $productId = $this->skuProcessor->getNewSku($sku)['entity_id'];
-
-                foreach ($this->_linkNameToId as $linkName => $linkId) {
-                    $productIds[] = $productId;
-                    if (isset($rowData[$linkName . 'sku'])) {
-                        $linkSkus = explode($this->getMultipleValueSeparator(), $rowData[$linkName . 'sku']);
-                        $linkPositions = !empty($rowData[$linkName . 'position'])
-                            ? explode($this->getMultipleValueSeparator(), $rowData[$linkName . 'position'])
-                            : [];
-                        foreach ($linkSkus as $linkedKey => $linkedSku) {
-                            $linkedSku = trim($linkedSku);
-                            if ((!is_null(
-                                        $this->skuProcessor->getNewSku($linkedSku)
-                                    ) || isset(
-                                        $this->_oldSku[$linkedSku]
-                                    )) && $linkedSku != $sku
-                            ) {
-                                $newSku = $this->skuProcessor->getNewSku($linkedSku);
-                                if (!empty($newSku)) {
-                                    $linkedId = $newSku['entity_id'];
-                                } else {
-                                    $linkedId = $this->_oldSku[$linkedSku]['entity_id'];
-                                }
-
-                                if ($linkedId == null) {
-                                    // Import file links to a SKU which is skipped for some reason,
-                                    // which leads to a "NULL"
-                                    // link causing fatal errors.
-                                    continue;
-                                }
-
-                                $linkKey = "{$productId}-{$linkedId}-{$linkId}";
-                                if (empty($productLinkKeys[$linkKey])) {
-                                    $productLinkKeys[$linkKey] = $nextLinkId;
-                                }
-                                if (!isset($linkRows[$linkKey])) {
-                                    $linkRows[$linkKey] = [
-                                        'link_id' => $productLinkKeys[$linkKey],
-                                        'product_id' => $productId,
-                                        'linked_product_id' => $linkedId,
-                                        'link_type_id' => $linkId,
-                                    ];
-                                    if (!empty($linkPositions[$linkedKey])) {
-                                        $positionRows[] = [
-                                            'link_id' => $productLinkKeys[$linkKey],
-                                            'product_link_attribute_id' => $positionAttrId[$linkId],
-                                            'value' => $linkPositions[$linkedKey],
-                                        ];
-                                    }
-                                    $nextLinkId++;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            if (\Magento\ImportExport\Model\Import::BEHAVIOR_APPEND != $this->getBehavior() && $productIds) {
-                $this->_connection->delete(
-                    $mainTable,
-                    $this->_connection->quoteInto('product_id IN (?)', array_unique($productIds))
-                );
-            }
-            if ($linkRows) {
-                $this->_connection->insertOnDuplicate($mainTable, $linkRows, ['link_id']);
-            }
-            if ($positionRows) {
-                // process linked product positions
-                $this->_connection->insertOnDuplicate(
-                    $resource->getAttributeTypeTable('int'),
-                    $positionRows, ['value']
-                );
-            }
-        }
-        return $this;
-    }
-
     protected function uploadMediaFiles($fileName, $renameFileOff = false)
     {
         /** @var \MageSuite\Importer\Services\Import\ImageManager $imageManager */
@@ -400,5 +265,15 @@ class Product extends \Magento\CatalogImportExport\Model\Import\Product
         }
 
         return $this->thumbnailRemover;
+    }
+
+    protected function getProductEntityLinkField()
+    {
+        if (!$this->productEntityLinkField) {
+            $this->productEntityLinkField = $this->getMetadataPool()
+                ->getMetadata(\Magento\Catalog\Api\Data\ProductInterface::class)
+                ->getLinkField();
+        }
+        return $this->productEntityLinkField;
     }
 }
