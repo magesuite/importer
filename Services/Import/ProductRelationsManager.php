@@ -5,36 +5,45 @@ namespace MageSuite\Importer\Services\Import;
 class ProductRelationsManager
 {
     /**
+     * @var \Magento\Framework\EntityManager\MetadataPool
+     */
+    protected $metadataPool;
+
+    /**
      * @var \Magento\Framework\DB\Adapter\AdapterInterface
      */
-    private $connection;
+    protected $connection;
 
     /**
      * @var \Magento\Catalog\Model\ResourceModel\Product
      */
-    private $productResourceModel;
+    protected $productResourceModel;
 
     /**
      * @var \Magento\Catalog\Model\ResourceModel\Product\Link
      */
-    private $productLinkResourceModel;
+    protected $productLinkResourceModel;
 
     /**
      * @var \MageSuite\Importer\Services\Import\MediaGalleryImagesManager
      */
-    private $imagesManager;
+    protected $imagesManager;
+
+    protected $productEntityLinkField;
 
     public function __construct(
         \Magento\Catalog\Model\ResourceModel\Product $productResourceModel,
         \Magento\Catalog\Model\ResourceModel\Product\Link $productLinkResourceModel,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
-        \MageSuite\Importer\Services\Import\MediaGalleryImagesManager $imagesManager
+        \MageSuite\Importer\Services\Import\MediaGalleryImagesManager $imagesManager,
+        \Magento\Framework\EntityManager\MetadataPool $metadataPool
     ) {
         $this->productResourceModel = $productResourceModel;
         $this->productLinkResourceModel = $productLinkResourceModel;
 
         $this->connection = $resourceConnection->getConnection();
         $this->imagesManager = $imagesManager;
+        $this->metadataPool = $metadataPool;
     }
 
     /**
@@ -49,17 +58,20 @@ class ProductRelationsManager
         $productIdsToDeleteUpSellProducts = [];
         $productIdsToDeleteConfigurableVariations = [];
 
+        $linkField = $this->getProductEntityLinkField();
+
         $imagesChanges = [];
 
         foreach ($products as $product) {
-            $productId = $skuProcessor->getNewSku($product['sku'])['entity_id'];
+            $productId = $skuProcessor->getNewSku($product['sku'])[$linkField];
+            $entityId = $skuProcessor->getNewSku($product['sku'])['entity_id'];
 
             if (empty($productId)) {
                 continue;
             }
 
             if (array_key_exists('categories', $product)) {
-                $productIdsToDeleteCategories[] = $productId;
+                $productIdsToDeleteCategories[] = $entityId;
             }
 
             if (array_key_exists('related_skus', $product)) {
@@ -107,7 +119,7 @@ class ProductRelationsManager
      * @param $connection
      * @param $productsIds
      */
-    private function deleteLinks($productsIds, $linkType)
+    protected function deleteLinks($productsIds, $linkType)
     {
         if (empty($productsIds)) {
             return;
@@ -121,7 +133,7 @@ class ProductRelationsManager
         );
     }
 
-    private function productHasImagesChanges($product)
+    protected function productHasImagesChanges($product)
     {
         foreach ($this->imagesManager->getImportArrayKeysContainingImagesChanges() as $key) {
             if (array_key_exists($key, $product)) {
@@ -135,7 +147,7 @@ class ProductRelationsManager
     /**
      * @param $productIds
      */
-    private function deleteConfigurableProductRelations($productIds)
+    protected function deleteConfigurableProductRelations($productIds)
     {
         if(empty($productIds)) {
             return;
@@ -155,7 +167,7 @@ class ProductRelationsManager
     /**
      * @param $productIds
      */
-    private function deleteCategoriesRelations($productIds)
+    protected function deleteCategoriesRelations($productIds)
     {
         if(empty($productIds)) {
             return;
@@ -167,5 +179,15 @@ class ProductRelationsManager
             $categoriesTableName,
             $this->connection->quoteInto('product_id IN (?)', $productIds)
         );
+    }
+
+    protected function getProductEntityLinkField()
+    {
+        if (!$this->productEntityLinkField) {
+            $this->productEntityLinkField = $this->metadataPool
+                ->getMetadata(\Magento\Catalog\Api\Data\ProductInterface::class)
+                ->getLinkField();
+        }
+        return $this->productEntityLinkField;
     }
 }
