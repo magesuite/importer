@@ -1,0 +1,24 @@
+"Import Logs","Import Logs"
+"Please correct the email address: ""%1"".","Please correct the email address: ""%1""."
+"Import Log","Import Log"
+Pending,Pending
+"In progress","In progress"
+Done,Done
+Error,Error
+"Step identifier","Step identifier"
+"Started at","Started at"
+"Finished at","Finished at"
+Status,Status
+Output,Output
+"There was an error in import process during step %step_identifier: %error_output.","There was an error in import process during step %step_identifier: %error_output."
+MageSuite,MageSuite
+"Store Email Addresses","Store Email Addresses"
+"Importer E-mail","Importer E-mail"
+"Sender Name","Sender Name"
+"Additional Emails","Additional Emails"
+Importer,Importer
+Configuration,Configuration
+"Failed import execution time threshold","Failed import execution time threshold"
+ID,ID
+Title,Title
+Hash,Hash
