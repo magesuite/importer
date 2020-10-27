@@ -16,7 +16,8 @@ class CreateDirectoriesTest extends \PHPUnit\Framework\TestCase
         '/var/import'
     ];
 
-    public function setUp() {
+    public function setUp(): void
+    {
         $this->command = new \MageSuite\Importer\Command\File\CreateDirectories();
 
         $this->assetsDirectory = realpath(__DIR__.'/../assets');
@@ -45,7 +46,7 @@ class CreateDirectoriesTest extends \PHPUnit\Framework\TestCase
         $this->command->execute(['directories_paths' => [$this->assetsDirectoryRelativeToMainDirectory . '/existing_directory']]);
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         foreach($this->directoriesPaths as $directoryPath) {
             if(is_dir($this->assetsDirectory . $directoryPath)) {

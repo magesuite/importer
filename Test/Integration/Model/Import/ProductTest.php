@@ -37,7 +37,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
     protected $directoryWithImages;
     protected $mediaCatalogDirectory = BP . '/pub/media/catalog/product';
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->objectManager = \Magento\TestFramework\ObjectManager::getInstance();
         $this->productRepository = $this->objectManager->create(\Magento\Catalog\Api\ProductRepositoryInterface::class);

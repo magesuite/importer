@@ -14,7 +14,8 @@ class ParseTest extends \PHPUnit\Framework\TestCase
      */
     private $objectManagerMock;
 
-    public function setUp() {
+    public function setUp(): void
+    {
         $this->objectManagerMock = $this->getMockBuilder(\Magento\Framework\ObjectManagerInterface::class)->getMock();
 
         $this->command = new \MageSuite\Importer\Command\Import\Parse($this->objectManagerMock);

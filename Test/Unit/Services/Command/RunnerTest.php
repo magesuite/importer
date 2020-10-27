@@ -40,7 +40,8 @@ class RunnerTest extends \PHPUnit\Framework\TestCase
      */
     protected $loggerMock;
 
-    public function setUp() {
+    public function setUp(): void
+    {
         $this->commandFactoryStub = $this
             ->getMockBuilder(\MageSuite\Importer\Command\CommandFactory::class)
             ->getMock();

@@ -19,7 +19,8 @@ class CommandDispatcherTest extends \PHPUnit\Framework\TestCase
      */
     private $shellMock;
 
-    public function setUp() {
+    public function setUp(): void
+    {
         $this->importRepositoryStub = $this
             ->getMockBuilder(\MageSuite\Importer\Api\ImportRepositoryInterface::class)
             ->getMock();

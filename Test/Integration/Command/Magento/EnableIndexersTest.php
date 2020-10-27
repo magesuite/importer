@@ -19,7 +19,8 @@ class EnableIndexersTest extends \PHPUnit\Framework\TestCase
      */
     protected $scopeConfig;
 
-    public function setUp() {
+    public function setUp(): void
+    {
         $this->objectManager = \Magento\TestFramework\ObjectManager::getInstance();
         $this->command  = $this->objectManager->get(\MageSuite\Importer\Command\Magento\EnableIndexers::class);
         $this->scopeConfig = $this->objectManager->get(\Magento\Framework\App\Config\ScopeConfigInterface::class);

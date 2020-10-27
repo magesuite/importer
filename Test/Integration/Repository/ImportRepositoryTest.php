@@ -14,7 +14,7 @@ class ImportRepositoryTest extends \PHPUnit\Framework\TestCase
      */
     protected $repository;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->objectManager = \Magento\TestFramework\ObjectManager::getInstance();
 

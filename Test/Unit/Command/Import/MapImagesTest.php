@@ -18,7 +18,8 @@ class MapImagesTest extends \PHPUnit\Framework\TestCase
     private $assetsDirectoryRelativeToMainDirectory;
     private $assetsDirectory;
 
-    public function setUp() {
+    public function setUp(): void
+    {
         $this->imageMapperStub = $this
             ->getMockBuilder(\MageSuite\Importer\Services\Import\ImageMapper::class)
             ->disableOriginalConstructor()

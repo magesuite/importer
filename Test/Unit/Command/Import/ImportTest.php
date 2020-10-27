@@ -11,7 +11,8 @@ class ImportTest extends \PHPUnit\Framework\TestCase
 
     private $importerMock;
 
-    public function setUp() {
+    public function setUp(): void
+    {
         $this->importerMock = $this
             ->getMockBuilder(\MageSuite\Importer\Model\Import\Product::class)
             ->disableOriginalConstructor()

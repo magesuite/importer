@@ -14,7 +14,8 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
      */
     protected $cronScheduler;
 
-    public function setUp() {
+    public function setUp(): void
+    {
         $this->schedulerMock = $this->getMockBuilder(\MageSuite\Importer\Services\Import\Scheduler::class)
             ->disableOriginalConstructor()
             ->getMock();

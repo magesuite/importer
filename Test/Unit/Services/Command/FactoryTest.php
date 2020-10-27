@@ -6,7 +6,8 @@ class CommandFactoryTest extends \PHPUnit\Framework\TestCase
 {
     private $factory;
 
-    public function setUp() {
+    public function setUp(): void
+    {
         $this->factory = \Magento\TestFramework\ObjectManager::getInstance()->create(\MageSuite\Importer\Services\Command\Factory::class);
     }
 

@@ -2,8 +2,10 @@
 
 namespace MageSuite\Importer\Test\Unit\Command\File;
 
-class DownloadNewestTest extends DownloaderTest {
-    public function setUp() {
+class DownloadNewestTest extends DownloaderTest
+{
+    public function setUp(): void
+    {
         $this->fileDownloaderDouble = $this
             ->getMockBuilder(\Creativestyle\LFTP\File\Downloader::class)
             ->disableOriginalConstructor()

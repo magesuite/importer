@@ -11,7 +11,7 @@ class MoveTest extends \PHPUnit\Framework\TestCase
     protected $assetsDirectory;
     protected $assetsDirectoryRelativeToMainDirectory;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->assetsDirectory = realpath(__DIR__ . '/../assets');
         $this->assetsDirectoryRelativeToMainDirectory = str_replace(BP . '/', '', $this->assetsDirectory);
@@ -59,7 +59,7 @@ class MoveTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse(file_exists($this->assetsDirectoryRelativeToMainDirectory . '/file_to_be_moved'));
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         if(file_exists($this->assetsDirectory.'/target_path')) {
             unlink($this->assetsDirectory.'/target_path');

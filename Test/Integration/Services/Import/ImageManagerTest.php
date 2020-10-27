@@ -19,7 +19,7 @@ class ImageManagerTest extends \PHPUnit\Framework\TestCase
      */
     protected $connection;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->objectManager = \Magento\TestFramework\ObjectManager::getInstance();
         $this->imageManager = $this->objectManager->create(\MageSuite\Importer\Services\Import\ImageManager::class);

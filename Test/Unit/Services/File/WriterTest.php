@@ -11,7 +11,8 @@ class WriterTest extends \PHPUnit\Framework\TestCase
      */
     protected $writer;
 
-    public function setUp() {
+    public function setUp(): void
+    {
         $this->filePath = __DIR__ . '/../assets/write_test';
 
         $this->writer = new \MageSuite\Importer\Services\File\Writer($this->filePath);
@@ -25,7 +26,7 @@ class WriterTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(["first_line".PHP_EOL, 'second_line'], file($this->filePath));
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         if(!file_exists($this->filePath)) {
             return;

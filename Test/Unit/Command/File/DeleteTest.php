@@ -11,7 +11,7 @@ class DeleteTest extends \PHPUnit\Framework\TestCase
     protected $assetsDirectory;
     protected $assetsDirectoryRelativeToMainDirectory;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->assetsDirectory = realpath(__DIR__ . '/../assets');
         $this->assetsDirectoryRelativeToMainDirectory = str_replace(BP . '/', '', $this->assetsDirectory);
@@ -40,7 +40,7 @@ class DeleteTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse(file_exists($this->assetsDirectory.'/file_to_be_deleted'));
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         if(file_exists($this->assetsDirectory.'/file_to_be_deleted')) {
             unlink($this->assetsDirectory.'/file_to_be_deleted');

@@ -19,7 +19,8 @@ class DisableIndexerTest extends \PHPUnit\Framework\TestCase
      */
     protected $indexerProcessorDummy;
 
-    public function setUp() {
+    public function setUp(): void
+    {
         $this->objectManager = \Magento\TestFramework\ObjectManager::getInstance();
 
         $this->plugin = $this->objectManager->get(\MageSuite\Importer\Plugin\DisableIndexer::class);
