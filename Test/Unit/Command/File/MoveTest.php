@@ -19,27 +19,24 @@ class MoveTest extends \PHPUnit\Framework\TestCase
         $this->command = new \MageSuite\Importer\Command\File\Move();
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testItThrowsExceptionWhenSourcePathIsNotDefined()
     {
+        $this->expectException(\InvalidArgumentException::class);
+
         $this->command->execute(['target_path' => 'something']);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testItThrowsExceptionWhenTargetPathIsNotDefined()
     {
+        $this->expectException(\InvalidArgumentException::class);
+
         $this->command->execute(['source_path' => 'something']);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testItThrowsExceptionWhenSourceFileDoesNotExists()
     {
+        $this->expectException(\InvalidArgumentException::class);
+
         $this->command->execute([
             'source_path' => $this->assetsDirectoryRelativeToMainDirectory . '/not_existing_file',
             'target_path' => $this->assetsDirectoryRelativeToMainDirectory . '/target_path'

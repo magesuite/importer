@@ -19,11 +19,10 @@ class DeleteTest extends \PHPUnit\Framework\TestCase
         $this->command = new \MageSuite\Importer\Command\File\Delete();
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testItThrowsExceptionWhenPathIsNotDefined()
     {
+        $this->expectException(\InvalidArgumentException::class);
+
         $this->command->execute(['key' => 'something']);
     }
 

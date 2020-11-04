@@ -45,10 +45,12 @@ class DisableIndexerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @magentoDbIsolation disabled
-     * @expectedException \Exception
      * @magentoDataFixture disableIndexerFixture
      */
-    public function testAroundUpdateMviewIndexerIsDisabled() {
+    public function testAroundUpdateMviewIndexerIsDisabled()
+    {
+        $this->expectException(\Exception::class);
+
         $this->plugin->aroundUpdateMview($this->indexerProcessorDummy, function() {});
     }
 
@@ -67,10 +69,12 @@ class DisableIndexerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @magentoDbIsolation disabled
-     * @expectedException \Exception
      * @magentoDataFixture disableIndexerFixture
      */
-    public function testReindexAllInvalidIndexerIsDisabled() {
+    public function testReindexAllInvalidIndexerIsDisabled()
+    {
+        $this->expectException(\Exception::class);
+
         $this->plugin->aroundReindexAllInvalid($this->indexerProcessorDummy, function() {});
     }
 

@@ -160,10 +160,10 @@ class RunnerTest extends \PHPUnit\Framework\TestCase
         $this->commandRunner->runCommand($importId, $importIdentifier, 'download');
     }
 
-    /**
-     * @expectedException \Exception
-     */
-    public function testItThrowsEventWhenCommandFailed() {
+    public function testItThrowsEventWhenCommandFailed()
+    {
+        $this->expectException(\Exception::class);
+
         $importId = 'import_id';
         $importIdentifier = 'import_identifier';
 
@@ -188,10 +188,10 @@ class RunnerTest extends \PHPUnit\Framework\TestCase
         $this->commandRunner->runCommand($importId, $importIdentifier, 'download');
     }
 
-    /**
-     * @expectedException \Exception
-     */
-    public function testItRetriesMultipleTimesWhenErrorOccurs() {
+    public function testItRetriesMultipleTimesWhenErrorOccurs()
+    {
+        $this->expectException(\Exception::class);
+
         $importId = 'import_id';
         $importIdentifier = 'import_identifier';
 
@@ -207,10 +207,10 @@ class RunnerTest extends \PHPUnit\Framework\TestCase
         $this->commandRunner->runCommand($importId, $importIdentifier, 'download');
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
-    public function testItThrowsExceptionWhenThereAreNoStepsToRun() {
+    public function testItThrowsExceptionWhenThereAreNoStepsToRun()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
         $importId = 'import_id';
         $importIdentifier = 'import_identifier';
 
@@ -225,10 +225,10 @@ class RunnerTest extends \PHPUnit\Framework\TestCase
         $this->commandRunner->runCommand($importId, $importIdentifier, 'download');
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
-    public function testItThrowsExceptionWhenCommandDoesNotExist() {
+    public function testItThrowsExceptionWhenCommandDoesNotExist()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
         $importId = 'import_id';
         $importIdentifier = 'import_identifier';
 
