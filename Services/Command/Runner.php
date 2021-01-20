@@ -102,30 +102,20 @@ class Runner
 
         $this->eventManager->dispatch('import_command_executes', ['step' => $step]);
 
-        $attempt = 1;
+        $attempt = $step->getRetriesCount()+1;
 
-        while(true) {
-            try {
-                $output = $command->execute($stepConfiguration);
+        try {
+            $output = $command->execute($stepConfiguration);
 
-                $this->eventManager->dispatch('import_command_done', ['step' => $step, 'output' => $output]);
+            $this->eventManager->dispatch('import_command_done', ['step' => $step, 'output' => $output]);
 
-                $this->lockManager->unlock($lockName);
+            $this->lockManager->unlock($lockName);
+        } catch (\Exception $e) {
+            $wasFinalAttempt = (bool)($attempt == $this->getAmountOfRetries($stepConfiguration));
 
-                break;
-            } catch (\Exception $e) {
-                $wasFinalAttempt = (bool)($attempt == $this->getAmountOfRetries($stepConfiguration));
+            $this->eventManager->dispatch('import_command_error', ['attempt' => $attempt, 'step' => $step, 'error' => $e->getMessage(), 'was_final_attempt' => $wasFinalAttempt]);
 
-                $this->eventManager->dispatch('import_command_error', ['attempt' => $attempt, 'step' => $step, 'error' => $e->getMessage(), 'was_final_attempt' => $wasFinalAttempt]);
-
-                if($wasFinalAttempt) {
-                    $this->lockManager->unlock($lockName);
-
-                    throw $e;
-                }
-
-                $attempt++;
-            }
+            $this->lockManager->unlock($lockName);
         }
     }
 
