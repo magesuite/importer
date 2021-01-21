@@ -111,6 +111,24 @@ class UpgradeSchema implements \Magento\Framework\Setup\UpgradeSchemaInterface
             }
         }
 
+        if (version_compare($context->getVersion(), '1.0.6') < 0) {
+            $tableName = $setup->getTable('import_log_step');
+
+            if ($setup->tableExists($tableName) == true) {
+                $connection = $setup->getConnection();
+
+                if(!$connection->tableColumnExists($tableName, 'retries_count')){
+                    $connection->addColumn($tableName, 'retries_count', [
+                        'type' => \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
+                        'nullable' => false,
+                        'size' => 1,
+                        'comment' => 'Retries count',
+                        'default' => 0
+                    ]);
+                }
+            }
+        }
+
         $setup->endSetup();
     }
 }

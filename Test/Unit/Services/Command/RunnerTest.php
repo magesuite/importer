@@ -162,8 +162,6 @@ class RunnerTest extends \PHPUnit\Framework\TestCase
 
     public function testItThrowsEventWhenCommandFailed()
     {
-        $this->expectException(\Exception::class);
-
         $importId = 'import_id';
         $importIdentifier = 'import_identifier';
 
@@ -184,25 +182,6 @@ class RunnerTest extends \PHPUnit\Framework\TestCase
                 'was_final_attempt' => false,
                 'attempt' => 1
             ]);
-
-        $this->commandRunner->runCommand($importId, $importIdentifier, 'download');
-    }
-
-    public function testItRetriesMultipleTimesWhenErrorOccurs()
-    {
-        $this->expectException(\Exception::class);
-
-        $importId = 'import_id';
-        $importIdentifier = 'import_identifier';
-
-        $importStep = $this->prepareDoublesForEventTest($importId, $importIdentifier);
-
-        $exceptionThrown = new \Exception('exception');
-
-        $this->commandMock
-            ->expects($this->exactly(5))
-            ->method('execute')
-            ->will($this->throwException($exceptionThrown));
 
         $this->commandRunner->runCommand($importId, $importIdentifier, 'download');
     }
