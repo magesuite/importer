@@ -108,15 +108,13 @@ class Runner
             $output = $command->execute($stepConfiguration);
 
             $this->eventManager->dispatch('import_command_done', ['step' => $step, 'output' => $output]);
-
-            $this->lockManager->unlock($lockName);
         } catch (\Exception $e) {
             $wasFinalAttempt = (bool)($attempt == $this->getAmountOfRetries($stepConfiguration));
 
             $this->eventManager->dispatch('import_command_error', ['attempt' => $attempt, 'step' => $step, 'error' => $e->getMessage(), 'was_final_attempt' => $wasFinalAttempt]);
-
-            $this->lockManager->unlock($lockName);
         }
+
+        $this->lockManager->unlock($lockName);
     }
 
     public function getAmountOfRetries($stepConfiguration) {

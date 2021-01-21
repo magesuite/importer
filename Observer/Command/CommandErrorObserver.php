@@ -4,6 +4,8 @@ namespace MageSuite\Importer\Observer\Command;
 
 class CommandErrorObserver extends AbstractCommandResultObserver  implements \Magento\Framework\Event\ObserverInterface
 {
+    const ERROR_MESSAGE = "%s\n Error at attempt #%s on %s: \n %s";
+
     /**
      * @var \Magento\Framework\Stdlib\DateTime\DateTime
      */
@@ -37,7 +39,7 @@ class CommandErrorObserver extends AbstractCommandResultObserver  implements \Ma
         $currentTime = date('Y-m-d H:i:s', $this->dateTime->gmtTimestamp());
 
         $newError = sprintf(
-            "%s\n Error at attempt #%s on %s: \n %s",
+            self::ERROR_MESSAGE,
             $existingError,
             $attempt,
             $currentTime,
