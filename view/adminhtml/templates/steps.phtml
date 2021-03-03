@@ -22,6 +22,7 @@
         <th class="data-grid-th  no-link "><span><?=__('Status')?></span></th>
         <th class="data-grid-th col-date last no-link"><span><?=__('Output')?></span></th>
         <th class="data-grid-th col-date last no-link"><span><?=__('Errors')?></span></th>
+        <th class="data-grid-th col-date last no-link"><span><?=__('Server Status')?></span></th>
     </tr>
     </thead>
 
@@ -52,6 +53,9 @@
         </td>
         <td class="a-left indexer-title col-indexer_title  ">
                 <?= nl2br($step->getError()) ?>
+        </td>
+        <td class="a-left indexer-title col-indexer_title  ">
+            <a href="<?=$block->getUrl('importer/import/showServerStatusLog', ['step_id' => $step->getId()])?>" target="_blank">See log</a>
         </td>
     </tbody>
     <?php endforeach; ?>

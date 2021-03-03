@@ -1,10 +1,11 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../../lib/internal/Magento/Framework/Module/etc/module.xsd">
-    <module name="MageSuite_Importer" setup_version="1.0.6">
+    <module name="MageSuite_Importer" setup_version="1.0.7">
         <sequence>
             <module name="Magento_CatalogImportExport"/>
             <module name="Magento_ImportExport" />
             <module name="Magento_Indexer" />
+            <module name="MageSuite_ServerStatusLogger" />
         </sequence>
     </module>
 </config>

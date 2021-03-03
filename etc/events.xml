@@ -16,6 +16,8 @@
     <event name="import_command_executes">
         <observer name="command_executes_observer"
                   instance="MageSuite\Importer\Observer\Command\CommandExecutesObserver"/>
+        <observer name="log_server_status_before_command_execution"
+                  instance="MageSuite\Importer\Observer\Command\LogServerStatusBeforeCommandExecution"/>
     </event>
 
     <event name="import_command_done">

@@ -100,9 +100,9 @@ class Runner
             throw new \InvalidArgumentException(sprintf("Command with type %s does not exist.", $commandType));
         }
 
-        $this->eventManager->dispatch('import_command_executes', ['step' => $step]);
-
         $attempt = $step->getRetriesCount()+1;
+
+        $this->eventManager->dispatch('import_command_executes', ['step' => $step, 'attempt' => $attempt]);
 
         try {
             $output = $command->execute($stepConfiguration);

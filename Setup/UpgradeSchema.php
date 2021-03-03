@@ -129,6 +129,24 @@ class UpgradeSchema implements \Magento\Framework\Setup\UpgradeSchemaInterface
             }
         }
 
+        if (version_compare($context->getVersion(), '1.0.7') < 0) {
+            $tableName = $setup->getTable('import_log_step');
+
+            if ($setup->tableExists($tableName) == true) {
+                $connection = $setup->getConnection();
+
+                if(!$connection->tableColumnExists($tableName, 'server_status_log')){
+                    $connection->addColumn($tableName, 'server_status_log', [
+                        'type' => \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+                        'nullable' => false,
+                        'length' => 16777216,
+                        'comment' => 'Server status log',
+                        'default' => ''
+                    ]);
+                }
+            }
+        }
+
         $setup->endSetup();
     }
 }
