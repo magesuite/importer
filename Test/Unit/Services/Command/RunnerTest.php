@@ -138,7 +138,10 @@ class RunnerTest extends \PHPUnit\Framework\TestCase
         $this->eventManagerMock
             ->expects($this->at(0))
             ->method('dispatch')
-            ->with('import_command_executes', ['step' => $importStep]);
+            ->with('import_command_executes', [
+                'step' => $importStep,
+                'attempt' => 1
+            ]);
 
         $this->commandRunner->runCommand($importId, $importIdentifier, 'download');
     }
