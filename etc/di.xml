@@ -74,6 +74,7 @@
             <argument name="stepTypeMap" xsi:type="array">
                 <item name="download" xsi:type="object">MageSuite\Importer\Command\File\Download</item>
                 <item name="download_newest" xsi:type="object">MageSuite\Importer\Command\File\DownloadNewest</item>
+                <item name="download_from_url" xsi:type="object">MageSuite\Importer\Command\File\DownloadFromUrl</item>
                 <item name="sync" xsi:type="object">MageSuite\Importer\Command\File\Sync</item>
                 <item name="parse" xsi:type="object">MageSuite\Importer\Command\Import\Parse</item>
                 <item name="map_images" xsi:type="object">MageSuite\Importer\Command\Import\MapImages</item>
