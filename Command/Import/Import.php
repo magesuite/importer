@@ -5,6 +5,7 @@ namespace MageSuite\Importer\Command\Import;
 class Import implements \MageSuite\Importer\Command\Command
 {
     protected $magentoBuiltInBehaviors = ['replace'];
+
     /**
      * @var \MageSuite\Importer\Model\Import\Product
      */

@@ -31,7 +31,7 @@ class FileImporter extends \FireGento\FastSimpleImport\Model\Importer
         }
 
         if (
-            $this->importModel->getErrorAggregator()->getValidationStrategy() == \Magento\ImportExport\Model\Import\ErrorProcessing\ProcessingErrorAggregatorInterface::VALIDATION_STRATEGY_SKIP_ERRORS and
+            ! $this->importModel->getErrorAggregator()->hasToBeTerminated() and
             $this->importModel->getErrorAggregator()->hasFatalExceptions()
         ) {
             $this->importModel->addLogComment($this->getErrorMessages());
