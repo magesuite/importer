@@ -109,7 +109,7 @@ class FileAdapter extends \Magento\ImportExport\Model\Import\AbstractSource
      */
     public function valid()
     {
-        return $this->_position < $this->numberOfLines;
+        return $this->_position <= $this->numberOfLines;
     }
 
     /**
@@ -128,7 +128,7 @@ class FileAdapter extends \Magento\ImportExport\Model\Import\AbstractSource
 
     protected function convertArrayToString($values)
     {
-        if(empty($values)) {
+        if(! is_array($values)) {
             throw new \InvalidArgumentException('array expected');
         }
 

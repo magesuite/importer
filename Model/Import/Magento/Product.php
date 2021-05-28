@@ -230,9 +230,7 @@ class Product extends \Magento\CatalogImportExport\Model\Import\Product
         $imagePreviouslyUploaded = $imageManager->wasImagePreviouslyUploaded($filePath, $fileSize);
         $imageManager->addImageFileSizeForUpdate($filePath, $fileSize);
 
-        $absoluteFilePath = BP . $this->_getUploader()->getDestDir() . '/' . $filePath;
-
-        if (file_exists($absoluteFilePath) AND $imagePreviouslyUploaded == \MageSuite\Importer\Services\Import\ImageManager::IMAGE_IDENTICAL) {
+        if ($imagePreviouslyUploaded == \MageSuite\Importer\Services\Import\ImageManager::IMAGE_IDENTICAL) {
             return $filePath;
         }
 
