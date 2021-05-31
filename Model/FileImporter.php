@@ -72,11 +72,7 @@ class FileImporter extends \FireGento\FastSimpleImport\Model\Importer
 
         return $message;
     }
-
-    /**
-     * To use Redis SCAN command we need Credis_Client configured by Cache backend class
-     * That property is protected so we need to hack its retrieval using Reflection API
-     */
+    
     protected function getPrivateProperty($object, $propertyName)
     {
         $reflection = new \ReflectionClass($object);
