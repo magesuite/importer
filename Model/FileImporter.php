@@ -12,11 +12,12 @@ class FileImporter extends \FireGento\FastSimpleImport\Model\Importer
     public function processImport($filePath)
     {
         $this->importModel = $this->createImportModel();
+        $errorAgregator = $this->importModel->getErrorAggregator();
 
         if (!$this->validateData($filePath) and
             (
-                $this->importModel->getErrorAggregator()->getValidationStrategy() == \Magento\ImportExport\Model\Import\ErrorProcessing\ProcessingErrorAggregatorInterface::VALIDATION_STRATEGY_STOP_ON_ERROR and
-                $this->importModel->getErrorAggregator()->hasFatalExceptions()
+                $this->getPrivateProperty($errorAgregator, 'validationStrategy') == \Magento\ImportExport\Model\Import\ErrorProcessing\ProcessingErrorAggregatorInterface::VALIDATION_STRATEGY_STOP_ON_ERROR and
+                $errorAgregator->hasFatalExceptions()
             )
         ) {
             $message = $this->getLogTrace() . PHP_EOL;
@@ -26,13 +27,13 @@ class FileImporter extends \FireGento\FastSimpleImport\Model\Importer
 
         $this->importData();
 
-        if ($this->importModel->getErrorAggregator()->hasToBeTerminated()) {
+        if ($errorAgregator->hasToBeTerminated()) {
             $this->importModel->addLogComment($this->getErrorMessages());
         }
 
         if (
-            $this->importModel->getErrorAggregator()->getValidationStrategy() == \Magento\ImportExport\Model\Import\ErrorProcessing\ProcessingErrorAggregatorInterface::VALIDATION_STRATEGY_SKIP_ERRORS and
-            $this->importModel->getErrorAggregator()->hasFatalExceptions()
+            $this->getPrivateProperty($errorAgregator, 'validationStrategy') == \Magento\ImportExport\Model\Import\ErrorProcessing\ProcessingErrorAggregatorInterface::VALIDATION_STRATEGY_SKIP_ERRORS and
+            $errorAgregator->hasFatalExceptions()
         ) {
             $this->importModel->addLogComment($this->getErrorMessages());
         }
@@ -71,4 +72,15 @@ class FileImporter extends \FireGento\FastSimpleImport\Model\Importer
 
         return $message;
     }
+    
+    protected function getPrivateProperty($object, $propertyName)
+    {
+        $reflection = new \ReflectionClass($object);
+
+        $property = $reflection->getProperty($propertyName);
+        $property->setAccessible(true);
+
+        return $property->getValue($object);
+    }
+
 }

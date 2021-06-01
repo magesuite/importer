@@ -128,6 +128,10 @@ class FileAdapter extends \Magento\ImportExport\Model\Import\AbstractSource
 
     protected function convertArrayToString($values)
     {
+        if(! is_array($values)) {
+            throw new \InvalidArgumentException('array expected');
+        }
+
         foreach($values as $key => $value) {
             if(!is_array($value)) {
                 continue;
