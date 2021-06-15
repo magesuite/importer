@@ -90,4 +90,12 @@
             </argument>
         </arguments>
     </type>
+
+    <type name="Magento\CatalogImportExport\Model\Import\Product\Type\AbstractType">
+        <plugin name="ignore_default_values_for_bestseller_attributes" type="MageSuite\Importer\Plugin\CatalogImportExport\Model\Import\Product\Type\AbstractType\IgnoreDefaultValueForBestsellerAttributes"/>
+    </type>
+
+    <type name="Magento\ImportExport\Model\Import\Entity\AbstractEntity">
+        <plugin name="ignore_default_values_for_bestseller_attributes" type="MageSuite\Importer\Plugin\ImportExport\Model\Import\Entity\AbstractEntity\SetRunningImportFlag"/>
+    </type>
 </config>
