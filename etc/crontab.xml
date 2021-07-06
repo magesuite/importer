@@ -7,5 +7,8 @@
         <job name="dispatch_steps" instance="MageSuite\Importer\Cron\Dispatcher" method="execute">
             <schedule>* * * * *</schedule>
         </job>
+        <job name="remove_old_import_logs" instance="MageSuite\Importer\Cron\RemoveOldImportLogs" method="execute">
+            <config_path>importer/logs/cron_schedule</config_path>
+        </job>
     </group>
 </config>

@@ -22,6 +22,11 @@
                 <failed_import_threshold>4</failed_import_threshold>
                 <use_cron_to_run_steps>0</use_cron_to_run_steps>
             </configuration>
+            <logs>
+                <enable_clearing>1</enable_clearing>
+                <delete_older_than>90</delete_older_than>
+                <cron_schedule>0 23 1 * *</cron_schedule>
+            </logs>
         </importer>
     </default>
 </config>
