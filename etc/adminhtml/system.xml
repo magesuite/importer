@@ -39,6 +39,22 @@
                     <comment>Importer will use cron jobs that runs every minute to execute import steps. Enable this for multi node environments.</comment>
                 </field>
             </group>
+            <group id="logs" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Logs</label>
+                <field id="enable_clearing" translate="label" type="select" sortOrder="20" showInDefault="1">
+                    <label>Enable Clearing</label>
+                    <comment>Logs older than X days will be cleared at time provided in cron expression</comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="delete_older_than" translate="label" type="text" sortOrder="40" showInDefault="1">
+                    <label>Delete Older Than</label>
+                    <comment>Enter the number of days after which logs should be deleted</comment>
+                </field>
+                <field id="cron_schedule" translate="label" type="text" sortOrder="60" showInDefault="1">
+                    <label>Cron Schedule</label>
+                    <comment>Please type full cron schedule expression, eg. '59 23 * * *'</comment>
+                </field>
+            </group>
         </section>
     </system>
 </config>

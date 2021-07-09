@@ -147,6 +147,35 @@ class UpgradeSchema implements \Magento\Framework\Setup\UpgradeSchemaInterface
             }
         }
 
+        if (version_compare($context->getVersion(), '1.0.8') < 0) {
+            $importLogTableName = $setup->getTable('import_log');
+            $importLogStepTableName = $setup->getTable('import_log_step');
+
+            if ($setup->tableExists($importLogTableName) == true && $setup->tableExists($importLogStepTableName)) {
+                $connection = $setup->getConnection();
+                $connection->modifyColumn(
+                    $importLogStepTableName,
+                    'import_id',
+                    [
+                        'type' => \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
+                        'unsigned' => true,
+                        'nullable' => false,
+                        'length' => 10
+                    ]
+                );
+                $connection->addIndex($importLogStepTableName,'import_id','import_id');
+
+                $connection->addForeignKey(
+                    $setup->getFkName($importLogStepTableName, 'import_id', $importLogTableName, 'import_id'),
+                    $setup->getTable($importLogStepTableName),
+                    'import_id',
+                    $setup->getTable($importLogTableName),
+                    'import_id',
+                    \Magento\Framework\DB\Ddl\Table::ACTION_CASCADE
+                );
+            }
+        }
+
         $setup->endSetup();
     }
 }
