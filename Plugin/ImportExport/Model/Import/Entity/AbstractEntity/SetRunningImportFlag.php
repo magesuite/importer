@@ -25,5 +25,6 @@ class SetRunningImportFlag
         $result
     ) {
         $this->importRunningFlag->setIsRunning(false);
+        return $result;
     }
 }
