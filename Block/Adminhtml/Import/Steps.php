@@ -43,6 +43,7 @@ class Steps extends \Magento\Backend\Block\Template
     }
 
     public function getDate($date) {
+        $date = new \DateTime($date);
         return $this->timezone->date($date)->format('d-m-Y H:i:s');
     }
 }
