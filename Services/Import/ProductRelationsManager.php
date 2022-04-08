@@ -63,6 +63,10 @@ class ProductRelationsManager
         $imagesChanges = [];
 
         foreach ($products as $product) {
+            if(empty($skuProcessor->getNewSku($product['sku']))) {
+                continue;
+            }
+
             $productId = $skuProcessor->getNewSku($product['sku'])[$linkField];
             $entityId = $skuProcessor->getNewSku($product['sku'])['entity_id'];
 
