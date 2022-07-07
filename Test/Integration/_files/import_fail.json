@@ -1,0 +1,3 @@
+{"sku":"simple1","product_type":"simple","name":"Simple 1","price":"25","attribute_set_code": "Default","categories":"Default Category/Category 1"}
+{"sku":"simple2","product_type":"simple","name":"Simple 2","price":"34","attribute_set_code": "Default","categories":"Default Category/Category 1","base_image":"fail.png"}
+{"sku":"simple3","product_type":"simple","name":"Simple 3","price":"58","attribute_set_code": "Default","categories":"Default Category/Category 1"}

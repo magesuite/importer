@@ -6,9 +6,15 @@
 
         <observer name="update_image_file_sizes"
                   instance="MageSuite\Importer\Observer\UpdateImageFileSizes"/>
+
+        <observer name="end_transaction_for_product_bunch"
+                  instance="MageSuite\Importer\Observer\EndTransactionForProductBunch"/>
     </event>
 
     <event name="catalog_product_import_bunch_processing_before">
+        <observer name="begin_transaction_for_product_bunch"
+                  instance="MageSuite\Importer\Observer\BeginTransactionForProductBunch"/>
+
         <observer name="catalog_product_import_process_one_to_many_values"
                   instance="MageSuite\Importer\Observer\ImportProductsBunchObserver"/>
     </event>

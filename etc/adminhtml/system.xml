@@ -38,6 +38,11 @@
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <comment>Importer will use cron jobs that runs every minute to execute import steps. Enable this for multi node environments.</comment>
                 </field>
+                <field id="use_transactions" translate="label" type="select" sortOrder="1" showInDefault="1">
+                    <label>Use MySQL Transactions</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>When this option is enabled changes made to products will be rollbacked in case of error during importing to Magento</comment>
+                </field>
             </group>
             <group id="logs" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Logs</label>
