@@ -12,7 +12,7 @@ class Config
     const XML_PATH_LOGS_DELETE_OLDER_THAN = 'importer/logs/delete_older_than';
 
     const XML_PATH_ADMIN_NOTIFICATION_SENDER_NAME = 'trans_email/importer_email/name';
-    const XML_PATH_ADMIN_NOTIFICATION_EMAILS = 'trans_email/importer_email/name';
+    const XML_PATH_ADMIN_NOTIFICATION_EMAILS = 'trans_email/importer_email/email';
 
     /**
      * @var \Magento\Framework\App\Config\ScopeConfigInterface
@@ -49,12 +49,12 @@ class Config
 
     public function getAdminNotificationSenderName(): string
     {
-        return $this->scopeConfig->getValue(self::XML_PATH_LOGS_DELETE_OLDER_THAN);
+        return $this->scopeConfig->getValue(self::XML_PATH_ADMIN_NOTIFICATION_SENDER_NAME);
     }
 
     public function getAdminNotificationEmails(): array
     {
-        $storeAdminEmails =  $this->scopeConfig->getValue(self::XML_PATH_LOGS_DELETE_OLDER_THAN);
+        $storeAdminEmails =  $this->scopeConfig->getValue(self::XML_PATH_ADMIN_NOTIFICATION_EMAILS);
         return array_map('trim', explode("\n", $storeAdminEmails));
     }
 }
