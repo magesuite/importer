@@ -11,6 +11,9 @@ class Config
     const XML_PATH_LOGS_ENABLE_CLEARING = 'importer/logs/enable_clearing';
     const XML_PATH_LOGS_DELETE_OLDER_THAN = 'importer/logs/delete_older_than';
 
+    const XML_PATH_ADMIN_NOTIFICATION_SENDER_NAME = 'trans_email/importer_email/name';
+    const XML_PATH_ADMIN_NOTIFICATION_EMAILS = 'trans_email/importer_email/name';
+
     /**
      * @var \Magento\Framework\App\Config\ScopeConfigInterface
      */
@@ -42,5 +45,16 @@ class Config
     public function getDeleteOlderThanValue()
     {
         return $this->scopeConfig->getValue(self::XML_PATH_LOGS_DELETE_OLDER_THAN);
+    }
+
+    public function getAdminNotificationSenderName(): string
+    {
+        return $this->scopeConfig->getValue(self::XML_PATH_LOGS_DELETE_OLDER_THAN);
+    }
+
+    public function getAdminNotificationEmails(): array
+    {
+        $storeAdminEmails =  $this->scopeConfig->getValue(self::XML_PATH_LOGS_DELETE_OLDER_THAN);
+        return array_map('trim', explode("\n", $storeAdminEmails));
     }
 }

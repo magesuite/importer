@@ -7,7 +7,7 @@ class Runner
     const DEFAULT_AMOUNT_OF_RETRIES = 5;
 
     /**
-     * @var \Magento\Framework\Lock\LockManagerInterface
+     * @var \MageSuite\Importer\Services\Notification\LockManager
      */
     protected $lockManager;
 
@@ -43,7 +43,7 @@ class Runner
         \MageSuite\Importer\Command\CommandFactory $commandFactory,
         \MageSuite\Importer\Api\ImportRepositoryInterface $importRepository,
         \Magento\Framework\Event\ManagerInterface $eventManager,
-        \Magento\Framework\Lock\LockManagerInterface $lockManager,
+        \MageSuite\Importer\Services\Notification\LockManager $lockManager,
         \Psr\Log\LoggerInterface $logger
     )
     {
@@ -79,14 +79,12 @@ class Runner
      */
     private function runStepCommand($step)
     {
-        $lockName = sprintf('import_step_%s',  $step->getId());
-
-        if($this->lockManager->isLocked($lockName)) {
+        if (!$this->lockManager->canAcquireLock($step->getId())) {
             $this->logger->debug(sprintf('Import step %s tried to execute concurrently.', $step->getIdentifier()));
             return;
         }
 
-        $this->lockManager->lock($lockName);
+        $this->lockManager->lock($step->getId());
 
         $stepDefinition = $this->configuration['steps'][$step->getIdentifier()];
 
@@ -114,7 +112,7 @@ class Runner
             $this->eventManager->dispatch('import_command_error', ['attempt' => $attempt, 'step' => $step, 'error' => $e->getMessage(), 'was_final_attempt' => $wasFinalAttempt]);
         }
 
-        $this->lockManager->unlock($lockName);
+        $this->lockManager->unlock($step->getId());
     }
 
     public function getAmountOfRetries($stepConfiguration) {

@@ -10,5 +10,8 @@
         <job name="remove_old_import_logs" instance="MageSuite\Importer\Cron\RemoveOldImportLogs" method="execute">
             <config_path>importer/logs/cron_schedule</config_path>
         </job>
+        <job name="monitor_import_oom_errors" instance="MageSuite\Importer\Cron\MonitorImportProcess" method="execute">
+            <schedule>*/10 * * * *</schedule>
+        </job>
     </group>
 </config>
