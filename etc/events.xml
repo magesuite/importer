@@ -19,6 +19,11 @@
                   instance="MageSuite\Importer\Observer\ImportProductsBunchObserver"/>
     </event>
 
+    <event name="catalog_product_import_finish_before">
+        <observer name="send_notification_with_silent_errors"
+                  instance="MageSuite\Importer\Observer\SendNotificationAboutSilentErrors"/>
+    </event>
+
     <event name="import_command_executes">
         <observer name="command_executes_observer"
                   instance="MageSuite\Importer\Observer\Command\CommandExecutesObserver"/>

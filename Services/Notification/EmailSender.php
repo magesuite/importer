@@ -33,6 +33,10 @@ class EmailSender
             return;
         }
 
+        if (is_array($error)) {
+            $error = $this->prepareMessage($error);
+        }
+
         $this->getTransport([
                 'name' => $storeAdminName,
                 'email' => array_shift($storeAdminEmails),
@@ -58,5 +62,16 @@ class EmailSender
         }
 
         return $transport->getTransport();
+    }
+
+    protected function prepareMessage(array $errors)
+    {
+        $resultErrorMessage = '';
+        /** @var \Magento\ImportExport\Model\Import\ErrorProcessing\ProcessingError $error */
+        foreach ($errors as $error) {
+            $resultErrorMessage .= 'Row #' . $error->getRowNumber() . ' - Error:  ' . $error->getErrorMessage() . '|';
+        }
+
+        return $resultErrorMessage;
     }
 }

@@ -47,12 +47,12 @@ class Config
         return $this->scopeConfig->getValue(self::XML_PATH_LOGS_DELETE_OLDER_THAN);
     }
 
-    public function getAdminNotificationSenderName(): string
+    public function getAdminNotificationSenderName(): ?string
     {
         return $this->scopeConfig->getValue(self::XML_PATH_ADMIN_NOTIFICATION_SENDER_NAME);
     }
 
-    public function getAdminNotificationEmails(): array
+    public function getAdminNotificationEmails(): ?array
     {
         $storeAdminEmails =  $this->scopeConfig->getValue(self::XML_PATH_ADMIN_NOTIFICATION_EMAILS);
         return array_map('trim', explode("\n", $storeAdminEmails));
