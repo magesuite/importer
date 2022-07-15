@@ -29,7 +29,7 @@ class EmailSender
         $storeAdminName = $this->config->getAdminNotificationSenderName();
         $storeAdminEmails = $this->config->getAdminNotificationEmails();
 
-        if (!$storeAdminEmails) {
+        if (empty($storeAdminEmails)) {
             return;
         }
 

@@ -1,3 +1,5 @@
-{"sku":"simple1","product_type":"simple","name":"Simple 1","price":"25","attribute_set_code": "Default","categories":"Default Category/Category 1"}
-{"sku":"simple2","product_type":"simple","name":"Simple 2","price":"34","attribute_set_code": "Default","categories":"Default Category/Category 1"}
-{"sku":"simple3","product_type":"simple","name":"Simple 3","price":"58","attribute_set_code": "Default","categories":"Default Category/Category 1"}
+{"sku":"simple1","product_type":"simple","name":"Simple 1","price":"25","attribute_set_code":"Default","categories":"Default Category/Category 1","base_image":"01aaaa.png","small_image":"01bbbb.png","thumbnail_image":"01cccc.png"}
+{"sku":"simple2","product_type":"simple","name":"Simple 2","price":"34","attribute_set_code":"Default","categories":"Default Category/Category 2","base_image":"non-existing.png", "small_image":"01bbbb.png"}
+{"sku":"simple3","product_type":"simple","name":"Simple 3","price":"58.99","attribute_set_code":"Default","categories":"Default Category/Category 3","base_image":"01aaaa.png","small_image":"01bbbb.png"}
+{"sku":"configurable","product_type":"configurable","name":"Configurable Product Updated Name","attribute_set_code":"Default","categories":"Default Category/Category 1","base_image":"fail.png","small_image":"01bbbb.png","thumbnail_image":"01cccc.png"}
+{"sku":"configurable_12345","product_type":"configurable","name":"Configurable Product New Name","attribute_set_code":"Default","categories":"Default Category/Category 1,Default Category/Category 3","configurable_variations":[{"sku":"simple_30","test_configurable":"Option 1"},{"sku":"simple_40","test_configurable":"Option 2"}],"base_image":"01aaaa.png","small_image":"01bbbb.png","thumbnail_image":"01cccc.png"}

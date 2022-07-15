@@ -10,7 +10,7 @@ class Data extends \Magento\ImportExport\Model\ResourceModel\Import\Data
      */
     public function getIterator()
     {
-        return \Magento\Framework\App\ObjectManager::getInstance()->get(
+        return \Magento\Framework\App\ObjectManager::getInstance()->create(
             \MageSuite\Importer\Model\Import\Data\Iterator::class
         );
     }

@@ -55,6 +55,6 @@ class Config
     public function getAdminNotificationEmails(): ?array
     {
         $storeAdminEmails =  $this->scopeConfig->getValue(self::XML_PATH_ADMIN_NOTIFICATION_EMAILS);
-        return array_map('trim', explode("\n", $storeAdminEmails));
+        return $storeAdminEmails ? array_map('trim', explode("\n", $storeAdminEmails)) : null;
     }
 }
