@@ -100,6 +100,21 @@ class TransactionCommitAndRollbackTest extends \PHPUnit\Framework\TestCase
                     'small_image' => '/0/1/01bbbb.png',
                     'thumbnail_image' => '/0/1/01cccc.png'
                 ]
+            ],
+            'configurable_imported' => [
+                'general' => [
+                    'sku' => 'configurable_imported',
+                    'name' => 'Imported Configurable With Simples'
+                ],
+                'categories' => [
+                    'Category 1',
+                    'Category 3'
+                ],
+                'options' => [
+                    'simple_100',
+                    'simple_200'
+                ],
+                'images' => []
             ]
         ]
     ];

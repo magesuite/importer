@@ -57,5 +57,6 @@ class EndTransactionForProductBunch implements \Magento\Framework\Event\Observer
     protected function doRollbackInImportAdapter(\Magento\CatalogImportExport\Model\Import\Product $adapter)
     {
         $adapter->getCategoryProcessor()->reinitializeCategories();
+        $adapter->getDataSourceModel()->deleteLastBunch();
     }
 }

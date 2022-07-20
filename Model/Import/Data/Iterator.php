@@ -18,12 +18,24 @@ class Iterator implements \Iterator
 
     protected $index = 0;
 
+    protected $lastId = null;
+
     public function __construct(\Magento\Framework\App\ResourceConnection $resource)
     {
         $this->resource = $resource;
         $this->connection = $resource->getConnection(\Magento\Framework\App\ResourceConnection::DEFAULT_CONNECTION);
 
         $this->rowsCount = $this->getRowsCount();
+    }
+
+    public function recalculateRowsCount()
+    {
+        $this->rowsCount = $this->getRowsCount();
+    }
+
+    public function getLastBunchId()
+    {
+        return $this->lastId;
     }
 
     public function getRowsCount() {
@@ -39,19 +51,25 @@ class Iterator implements \Iterator
     {
         $select = $this->connection
             ->select()
-            ->from('importexport_importdata', ['data'])
+            ->from('importexport_importdata', ['id', 'data'])
             ->order('id ASC')
             ->limit(1, $this->index);
 
         $stmt = $this->connection->query($select);
         $row = $stmt->fetch();
 
+        $this->lastId = $row['id'];
         return [$row['data']];
     }
 
     public function next()
     {
         $this->index++;
+    }
+
+    public function previous()
+    {
+        $this->index--;
     }
 
     public function key()
