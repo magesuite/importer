@@ -39,6 +39,7 @@ class EndTransactionForProductBunch implements \Magento\Framework\Event\Observer
 
         if ($this->isErrorInImportedBunch($adapter)) {
             $connection->rollBack();
+            $this->doRollbackInImportAdapter($adapter);
         } else {
             $connection->commit();
         }
@@ -51,5 +52,10 @@ class EndTransactionForProductBunch implements \Magento\Framework\Event\Observer
 
         self::$errorAmount = $currentErrorAmount;
         return $hasNewErrors;
+    }
+
+    protected function doRollbackInImportAdapter(\Magento\CatalogImportExport\Model\Import\Product $adapter)
+    {
+        $adapter->getCategoryProcessor()->reinitializeCategories();
     }
 }

@@ -89,7 +89,7 @@ class TransactionCommitAndRollbackTest extends \PHPUnit\Framework\TestCase
                 ],
                 'categories' => [
                     'Category 1',
-                    'Category 3'
+                    'Category 2'
                 ],
                 'options' => [
                     'simple_30',
