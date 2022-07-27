@@ -135,6 +135,7 @@ class TransactionCommitAndRollbackTest extends \PHPUnit\Framework\TestCase
      * @magentoConfigFixture current_store general/file/bunch_size 1
      * @magentoDataFixture Magento/Catalog/_files/multiple_products.php
      * @magentoDataFixture multipleConfigurableProductsFixture
+     * @magentoDataFixture dropdownAttributeFixture
      */
     public function testItRollbacksProductsCorrectly()
     {
@@ -153,6 +154,9 @@ class TransactionCommitAndRollbackTest extends \PHPUnit\Framework\TestCase
             $this->checkProductRelatedData($productSku, $expectedData);
             $this->checkChildrenRelatedData($productSku, $expectedData);
         }
+
+        $this->expectException(\Magento\Framework\Exception\NoSuchEntityException::class);
+        $this->productRepository->get('simple4');
     }
 
     protected function checkProductRelatedData($sku, $expectedData)
@@ -206,5 +210,15 @@ class TransactionCommitAndRollbackTest extends \PHPUnit\Framework\TestCase
     public static function multipleConfigurableProductsFixtureRollback()
     {
         require __DIR__.'/../_files/multiple_configurable_products_rollback.php';
+    }
+
+    public static function dropdownAttributeFixture()
+    {
+        require __DIR__.'/../_files/attribute.php';
+    }
+
+    public static function dropdownAttributeFixtureRollback()
+    {
+        require __DIR__.'/../_files/attribute_rollback.php';
     }
 }
