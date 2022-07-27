@@ -157,13 +157,11 @@ class TransactionCommitAndRollbackTest extends \PHPUnit\Framework\TestCase
 
     protected function checkProductRelatedData($sku, $expectedData)
     {
-        //Check basic data
         $product = $this->productRepository->get($sku);
         foreach ($expectedData['general'] as $key => $value) {
             $this->assertEquals($value, $product->getData($key));
         }
 
-        //Check categories
         $categoryIds = $product->getCategoryIds();
         $this->assertEquals(count($expectedData['categories']), count($categoryIds));
         foreach ($categoryIds as $key => $categoryId) {
@@ -171,7 +169,6 @@ class TransactionCommitAndRollbackTest extends \PHPUnit\Framework\TestCase
             $this->assertEquals($expectedData['categories'][$key], $category->getName());
         }
 
-        //Check media gallery
         foreach ($expectedData['images'] as $imagePath) {
             $this->assertTrue($this->isImageInGallery($product, $imagePath));
         }
