@@ -25,6 +25,9 @@ class BeginTransactionForProductBunch implements \Magento\Framework\Event\Observ
     public function execute(\Magento\Framework\Event\Observer $observer)
     {
         if ($this->config->shouldUseTransactions()) {
+            $adapter = $observer->getData('adapter');
+            EndTransactionForProductBunch::$errorAmount = count($adapter->getErrorAggregator()->getAllErrors());
+
             $connection = $this->resourceConnection->getConnection();
             $connection->beginTransaction();
         }

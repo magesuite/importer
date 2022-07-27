@@ -17,7 +17,7 @@ class EndTransactionForProductBunch implements \Magento\Framework\Event\Observer
     /**
      * @var int
      */
-    protected static $errorAmount = 0;
+    public static $errorAmount = 0;
 
     public function __construct(
         \MageSuite\Importer\Helper\Config $config,
@@ -48,10 +48,7 @@ class EndTransactionForProductBunch implements \Magento\Framework\Event\Observer
     protected function isErrorInImportedBunch(\Magento\CatalogImportExport\Model\Import\Product $adapter) : bool
     {
         $currentErrorAmount = count($adapter->getErrorAggregator()->getAllErrors());
-        $hasNewErrors = self::$errorAmount < $currentErrorAmount;
-
-        self::$errorAmount = $currentErrorAmount;
-        return $hasNewErrors;
+        return self::$errorAmount < $currentErrorAmount;
     }
 
     protected function doRollbackInImportAdapter(\Magento\CatalogImportExport\Model\Import\Product $adapter)
