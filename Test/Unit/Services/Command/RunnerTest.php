@@ -52,7 +52,10 @@ class RunnerTest extends \PHPUnit\Framework\TestCase
 
         $this->eventManagerMock = $this->getMockBuilder(\Magento\Framework\Event\ManagerInterface::class)->getMock();
 
-        $this->lockManagerMock = $this->getMockBuilder(\Magento\Framework\Lock\LockManagerInterface::class)->getMock();
+        $lockManager = $this->getMockBuilder(\Magento\Framework\Lock\LockManagerInterface::class)->getMock();
+        $this->lockManagerMock = $this->getMockBuilder(\MageSuite\Importer\Services\Notification\LockManager::class)
+            ->setConstructorArgs([$lockManager])
+            ->getMock();
 
         $this->loggerMock = $this->getMockBuilder(\Psr\Log\LoggerInterface::class)->getMock();
 
@@ -82,6 +85,7 @@ class RunnerTest extends \PHPUnit\Framework\TestCase
         ]);
 
         $this->importRepositoryStub->method('getStepsByImportId')->with($importId)->willReturn($importSteps);
+        $this->lockManagerMock->method('canAcquireLock')->with(2)->willReturn(true);
 
         $this->commandFactoryStub
             ->method('create')
@@ -111,7 +115,7 @@ class RunnerTest extends \PHPUnit\Framework\TestCase
 
         $this->importRepositoryStub->method('getStepsByImportId')->with($importId)->willReturn($importSteps);
 
-        $this->lockManagerMock->method('isLocked')->with('import_step_1')->willReturn(true);
+        $this->lockManagerMock->method('canAcquireLock')->with(1)->willReturn(false);
 
         $this->loggerMock->expects($this->exactly(1))
             ->method('debug')
@@ -143,6 +147,8 @@ class RunnerTest extends \PHPUnit\Framework\TestCase
                 'attempt' => 1
             ]);
 
+        $this->lockManagerMock->method('canAcquireLock')->with(1)->willReturn(true);
+
         $this->commandRunner->runCommand($importId, $importIdentifier, 'download');
     }
 
@@ -154,6 +160,7 @@ class RunnerTest extends \PHPUnit\Framework\TestCase
 
 
         $this->commandMock->method('execute')->willReturn('output');
+        $this->lockManagerMock->method('canAcquireLock')->with(1)->willReturn(true);
 
         $this->eventManagerMock
             ->expects($this->at(1))
@@ -171,6 +178,8 @@ class RunnerTest extends \PHPUnit\Framework\TestCase
         $importStep = $this->prepareDoublesForEventTest($importId, $importIdentifier);
 
         $exceptionThrown = new \Exception('exception');
+
+        $this->lockManagerMock->method('canAcquireLock')->with(1)->willReturn(true);
 
         $this->commandMock
             ->method('execute')
@@ -223,6 +232,8 @@ class RunnerTest extends \PHPUnit\Framework\TestCase
         ]);
 
         $this->importRepositoryStub->method('getStepsByImportId')->with($importId)->willReturn($importSteps);
+
+        $this->lockManagerMock->method('canAcquireLock')->with(1)->willReturn(true);
 
         $this->commandFactoryStub
             ->method('create')
