@@ -5,22 +5,14 @@ namespace MageSuite\Importer\Observer\Command;
 class CommandErrorMailObserver implements \Magento\Framework\Event\ObserverInterface
 {
     /**
-     * @var \Magento\Store\Model\ScopeInterface
+     * @var \MageSuite\Importer\Services\Notification\EmailSender
      */
-    private $config;
-
-    /**
-     * @var \Magento\Framework\Mail\Template\TransportBuilder
-     */
-    private $transportBuilder;
+    private $emailSender;
 
     public function __construct(
-        \Magento\Framework\App\Config\ScopeConfigInterface $config,
-        \Magento\Framework\Mail\Template\TransportBuilder $transportBuilder
-    )
-    {
-        $this->config = $config;
-        $this->transportBuilder = $transportBuilder;
+        \MageSuite\Importer\Services\Notification\EmailSender $emailSender
+    ) {
+        $this->emailSender = $emailSender;
     }
 
     /**
@@ -33,38 +25,6 @@ class CommandErrorMailObserver implements \Magento\Framework\Event\ObserverInter
         $step = $observer->getData('step');
         $error = $observer->getData('error');
 
-        $storeAdminName = $this->config->getValue('trans_email/importer_email/name', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
-        $storeAdminEmail = $this->config->getValue('trans_email/importer_email/email', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
-
-        if($storeAdminEmail == null) {
-            return;
-        }
-
-        $adminEmails = ($storeAdminEmail) ? array_map('trim', explode("\n", $storeAdminEmail)) : [$this->config->getValue('trans_email/ident_general/email', \Magento\Store\Model\ScopeInterface::SCOPE_STORE)];
-
-        $emailTemplateVariables = ['error' => $error, 'step_identifier' => $step->getIdentifier()];
-
-        $templateVariables = new \Magento\Framework\DataObject();
-        $templateVariables->setData($emailTemplateVariables);
-
-        $sender = [
-            'name' => $storeAdminName,
-            'email' => array_shift($adminEmails),
-        ];
-
-        $transport = $this->transportBuilder->setTemplateIdentifier('import_error_notification')
-            ->setTemplateOptions(['area' => \Magento\Framework\App\Area::AREA_ADMINHTML, 'store' => \Magento\Store\Model\Store::DEFAULT_STORE_ID])
-            ->setTemplateVars(['data' => $templateVariables])
-            ->setFrom($sender)
-            ->addTo($sender['email'])
-            ->setReplyTo($sender['email']);
-
-        if(count($adminEmails)){
-            foreach($adminEmails AS $email){
-                $transport->addBcc($email);
-            }
-        }
-
-        $transport->getTransport()->sendMessage();
+        $this->emailSender->notify($error, $step);
     }
 }

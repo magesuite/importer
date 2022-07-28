@@ -176,6 +176,10 @@ class Product extends \Magento\CatalogImportExport\Model\Import\Product
         return $value;
     }
 
+    public function getDataSourceModel()
+    {
+        return $this->_dataSourceModel;
+    }
 
     private function getStockItems($productIdsToGetStockItems)
     {
