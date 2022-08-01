@@ -159,6 +159,27 @@ class TransactionCommitAndRollbackTest extends \PHPUnit\Framework\TestCase
         $this->productRepository->get('simple4');
     }
 
+    /**
+     * @retyrn void
+     */
+    protected function tearDown(): void
+    {
+        $categoryCollection = $this->objectManager->get(\Magento\Catalog\Model\ResourceModel\Category\Collection::class);
+        $registry = $this->objectManager->get(\Magento\Framework\Registry::class);
+
+        $registry->unregister('isSecureArea');
+        $registry->register('isSecureArea', true);
+
+        foreach ($categoryCollection as $category) {
+            if ($category->getId() > 1 && !$category->getResource()->isForbiddenToDelete($category->getId())) {
+                $this->categoryRepository->delete($category);
+            }
+        }
+
+        $registry->unregister('isSecureArea');
+        $registry->register('isSecureArea', false);
+    }
+
     protected function checkProductRelatedData($sku, $expectedData)
     {
         $product = $this->productRepository->get($sku);
