@@ -2,7 +2,6 @@
 
 namespace MageSuite\Importer\Cron;
 
-
 class MonitorImportProcess
 {
     protected \MageSuite\Importer\Services\Notification\ImportWatcher $importWatcher;
