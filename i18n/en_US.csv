@@ -10,7 +10,7 @@ Error,Error
 "Finished at","Finished at"
 Status,Status
 Output,Output
-"There was an error in import process during step %step_identifier: %error_output.","There was an error in import process during step %step_identifier: %error_output."
+"There was an error in import process during step '%step_identifier': %error_output.","There was an error in import process during step '%step_identifier': %error_output."
 MageSuite,MageSuite
 "Store Email Addresses","Store Email Addresses"
 "Importer E-mail","Importer E-mail"

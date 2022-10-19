@@ -4,10 +4,7 @@ namespace MageSuite\Importer\Observer\Command;
 
 class CommandErrorMailObserver implements \Magento\Framework\Event\ObserverInterface
 {
-    /**
-     * @var \MageSuite\Importer\Services\Notification\EmailSender
-     */
-    private $emailSender;
+    protected \MageSuite\Importer\Services\Notification\EmailSender $emailSender;
 
     public function __construct(
         \MageSuite\Importer\Services\Notification\EmailSender $emailSender
@@ -15,11 +12,7 @@ class CommandErrorMailObserver implements \Magento\Framework\Event\ObserverInter
         $this->emailSender = $emailSender;
     }
 
-    /**
-     * @param \Magento\Framework\Event\Observer $observer
-     * @return void
-     */
-    public function execute(\Magento\Framework\Event\Observer $observer)
+    public function execute(\Magento\Framework\Event\Observer $observer): void
     {
         /** @var \MageSuite\Importer\Model\ImportStep $step */
         $step = $observer->getData('step');
