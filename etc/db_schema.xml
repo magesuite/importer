@@ -1,6 +1,55 @@
 <?xml version="1.0"?>
 <schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="import_log" resource="default" engine="innodb" comment="Import log table">
+        <column xsi:type="int" name="import_id" padding="10" unsigned="true" nullable="false" identity="true" comment="Import ID"/>
+        <column xsi:type="varchar" name="hash" nullable="true" length="13" comment="Hash"/>
+        <column xsi:type="timestamp" name="started_at" nullable="true" default="NULL" comment="Import started at"/>
+        <column xsi:type="timestamp" name="finished_at" nullable="true" default="NULL" comment="Import finished at"/>
+        <column xsi:type="int" name="status" padding="11" nullable="false" default="1" comment="Import Status"/>
+        <column xsi:type="text" name="import_identifier" nullable="false" comment="Import identifier"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="import_id"/>
+        </constraint>
+        <index referenceId="IMPORT_LOG_HASH" indexType="btree">
+            <column name="hash"/>
+        </index>
+    </table>
+
+    <table name="import_log_step" resource="default" engine="innodb" comment="Import step log table">
+        <column xsi:type="int" name="id" padding="10" unsigned="true" nullable="false" identity="true" comment="Step id"/>
+        <column xsi:type="varchar" name="identifier" nullable="false" length="255" comment="Step identifier"/>
+        <column xsi:type="int" name="import_id" padding="10" unsigned="true" nullable="false" comment="Import ID"/>
+        <column xsi:type="int" name="status" padding="11" nullable="false" default="1" comment="Step status"/>
+        <column xsi:type="timestamp" name="started_at" nullable="true" default="NULL" comment="Step started at"/>
+        <column xsi:type="timestamp" name="finished_at" nullable="true" default="NULL" comment="Step finished at"/>
+        <column xsi:type="mediumtext" name="output" nullable="false" comment="Output"/>
+        <column xsi:type="mediumtext" name="error" nullable="false" comment="Error output"/>
+        <column xsi:type="int" name="retries_count" padding="11" nullable="false" default="0" comment="Retries count"/>
+        <column xsi:type="mediumtext" name="server_status_log" nullable="false" comment="Server status log"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="id"/>
+        </constraint>
+        <index referenceId="import_id" indexType="btree">
+            <column name="import_id"/>
+        </index>
+        <constraint xsi:type="foreign" referenceId="IMPORT_LOG_STEP_IMPORT_ID_IMPORT_LOG_IMPORT_ID"
+                    table="import_log_step" column="import_id" referenceTable="import_log"
+                    referenceColumn="import_id" onDelete="CASCADE"/>
+    </table>
+
+    <table name="images_metadata" resource="default" engine="innodb" comment="Images metadata table">
+        <column xsi:type="int" name="id" padding="10" unsigned="true" nullable="false" identity="true" comment="Image id"/>
+        <column xsi:type="varchar" name="path" length="255" comment="Image path"/>
+        <column xsi:type="int" name="size" padding="11" default="0" comment="Image size"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="id"/>
+        </constraint>
+        <constraint xsi:type="unique" referenceId="IMAGES_METADATA_PATH">
+            <column name="path"/>
+        </constraint>
+    </table>
+
     <table name="catalog_product_entity_media_gallery">
         <column xsi:type="int" name="file_size" unsigned="true" nullable="false" default="0" comment="Image file size in bytes"/>
     </table>

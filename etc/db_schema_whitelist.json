@@ -1,0 +1,55 @@
+{
+    "import_log": {
+        "column": {
+            "import_id": true,
+            "hash": true,
+            "started_at": true,
+            "finished_at": true,
+            "status": true,
+            "import_identifier": true
+        },
+        "index": {
+            "IMPORT_LOG_HASH": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    },
+    "import_log_step": {
+        "column": {
+            "id": true,
+            "identifier": true,
+            "import_id": true,
+            "status": true,
+            "started_at": true,
+            "finished_at": true,
+            "output": true,
+            "error": true,
+            "retries_count": true,
+            "server_status_log": true
+        },
+        "index": {
+            "IMPORT_LOG_STEP_IMPORT_ID": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "IMPORT_LOG_STEP_IMPORT_ID_IMPORT_LOG_IMPORT_ID": true
+        }
+    },
+    "images_metadata": {
+        "column": {
+            "id": true,
+            "path": true,
+            "size": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "IMAGES_METADATA_PATH": true
+        }
+    },
+    "catalog_product_entity_media_gallery": {
+        "column": {
+            "file_size": true
+        }
+    }
+}
