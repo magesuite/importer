@@ -169,6 +169,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * @magentoDbIsolation disabled
      * @magentoDataFixture Magento/Catalog/_files/product_simple.php
      * @magentoDataFixture loadProductWithImage
      */
@@ -194,6 +195,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * @magentoDbIsolation disabled
      * @magentoDataFixture Magento/Catalog/_files/product_simple.php
      * @magentoDataFixture loadProductWithImage
      */
@@ -214,8 +216,9 @@ class ProductTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @magentoDataFixture Magento/Catalog/_files/product_simple.php
+     * @magentoDbIsolation disabled
      * @magentoAppIsolation enabled
+     * @magentoDataFixture Magento/Catalog/_files/product_simple.php
      * @magentoDataFixture loadProductWithAdditionalImages
      */
     public function testAllAdditionalImagesShouldBeRemovedButSpecialImagesShouldStay()
@@ -236,6 +239,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @magentoDataFixture Magento/Catalog/_files/product_simple.php
+     * @magentoDbIsolation disabled
      * @magentoAppIsolation enabled
      */
     public function testImagesShouldBeAddedToProductWithoutImages()
@@ -262,6 +266,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @magentoDataFixture Magento/Catalog/_files/product_simple.php
+     * @magentoDbIsolation disabled
      * @magentoAppIsolation enabled
      */
     public function testImagesShouldNotBeChanged()
@@ -285,6 +290,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
 
 
     /**
+     * @magentoDbIsolation disabled
      * @magentoDataFixture Magento/ConfigurableProduct/_files/product_configurable.php
      */
     public function testConfigurableVariationsShouldBeReplaced()

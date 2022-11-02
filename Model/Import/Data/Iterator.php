@@ -47,7 +47,7 @@ class Iterator implements \Iterator
         return $this->connection->fetchOne($select);
     }
 
-    public function current()
+    public function current(): mixed
     {
         $select = $this->connection
             ->select()
@@ -62,7 +62,7 @@ class Iterator implements \Iterator
         return [$row['data']];
     }
 
-    public function next()
+    public function next(): void
     {
         $this->index++;
     }
@@ -72,17 +72,17 @@ class Iterator implements \Iterator
         $this->index--;
     }
 
-    public function key()
+    public function key(): mixed
     {
         return $this->index;
     }
 
-    public function valid()
+    public function valid(): bool
     {
         return $this->index < $this->rowsCount;
     }
 
-    public function rewind()
+    public function rewind(): void
     {
         $this->index = 0;
     }
