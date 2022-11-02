@@ -59,7 +59,7 @@ class Validator extends \Magento\CatalogImportExport\Model\Import\Product\Valida
             return $valid;
         }
 
-        if (!strlen(trim($rowData[$attrCode]))) {
+        if (!strlen(trim((string)$rowData[$attrCode]))) {
             return true;
         }
         switch ($attrParams['type']) {
