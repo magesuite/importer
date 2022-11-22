@@ -58,6 +58,10 @@ class Iterator implements \Iterator
         $stmt = $this->connection->query($select);
         $row = $stmt->fetch();
 
+        if (empty($row)) {
+            return false;
+        }
+
         $this->lastId = $row['id'];
         return [$row['data']];
     }
