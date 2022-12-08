@@ -36,8 +36,6 @@
     </event>
 
     <event name="import_command_error">
-        <observer name="rollback_transaction_on_error"
-                  instance="MageSuite\Importer\Observer\RollbackTransactionOnError"/>
         <observer name="command_error_observer"
                   instance="MageSuite\Importer\Observer\Command\CommandErrorObserver"/>
         <observer name="command_error_mail_observer"
