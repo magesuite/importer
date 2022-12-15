@@ -40,7 +40,7 @@ class Iterator implements \Iterator
 
     public function getRowsCount() {
         $select = $this->connection->select()->from(
-            'importexport_importdata',
+            $this->connection->getTableName('importexport_importdata'),
             ['cnt' => 'count(*)']
         );
 
@@ -51,7 +51,7 @@ class Iterator implements \Iterator
     {
         $select = $this->connection
             ->select()
-            ->from('importexport_importdata', ['id', 'data'])
+            ->from($this->connection->getTableName('importexport_importdata'), ['id', 'data'])
             ->order('id ASC')
             ->limit(1, $this->index);
 

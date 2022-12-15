@@ -158,12 +158,12 @@ class ProductRelationsManager
         }
 
         $this->connection->delete(
-            'catalog_product_relation',
+            $this->connection->getTableName('catalog_product_relation'),
             $this->connection->quoteInto('parent_id IN (?)', $productIds)
         );
 
         $this->connection->delete(
-            'catalog_product_super_link',
+            $this->connection->getTableName('catalog_product_super_link'),
             $this->connection->quoteInto('parent_id IN (?)', $productIds)
         );
     }

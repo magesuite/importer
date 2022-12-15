@@ -76,11 +76,11 @@ class MediaGalleryImagesManager
 
         $select = $this->connection->select()
             ->from(
-                ['cpemgv' => 'catalog_product_entity_media_gallery_value'],
+                ['cpemgv' => $this->connection->getTableName('catalog_product_entity_media_gallery_value')],
                 ['*']
             )
             ->joinLeft(
-                ['cpemg' => 'catalog_product_entity_media_gallery'],
+                ['cpemg' => $this->connection->getTableName('catalog_product_entity_media_gallery')],
                 'cpemg.value_id = cpemgv.value_id',
                 ['*']
             )
@@ -99,7 +99,7 @@ class MediaGalleryImagesManager
     {
         $select = $this->connection->select()
             ->from(
-                ['ea' => 'eav_attribute'],
+                ['ea' => $this->connection->getTableName('eav_attribute')],
                 ['attribute_id', 'attribute_code']
             )
             ->where('entity_type_id = ?', '4')
@@ -122,7 +122,7 @@ class MediaGalleryImagesManager
     {
         $select = $this->connection->select()
             ->from(
-                ['cpev' => 'catalog_product_entity_varchar'],
+                ['cpev' => $this->connection->getTableName('catalog_product_entity_varchar')],
                 ['*']
             )
             ->where('attribute_id IN (?)', array_keys($this->attributesIdsToCodes))
@@ -235,7 +235,7 @@ class MediaGalleryImagesManager
             }
 
             $this->connection->delete(
-                'catalog_product_entity_varchar',
+                $this->connection->getTableName('catalog_product_entity_varchar'),
                 [
                     $this->getProductEntityLinkCondition() => $productIds,
                     'attribute_id = ?' => array_search($importArrayToAttributeCodesMapping[$specialImageType], $this->attributesIdsToCodes)
@@ -248,12 +248,12 @@ class MediaGalleryImagesManager
     protected function deleteImagesFromDatabase($imagesIds)
     {
         $this->connection->delete(
-            'catalog_product_entity_media_gallery',
+            $this->connection->getTableName('catalog_product_entity_media_gallery'),
             ['value_id IN (?)' => $imagesIds]
         );
 
         $this->connection->delete(
-            'catalog_product_entity_media_gallery_value',
+            $this->connection->getTableName('catalog_product_entity_media_gallery_value'),
             ['value_id IN (?)' => $imagesIds]
         );
     }

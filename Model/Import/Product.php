@@ -101,7 +101,7 @@ class Product
     private function getNotImportedSkus($importedSkus) {
         $select = $this->connection->select()
             ->from(
-                ['cpe' => 'catalog_product_entity'],
+                ['cpe' => $this->connection->getTableName('catalog_product_entity')],
                 ['sku']
             )
             ->where('sku NOT IN (?)', $importedSkus);

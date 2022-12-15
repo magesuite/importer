@@ -73,7 +73,7 @@ class ImageManager
     protected function getUploadedImages()
     {
         if ($this->uploadedImages == null) {
-            $select = $this->connection->select()->from('images_metadata', ['path', 'size']);
+            $select = $this->connection->select()->from($this->connection->getTableName('images_metadata'), ['path', 'size']);
 
             $this->uploadedImages = $this->connection->fetchPairs($select);
         }
