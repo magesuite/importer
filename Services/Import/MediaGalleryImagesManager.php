@@ -20,6 +20,11 @@ class MediaGalleryImagesManager
     protected $attributesIdsToCodes;
 
     /**
+     * @var \Magento\Framework\App\ResourceConnection
+     */
+    protected $resourceConnection;
+
+    /**
      * @var \Magento\Framework\DB\Adapter\AdapterInterface
      */
     protected $connection;
@@ -35,9 +40,9 @@ class MediaGalleryImagesManager
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Magento\Framework\EntityManager\MetadataPool $metadataPool
     ) {
+        $this->resourceConnection = $resourceConnection;
         $this->connection = $resourceConnection->getConnection();
         $this->metadataPool = $metadataPool;
-
         $this->attributesIdsToCodes = $this->getAttributesIdsToCodes();
     }
 
@@ -76,11 +81,11 @@ class MediaGalleryImagesManager
 
         $select = $this->connection->select()
             ->from(
-                ['cpemgv' => $this->connection->getTableName('catalog_product_entity_media_gallery_value')],
+                ['cpemgv' => $this->resourceConnection->getTableName('catalog_product_entity_media_gallery_value')],
                 ['*']
             )
             ->joinLeft(
-                ['cpemg' => $this->connection->getTableName('catalog_product_entity_media_gallery')],
+                ['cpemg' => $this->resourceConnection->getTableName('catalog_product_entity_media_gallery')],
                 'cpemg.value_id = cpemgv.value_id',
                 ['*']
             )
@@ -99,7 +104,7 @@ class MediaGalleryImagesManager
     {
         $select = $this->connection->select()
             ->from(
-                ['ea' => $this->connection->getTableName('eav_attribute')],
+                ['ea' => $this->resourceConnection->getTableName('eav_attribute')],
                 ['attribute_id', 'attribute_code']
             )
             ->where('entity_type_id = ?', '4')
@@ -122,7 +127,7 @@ class MediaGalleryImagesManager
     {
         $select = $this->connection->select()
             ->from(
-                ['cpev' => $this->connection->getTableName('catalog_product_entity_varchar')],
+                ['cpev' => $this->resourceConnection->getTableName('catalog_product_entity_varchar')],
                 ['*']
             )
             ->where('attribute_id IN (?)', array_keys($this->attributesIdsToCodes))
@@ -235,7 +240,7 @@ class MediaGalleryImagesManager
             }
 
             $this->connection->delete(
-                $this->connection->getTableName('catalog_product_entity_varchar'),
+                $this->resourceConnection->getTableName('catalog_product_entity_varchar'),
                 [
                     $this->getProductEntityLinkCondition() => $productIds,
                     'attribute_id = ?' => array_search($importArrayToAttributeCodesMapping[$specialImageType], $this->attributesIdsToCodes)
@@ -248,12 +253,12 @@ class MediaGalleryImagesManager
     protected function deleteImagesFromDatabase($imagesIds)
     {
         $this->connection->delete(
-            $this->connection->getTableName('catalog_product_entity_media_gallery'),
+            $this->resourceConnection->getTableName('catalog_product_entity_media_gallery'),
             ['value_id IN (?)' => $imagesIds]
         );
 
         $this->connection->delete(
-            $this->connection->getTableName('catalog_product_entity_media_gallery_value'),
+            $this->resourceConnection->getTableName('catalog_product_entity_media_gallery_value'),
             ['value_id IN (?)' => $imagesIds]
         );
     }

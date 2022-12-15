@@ -10,6 +10,11 @@ class ProductRelationsManager
     protected $metadataPool;
 
     /**
+     * @var \Magento\Framework\App\ResourceConnection
+     */
+    protected $resourceConnection;
+
+    /**
      * @var \Magento\Framework\DB\Adapter\AdapterInterface
      */
     protected $connection;
@@ -40,7 +45,7 @@ class ProductRelationsManager
     ) {
         $this->productResourceModel = $productResourceModel;
         $this->productLinkResourceModel = $productLinkResourceModel;
-
+        $this->resourceConnection = $resourceConnection;
         $this->connection = $resourceConnection->getConnection();
         $this->imagesManager = $imagesManager;
         $this->metadataPool = $metadataPool;
@@ -158,12 +163,12 @@ class ProductRelationsManager
         }
 
         $this->connection->delete(
-            $this->connection->getTableName('catalog_product_relation'),
+            $this->resourceConnection->getTableName('catalog_product_relation'),
             $this->connection->quoteInto('parent_id IN (?)', $productIds)
         );
 
         $this->connection->delete(
-            $this->connection->getTableName('catalog_product_super_link'),
+            $this->resourceConnection->getTableName('catalog_product_super_link'),
             $this->connection->quoteInto('parent_id IN (?)', $productIds)
         );
     }
