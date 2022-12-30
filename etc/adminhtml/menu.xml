@@ -8,6 +8,16 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
     <menu>
         <remove id="Magento_ImportExport::system_convert_history"/>
-        <add id="MageSuite_Importer::importer_import" title="Import Log" translate="title" module="MageSuite_Importer" sortOrder="40" parent="Magento_Backend::system_convert" action="importer/import/index" resource="Magento_ImportExport::history"/>
+        <add id="MageSuite_Importer::importer_import" title="Import Log" translate="title" module="MageSuite_Importer" sortOrder="40" parent="Magento_Backend::system_convert" action="importer/import/index" resource="Magento_ImportExport::import_log"/>
+        <add
+            id="MageSuite_ErpConnectorSubmenu::importer_import"
+            title="Import Log"
+            translate="title"
+            module="MageSuite_Importer"
+            sortOrder="40"
+            parent="MageSuite_ErpConnectorSubmenu::submenu"
+            action="importer/import/index"
+            resource="Magento_ImportExport::import_log"
+        />
     </menu>
 </config>
