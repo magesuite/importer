@@ -134,7 +134,7 @@ class ProductRelationsManager
             return;
         }
 
-        $productLinksTable = $this->productLinkResourceModel->getTable('catalog_product_link');
+        $productLinksTable = $this->resourceConnection->getTableName('catalog_product_link');
 
         $this->connection->delete(
             $productLinksTable,
