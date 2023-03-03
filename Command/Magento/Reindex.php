@@ -42,7 +42,7 @@ class Reindex implements \MageSuite\Importer\Command\Command
 
             $elapsed = microtime(true) - $startTime;
 
-            $output .= $indexer->getTitle() . ' index has been rebuilt successfully in ' . gmdate('H:i:s', $elapsed) . PHP_EOL;
+            $output .= $indexer->getTitle() . ' index has been rebuilt successfully in ' . gmdate('H:i:s', ceil($elapsed)) . PHP_EOL;
         }
 
         return $output;
