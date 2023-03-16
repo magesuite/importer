@@ -91,7 +91,7 @@ class ImportRepository implements \MageSuite\Importer\Api\ImportRepositoryInterf
             ]
         ]);
 
-        $collection->addOrder('import_id', 'DESC');
+        $collection->addOrder('import_id', 'ASC');
 
         return $collection->getFirstItem();
     }
