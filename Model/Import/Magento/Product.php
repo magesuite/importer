@@ -211,9 +211,8 @@ class Product extends \Magento\CatalogImportExport\Model\Import\Product
         return $stockItems;
     }
 
-    protected function uploadMediaFiles($fileName, $renameFileOff = false)
+    protected function uploadMediaFiles($fileName, $renameFileOff = false):string
     {
-        /** @var \MageSuite\Importer\Services\Import\ImageManager $imageManager */
         $imageManager = $this->getImageManager();
 
         if (preg_match('/^\bhttps?:\/\//i', $fileName)) {
@@ -230,25 +229,17 @@ class Product extends \Magento\CatalogImportExport\Model\Import\Product
         }
 
         $fileSize = @filesize($uploadedFilePath);
-
         $imagePreviouslyUploaded = $imageManager->wasImagePreviouslyUploaded($filePath, $fileSize);
         $imageManager->addImageFileSizeForUpdate($filePath, $fileSize);
 
-        if ($imagePreviouslyUploaded == \MageSuite\Importer\Services\Import\ImageManager::IMAGE_IDENTICAL) {
+        if ($imagePreviouslyUploaded === \MageSuite\Importer\Services\Import\ImageManager::IMAGE_IDENTICAL) {
             return $filePath;
         }
 
-        $return = parent::uploadMediaFiles($fileName, true);
-
-        $imageManager->insertImageMetadata($filePath, $fileSize);
-
-        return $return;
+        return parent::uploadMediaFiles($fileName, true);
     }
 
-    /**
-     * @return mixed
-     */
-    protected function getImageManager()
+    protected function getImageManager():\MageSuite\Importer\Services\Import\ImageManager
     {
         if ($this->imageManager == null) {
             $this->imageManager = \Magento\Framework\App\ObjectManager::getInstance()
@@ -258,9 +249,6 @@ class Product extends \Magento\CatalogImportExport\Model\Import\Product
         return $this->imageManager;
     }
 
-    /**
-     * @return mixed
-     */
     protected function getThumbnailRemover()
     {
         if ($this->thumbnailRemover == null) {
