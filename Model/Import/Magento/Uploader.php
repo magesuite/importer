@@ -2,8 +2,6 @@
 
 namespace MageSuite\Importer\Model\Import\Magento;
 
-use Magento\Framework\Filesystem\DriverPool;
-
 class Uploader extends \Magento\CatalogImportExport\Model\Import\Uploader
 {
     /**
@@ -42,7 +40,7 @@ class Uploader extends \Magento\CatalogImportExport\Model\Import\Uploader
         }
         if (preg_match('/\bhttps?:\/\//i', $fileName, $matches)) {
             $url = str_replace($matches[0], '', $fileName);
-            $read = $this->_readFactory->create($url, DriverPool::HTTP);
+            $read = $this->_readFactory->create($url, \Magento\Framework\Filesystem\DriverPool::HTTP);
 
             $fileName = $this->renameDownloadedFile($url);
 
@@ -61,7 +59,7 @@ class Uploader extends \Magento\CatalogImportExport\Model\Import\Uploader
         return $result;
     }
 
-    private function renameDownloadedFile($url)
+    protected function renameDownloadedFile($url)
     {
         $path = parse_url($url, PHP_URL_PATH);
         $splitedPath = explode("/", $path);

@@ -4,10 +4,15 @@ namespace MageSuite\Importer\Command\File;
 
 class Copy implements \MageSuite\Importer\Command\Command
 {
+    protected \Magento\Framework\Filesystem\Io\File $fileIo;
+
+    public function __construct()
+    {
+        $this->fileIo = new \Magento\Framework\Filesystem\Io\File();
+    }
+
     /**
      * Copies path from source path to target path
-     * @param $configuration
-     * @return mixed
      */
     public function execute($configuration)
     {
@@ -22,10 +27,10 @@ class Copy implements \MageSuite\Importer\Command\Command
         $sourcePath = BP . '/' . $configuration['source_path'];
         $targetPath = BP . '/' . $configuration['target_path'];
 
-        if (!file_exists($sourcePath)) {
+        if (!$this->fileIo->fileExists($sourcePath)) {
             throw new \InvalidArgumentException('Source file does not exists');
         }
 
-        copy($sourcePath, $targetPath);
+        $this->fileIo->cp($sourcePath, $targetPath);
     }
 }

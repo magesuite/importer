@@ -4,10 +4,15 @@ namespace MageSuite\Importer\Command\File;
 
 class Move implements \MageSuite\Importer\Command\Command
 {
+    protected \Magento\Framework\Filesystem\Io\File $fileIo;
+
+    public function __construct()
+    {
+        $this->fileIo = new \Magento\Framework\Filesystem\Io\File();
+    }
+
     /**
      * Moves file from source path to target path
-     * @param $configuration
-     * @return mixed
      */
     public function execute($configuration)
     {
@@ -22,10 +27,10 @@ class Move implements \MageSuite\Importer\Command\Command
         $sourcePath = BP . '/' . $configuration['source_path'];
         $targetPath = BP . '/' . $configuration['target_path'];
 
-        if (!file_exists($sourcePath)) {
+        if (!$this->fileIo->fileExists($sourcePath)) {
             throw new \InvalidArgumentException('Source file does not exists');
         }
 
-        rename($sourcePath, $targetPath);
+        $this->fileIo->mv($sourcePath, $targetPath);
     }
 }

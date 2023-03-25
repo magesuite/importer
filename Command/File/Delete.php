@@ -4,10 +4,15 @@ namespace MageSuite\Importer\Command\File;
 
 class Delete implements \MageSuite\Importer\Command\Command
 {
+    protected \Magento\Framework\Filesystem\Io\File $fileIo;
+
+    public function __construct()
+    {
+        $this->fileIo = new \Magento\Framework\Filesystem\Io\File();
+    }
+
     /**
      * Deletes file from path
-     * @param $configuration
-     * @return mixed
      */
     public function execute($configuration)
     {
@@ -17,10 +22,10 @@ class Delete implements \MageSuite\Importer\Command\Command
 
         $path = BP . '/' . $configuration['path'];
 
-        if (!file_exists($path)) {
+        if (!$this->fileIo->fileExists($path)) {
             return;
         }
 
-        unlink($path);
+        $this->fileIo->rm($path);
     }
 }

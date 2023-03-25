@@ -4,7 +4,7 @@ namespace MageSuite\Importer\Observer\Command;
 
 class CommandErrorObserver extends AbstractCommandResultObserver implements \Magento\Framework\Event\ObserverInterface
 {
-    const ERROR_MESSAGE = "%s\n Error at attempt #%s on %s: \n %s";
+    public const ERROR_MESSAGE = "%s\n Error at attempt #%s on %s: \n %s";
 
     /**
      * @var \Magento\Framework\Stdlib\DateTime\DateTime

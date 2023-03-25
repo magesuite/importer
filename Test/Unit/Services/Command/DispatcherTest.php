@@ -2,7 +2,7 @@
 
 namespace MageSuite\Importer\Test\Unit\Services\Command;
 
-class CommandDispatcherTest extends \PHPUnit\Framework\TestCase
+class DispatcherTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \MageSuite\Importer\Services\Command\Dispatcher
@@ -80,14 +80,14 @@ class CommandDispatcherTest extends \PHPUnit\Framework\TestCase
         $this->commandDispatcher->dispatch();
     }
 
-    private function createImportObject($importId)
+    protected function createImportObject($importId)
     {
         return \Magento\TestFramework\ObjectManager::getInstance()
             ->create(\MageSuite\Importer\Model\Import::class)
             ->setId($importId);
     }
 
-    private function createImportStepObject($status, $identifier)
+    protected function createImportStepObject($status, $identifier)
     {
         return \Magento\TestFramework\ObjectManager::getInstance()
             ->create(\MageSuite\Importer\Model\ImportStep::class)
@@ -95,7 +95,7 @@ class CommandDispatcherTest extends \PHPUnit\Framework\TestCase
             ->setIdentifier($identifier);
     }
 
-    private function createImportSteps($steps)
+    protected function createImportSteps($steps)
     {
         $importSteps = [];
 

@@ -4,10 +4,8 @@ namespace MageSuite\Importer\Command\Magento;
 
 class EnableIndexers implements \MageSuite\Importer\Command\Command
 {
-    /**
-     * @var \Magento\Framework\App\Config\Storage\WriterInterface
-     */
-    private $configWriter;
+    protected \Magento\Framework\App\Config\Storage\WriterInterface $configWriter;
+
     public function __construct(\Magento\Framework\App\Config\Storage\WriterInterface $configWriter)
     {
         $this->configWriter = $configWriter;
@@ -20,6 +18,9 @@ class EnableIndexers implements \MageSuite\Importer\Command\Command
      */
     public function execute($configuration)
     {
-        $this->configWriter->save(\MageSuite\Importer\Plugin\DisableIndexer::INDEXER_ENABLED_XML_PATH, '1');
+        $this->configWriter->save(
+            \MageSuite\Importer\Plugin\Indexer\Model\Processor\DisableIndexer::INDEXER_ENABLED_XML_PATH,
+            '1'
+        );
     }
 }

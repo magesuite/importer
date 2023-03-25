@@ -12,7 +12,7 @@
     </type>
 
     <type name="Magento\Indexer\Model\Processor">
-        <plugin name="disable_indexer" type="MageSuite\Importer\Plugin\DisableIndexer" sortOrder="1" />
+        <plugin name="disable_indexer" type="MageSuite\Importer\Plugin\Indexer\Model\Processor\DisableIndexer" sortOrder="1" />
     </type>
 
     <preference for="Magento\CatalogImportExport\Model\Import\Product\Validator"

@@ -4,11 +4,15 @@ namespace MageSuite\Importer\Command\File;
 
 class CreateDirectories implements \MageSuite\Importer\Command\Command
 {
+    protected \Magento\Framework\Filesystem\Io\File $fileIo;
+
+    public function __construct()
+    {
+        $this->fileIo = new \Magento\Framework\Filesystem\Io\File();
+    }
 
     /**
      * Creates directories specified in configuration
-     * @param $configuration
-     * @return mixed
      */
     public function execute($configuration)
     {
@@ -21,11 +25,11 @@ class CreateDirectories implements \MageSuite\Importer\Command\Command
         foreach ($directoriesPaths as $directoryPath) {
             $directoryPath = BP . DIRECTORY_SEPARATOR . $directoryPath;
 
-            if (file_exists($directoryPath)) {
+            if ($this->fileIo->fileExists($directoryPath)) {
                 continue;
             }
 
-            mkdir($directoryPath, 0777, true);
+            $this->fileIo->mkdir($directoryPath, 0777, true);
         }
     }
 }

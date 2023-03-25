@@ -4,13 +4,13 @@ namespace MageSuite\Importer\Test\Unit\Services\Command;
 
 class RunnerTest extends \PHPUnit\Framework\TestCase
 {
-    protected ?\PHPUnit\Framework\MockObject\MockObject $commandMock;
-    protected ?\MageSuite\Importer\Services\Command\Runner $commandRunner;
-    protected ?\PHPUnit\Framework\MockObject\MockObject $commandFactoryStub;
-    protected ?\PHPUnit\Framework\MockObject\MockObject $importRepositoryStub;
-    protected ?\PHPUnit\Framework\MockObject\MockObject $eventManagerMock;
-    protected ?\PHPUnit\Framework\MockObject\MockObject $lockManagerMock;
-    protected ?\PHPUnit\Framework\MockObject\MockObject $loggerMock;
+    protected ?\PHPUnit\Framework\MockObject\MockObject $commandMock = null;
+    protected ?\MageSuite\Importer\Services\Command\Runner $commandRunner = null;
+    protected ?\PHPUnit\Framework\MockObject\MockObject $commandFactoryStub = null;
+    protected ?\PHPUnit\Framework\MockObject\MockObject $importRepositoryStub = null;
+    protected ?\PHPUnit\Framework\MockObject\MockObject $eventManagerMock = null;
+    protected ?\PHPUnit\Framework\MockObject\MockObject $lockManagerMock = null;
+    protected ?\PHPUnit\Framework\MockObject\MockObject $loggerMock = null;
 
     public function setUp(): void
     {
@@ -207,7 +207,7 @@ class RunnerTest extends \PHPUnit\Framework\TestCase
     /**
      * @return \MageSuite\Importer\Model\ImportStep
      */
-    private function createImportStepObject($status, $identifier, $id)
+    protected function createImportStepObject($status, $identifier, $id)
     {
         return \Magento\TestFramework\ObjectManager::getInstance()
             ->create(\MageSuite\Importer\Model\ImportStep::class)
@@ -216,7 +216,7 @@ class RunnerTest extends \PHPUnit\Framework\TestCase
             ->setIdentifier($identifier);
     }
 
-    private function createImportSteps($steps)
+    protected function createImportSteps($steps)
     {
         $importSteps = [];
 
@@ -231,7 +231,7 @@ class RunnerTest extends \PHPUnit\Framework\TestCase
      * @param $importId
      * @return \MageSuite\Importer\Model\ImportStep
      */
-    private function prepareDoublesForEventTest($importId, $importIdentifier)
+    protected function prepareDoublesForEventTest($importId, $importIdentifier)
     {
         $importStep = $this->createImportStepObject(
             \MageSuite\Importer\Model\ImportStep::STATUS_PENDING,

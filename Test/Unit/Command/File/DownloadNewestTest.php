@@ -2,7 +2,7 @@
 
 namespace MageSuite\Importer\Test\Unit\Command\File;
 
-class DownloadNewestTest extends DownloaderTest
+class DownloadNewestTest extends AbstractDownloader
 {
     public function setUp(): void
     {

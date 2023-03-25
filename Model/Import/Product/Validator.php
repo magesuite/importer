@@ -8,10 +8,10 @@ namespace MageSuite\Importer\Model\Import\Product;
  */
 class Validator extends \Magento\CatalogImportExport\Model\Import\Product\Validator
 {
-    const INVALID_OPTION_VALUE_ERROR_MESSAGE = "Value for '%s' attribute contains incorrect value '%s' for product with SKU '%s', see acceptable values on settings specified for Admin";
-    const INVALID_VALUE_LENGTH_ERROR_MESSAGE = "Attribute '%s' exceeded max length for product with SKU '%s'";
-    const INVALID_NUMERIC_VALUE_ERROR_MESSAGE = "Value '%s' for '%s' attribute contains non numeric value for product with SKU: '%s'";
-    const VALUE_IS_REQUIRED_MESSAGE_WITH_SKU = "Please make sure attribute '%s' is not empty for product with SKU: '%s'.";
+    public const INVALID_OPTION_VALUE_ERROR_MESSAGE = "Value for '%s' attribute contains incorrect value '%s' for product with SKU '%s', see acceptable values on settings specified for Admin";
+    public const INVALID_VALUE_LENGTH_ERROR_MESSAGE = "Attribute '%s' exceeded max length for product with SKU '%s'";
+    public const INVALID_NUMERIC_VALUE_ERROR_MESSAGE = "Value '%s' for '%s' attribute contains non numeric value for product with SKU: '%s'";
+    public const VALUE_IS_REQUIRED_MESSAGE_WITH_SKU = "Please make sure attribute '%s' is not empty for product with SKU: '%s'.";
 
     /**
      * @param string $attrCode
@@ -33,7 +33,7 @@ class Validator extends \Magento\CatalogImportExport\Model\Import\Product\Valida
 
         if (!$this->isRequiredAttributeValid($attrCode, $attrParams, $rowData)) {
             $valid = false;
-            if (isset($rowData['sku']) and !empty($rowData['sku'])) {
+            if (isset($rowData['sku']) && !empty($rowData['sku'])) {
                 $this->_addMessages(
                     [
                         sprintf(
@@ -62,6 +62,7 @@ class Validator extends \Magento\CatalogImportExport\Model\Import\Product\Valida
         if (!strlen(trim((string)$rowData[$attrCode]))) {
             return true;
         }
+
         switch ($attrParams['type']) {
             case 'varchar':
             case 'text':
@@ -120,7 +121,7 @@ class Validator extends \Magento\CatalogImportExport\Model\Import\Product\Valida
      * @param string $value
      * @return bool
      */
-    private function validateOption($attrCode, $possibleOptions, $value)
+    protected function validateOption($attrCode, $possibleOptions, $value)
     {
         if (!isset($possibleOptions[strtolower($value)])) {
             $this->_addMessages(

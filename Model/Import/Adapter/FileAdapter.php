@@ -4,33 +4,20 @@ namespace MageSuite\Importer\Model\Import\Adapter;
 
 class FileAdapter extends \Magento\ImportExport\Model\Import\AbstractSource
 {
-    private $fileHandler;
-
-    /**
-     * @var int
-     */
-    private $_position = 0;
-
-    private $numberOfLines = 0;
-
-    private $filePath = '';
+    protected $fileHandler;
+    protected $position = 0;
+    protected $numberOfLines = 0;
+    protected $filePath = '';
 
     public function __construct($filePath)
     {
         $this->filePath = $filePath;
-
-        $this->_position = 0;
-
+        $this->position = 0;
         $this->fileHandler = new \SplFileObject($filePath);
-
         $this->fileHandler->seek(PHP_INT_MAX);
-
         $this->numberOfLines = $this->fileHandler->key();
-
         $this->fileHandler->seek(0);
-
         $colNames = array_keys(json_decode($this->fileHandler->current(), true));
-
         $this->fileHandler = fopen($filePath, 'r');
 
         parent::__construct($colNames);
@@ -45,7 +32,7 @@ class FileAdapter extends \Magento\ImportExport\Model\Import\AbstractSource
      */
     public function seek($position)
     {
-        $this->_position = $position;
+        $this->position = $position;
 
 
         if (!$this->valid()) {
@@ -60,7 +47,7 @@ class FileAdapter extends \Magento\ImportExport\Model\Import\AbstractSource
      */
     public function rewind()
     {
-        $this->_position = 0;
+        $this->position = 0;
     }
 
     /**
@@ -70,7 +57,7 @@ class FileAdapter extends \Magento\ImportExport\Model\Import\AbstractSource
      */
     public function current()
     {
-        if ($this->_position == 0) {
+        if ($this->position == 0) {
             $this->fileHandler = fopen($this->filePath, 'r');
         }
 
@@ -88,7 +75,7 @@ class FileAdapter extends \Magento\ImportExport\Model\Import\AbstractSource
      */
     public function key()
     {
-        return $this->_position;
+        return $this->position;
     }
 
     /**
@@ -98,7 +85,7 @@ class FileAdapter extends \Magento\ImportExport\Model\Import\AbstractSource
      */
     public function next()
     {
-        ++$this->_position;
+        ++$this->position;
     }
 
     /**
@@ -108,7 +95,7 @@ class FileAdapter extends \Magento\ImportExport\Model\Import\AbstractSource
      */
     public function valid()
     {
-        return $this->_position <= $this->numberOfLines;
+        return $this->position <= $this->numberOfLines;
     }
 
     /**

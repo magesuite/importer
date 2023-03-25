@@ -5,17 +5,8 @@ namespace MageSuite\Importer\Model\Import\Magento;
 class Product extends \Magento\CatalogImportExport\Model\Import\Product
 {
     protected $validatedRows = [];
-
-    /**
-     * @var \MageSuite\Importer\Services\Import\ImageManager
-     */
-    protected $imageManager = null;
-
-    /**
-     * @var \MageSuite\ThumbnailRemove\Service\ThumbnailRemover
-     */
-    protected $thumbnailRemover = null;
-
+    protected ?\MageSuite\Importer\Services\Import\ImageManager $imageManager = null;
+    protected ?\MageSuite\ThumbnailRemove\Service\ThumbnailRemover $thumbnailRemover = null;
     protected $productEntityLinkField;
 
     protected function getExistingImages($bunch)
@@ -140,6 +131,7 @@ class Product extends \Magento\CatalogImportExport\Model\Import\Product
                 } else {
                     $row['qty'] = 0;
                 }
+
                 if (!isset($stockData[$rowData[self::COL_SKU]])) {
                     $stockData[$rowData[self::COL_SKU]] = $row;
                 }
@@ -181,16 +173,21 @@ class Product extends \Magento\CatalogImportExport\Model\Import\Product
         return $this->_dataSourceModel;
     }
 
-    private function getStockItems($productIdsToGetStockItems)
+    protected function getStockItems($productIdsToGetStockItems)
     {
         $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
 
         /** @var \Magento\CatalogInventory\Api\StockItemCriteriaInterface $criteria */
-        $criteria = $objectManager->create('Magento\CatalogInventory\Api\StockItemCriteriaInterfaceFactory')->create();
+        $criteria = $objectManager
+            ->create(\Magento\CatalogInventory\Api\StockItemCriteriaInterfaceFactory::class)
+            ->create();
 
         $criteria->setProductsFilter([$productIdsToGetStockItems]);
-        $collection = $objectManager->get('Magento\CatalogInventory\Api\StockItemRepositoryInterface')->getList($criteria);
-        $stockItemFactory = $objectManager->get('\Magento\CatalogInventory\Api\Data\StockItemInterfaceFactory');
+        $collection = $objectManager
+            ->get(\Magento\CatalogInventory\Api\StockItemRepositoryInterface::class)
+            ->getList($criteria);
+        $stockItemFactory = $objectManager
+            ->get(\Magento\CatalogInventory\Api\Data\StockItemInterfaceFactory::class);
 
         $stockItems = [];
 

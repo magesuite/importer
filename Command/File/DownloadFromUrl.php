@@ -4,18 +4,21 @@ namespace MageSuite\Importer\Command\File;
 
 class DownloadFromUrl extends AbstractDownload implements \MageSuite\Importer\Command\Command
 {
+    protected \Magento\Framework\Filesystem\Io\File $fileIo;
+
+    public function __construct()
+    {
+        $this->fileIo = new \Magento\Framework\Filesystem\Io\File();
+    }
+
     /**
      * Downloads file from remote URL
-     * @param $configuration
-     * @return mixed
      */
     public function execute($configuration)
     {
         $this->setServerConfiguration($configuration);
-
-        $contents = file_get_contents($configuration['remote_url']);
-
-        file_put_contents($configuration['target_path'], $contents);
+        $contents = $this->fileIo->read($configuration['remote_url']);
+        $this->fileIo->write($configuration['target_path'], $contents);
 
         return true;
     }

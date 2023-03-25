@@ -4,27 +4,18 @@ namespace MageSuite\Importer\Model\Import\Data;
 
 class Iterator implements \Iterator
 {
-    /**
-     * @var \Magento\Framework\DB\Adapter\AdapterInterface
-     */
-    protected $connection;
-
-    /**
-     * @var \Magento\Framework\App\Resource
-     */
-    private $resource;
-
+    protected \Magento\Framework\DB\Adapter\AdapterInterface $connection;
+    protected \Magento\Framework\App\ResourceConnection $resource;
     protected $rowsCount;
-
     protected $index = 0;
-
     protected $lastId = null;
 
     public function __construct(\Magento\Framework\App\ResourceConnection $resource)
     {
         $this->resource = $resource;
-        $this->connection = $resource->getConnection(\Magento\Framework\App\ResourceConnection::DEFAULT_CONNECTION);
-
+        $this->connection = $resource->getConnection(
+            \Magento\Framework\App\ResourceConnection::DEFAULT_CONNECTION
+        );
         $this->rowsCount = $this->getRowsCount();
     }
 

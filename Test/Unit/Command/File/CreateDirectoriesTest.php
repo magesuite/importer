@@ -4,10 +4,7 @@ namespace MageSuite\Importer\Test\Unit\Command\File;
 
 class CreateDirectoriesTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var \MageSuite\Importer\Command\File\CreateDirectories
-     */
-    protected $command;
+    protected ?\MageSuite\Importer\Command\File\CreateDirectories $command = null;
     protected $assetsDirectory;
     protected $assetsDirectoryRelativeToMainDirectory;
 
@@ -19,7 +16,6 @@ class CreateDirectoriesTest extends \PHPUnit\Framework\TestCase
     public function setUp(): void
     {
         $this->command = new \MageSuite\Importer\Command\File\CreateDirectories();
-
         $this->assetsDirectory = realpath(__DIR__.'/../assets');
         $this->assetsDirectoryRelativeToMainDirectory = str_replace(BP . '/', '', $this->assetsDirectory);
     }

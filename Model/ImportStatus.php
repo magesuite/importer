@@ -30,7 +30,7 @@ class ImportStatus
         return ImportStep::STATUS_DONE;
     }
 
-    private function atLeastOneStepHasStatus($steps, $status)
+    protected function atLeastOneStepHasStatus($steps, $status)
     {
         /** @var \MageSuite\Importer\Model\ImportStep $step */
         foreach ($steps as $step) {

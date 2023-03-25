@@ -2,10 +2,9 @@
 
 namespace MageSuite\Importer\Test\Unit\Command\File;
 
-abstract class DownloaderTest extends \PHPUnit\Framework\TestCase
+abstract class AbstractDownloader extends \PHPUnit\Framework\TestCase
 {
     protected $command;
-
     protected $fileDownloaderDouble;
 
     public function testItImplementsCommandInterface()

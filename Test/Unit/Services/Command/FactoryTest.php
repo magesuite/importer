@@ -4,11 +4,12 @@ namespace MageSuite\Importer\Test\Unit\Command;
 
 class CommandFactoryTest extends \PHPUnit\Framework\TestCase
 {
-    private $factory;
+    protected ?\MageSuite\Importer\Services\Command\Factory $factory = null;
 
     public function setUp(): void
     {
-        $this->factory = \Magento\TestFramework\ObjectManager::getInstance()->create(\MageSuite\Importer\Services\Command\Factory::class);
+        $this->factory = \Magento\TestFramework\ObjectManager::getInstance()
+            ->create(\MageSuite\Importer\Services\Command\Factory::class);
     }
 
     public function testItImplementsCommandFactoryInterface()

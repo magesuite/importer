@@ -8,31 +8,14 @@ namespace MageSuite\Importer\Test\Integration\Model\Import;
  */
 class ProductTest extends \PHPUnit\Framework\TestCase
 {
-    const MAGENTO_IMAGE_URL_FORMAT = '/%s/%s/%s';
-    /**
-     * @var \Magento\TestFramework\ObjectManager
-     */
-    protected $objectManager;
+    public const MAGENTO_IMAGE_URL_FORMAT = '/%s/%s/%s';
 
-    /**
-     * @var \Magento\Catalog\Api\ProductRepositoryInterface
-     */
-    protected $productRepository;
-
-    /**
-     * @var \MageSuite\Importer\Model\Import\Product
-     */
-    protected $simpleProductImporter;
-
-    /**
-     * @var \MageSuite\Importer\Services\Import\ImageMapper
-     */
-    protected $imageMapper;
-
-    /**
-     * @var \MageSuite\Importer\Services\Import\ImageManager
-     */
-    protected $imageManager;
+    protected ?\Magento\TestFramework\ObjectManager $objectManager = null;
+    protected ?\Magento\Catalog\Api\ProductRepositoryInterface $productRepository = null;
+    protected ?\MageSuite\Importer\Model\Import\Product $simpleProductImporter = null;
+    protected ?\MageSuite\Importer\Services\Import\ImageMapper $imageMapper = null;
+    protected ?\MageSuite\Importer\Services\Import\ImageManager $imageManager = null;
+    protected ?\Magento\Framework\Filesystem\Io\File $fileIo = null;
 
     protected $directoryWithImages;
     protected $mediaCatalogDirectory = BP . '/pub/media/catalog/product';
@@ -44,10 +27,9 @@ class ProductTest extends \PHPUnit\Framework\TestCase
         $this->simpleProductImporter = $this->objectManager->get(\MageSuite\Importer\Model\Import\Product::class);
         $this->imageMapper = $this->objectManager->get(\MageSuite\Importer\Services\Import\ImageMapper::class);
         $this->imageManager = $this->objectManager->get(\MageSuite\Importer\Services\Import\ImageManager::class);
-
         $this->directoryWithImages = $this->getFilesDirectoryPathRelativeToMainDirectory();
-
         $this->simpleProductImporter->setImportImagesFileDir($this->directoryWithImages);
+        $this->fileIo = $this->objectManager->get(\Magento\Framework\Filesystem\Io\File::class);
     }
 
     /**
@@ -62,7 +44,10 @@ class ProductTest extends \PHPUnit\Framework\TestCase
             'categories' => 'Default Category/Gear,Default Category/Bags'
         ]);
 
-        $this->simpleProductImporter->importProductsFromData($productData, \MageSuite\Importer\Model\Import\Product::BEHAVIOR_SYNC);
+        $this->simpleProductImporter->importProductsFromData(
+            $productData,
+            \MageSuite\Importer\Model\Import\Product::BEHAVIOR_SYNC
+        );
 
         $this->assertFalse($this->productIsInRepository('simple'), 'Product with sku simple should be deleted but is still in database');
         $this->assertFalse($this->productIsInRepository('simple2'), 'Product with sku simple2 should be deleted but is still in database');
@@ -353,7 +338,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
     /**
      * @return \Magento\Catalog\Model\Product
      */
-    private function getProductFromRepositoryBySku($sku)
+    protected function getProductFromRepositoryBySku($sku)
     {
         return $this->productRepository->get($sku);
     }
@@ -362,7 +347,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
      * @param \Magento\Catalog\Model\Product $product
      * @param $imagePath
      */
-    private function isImageInGallery(\Magento\Catalog\Model\Product $product, $imagePath)
+    protected function isImageInGallery(\Magento\Catalog\Model\Product $product, $imagePath)
     {
         $mediaGallery = $product->getData('media_gallery');
 
@@ -378,12 +363,12 @@ class ProductTest extends \PHPUnit\Framework\TestCase
     /**
      * @return string
      */
-    private function getFilesDirectoryPathRelativeToMainDirectory()
+    protected function getFilesDirectoryPathRelativeToMainDirectory()
     {
         return realpath(__DIR__ . '/_files');
     }
 
-    private function getProductImportArray($productSku, $additionalFields)
+    protected function getProductImportArray($productSku, $additionalFields)
     {
         $productData = [
             'sku' => $productSku,
@@ -420,7 +405,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
         require __DIR__ . '/_files/product_with_images_rollback.php';
     }
 
-    private function productIsInRepository($sku)
+    protected function productIsInRepository($sku)
     {
         try {
             $this->productRepository->get($sku);
@@ -435,11 +420,11 @@ class ProductTest extends \PHPUnit\Framework\TestCase
     {
         $path = $this->mediaCatalogDirectory . $imagePath;
 
-        if (!file_exists($path)) {
+        if (!$this->fileIo->fileExists($path)) {
             return;
         }
 
-        unlink($path);
+        $this->fileIo->rm($path);
     }
 
     protected function insertImageMetadata($images)
@@ -447,7 +432,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
         foreach ($images as $image) {
             $path = $this->directoryWithImages . '/' . $image;
 
-            if (!file_exists($path)) {
+            if (!$this->fileIo->fileExists($path)) {
                 continue;
             }
 

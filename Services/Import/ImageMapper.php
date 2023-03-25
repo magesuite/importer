@@ -24,7 +24,7 @@ class ImageMapper
         $this->useBaseImageAsDefault = $this->useBaseImageAsDefault();
     }
 
-    private function useBaseImageAsDefault()
+    protected function useBaseImageAsDefault()
     {
         return true;
     }

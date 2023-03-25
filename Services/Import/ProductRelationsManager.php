@@ -160,7 +160,7 @@ class ProductRelationsManager
 
         foreach ($this->imagesManager->getImportArrayKeysContainingImagesChanges() as $key) {
             if (array_key_exists($key, $product)) {
-                $imagesChanges[$key] = ($product[$key] === null) ? '' : $product[$key];
+                $imagesChanges[$key] = $product[$key] ?? '';
             }
         }
 
