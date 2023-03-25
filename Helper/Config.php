@@ -24,11 +24,13 @@ class Config
         $this->scopeConfig = $scopeConfig;
     }
 
-    public function getFailedImportThreshold() {
+    public function getFailedImportThreshold()
+    {
         return $this->scopeConfig->getValue(self::FAILED_IMPORT_THRESHOLD_XML_PATH);
     }
 
-    public function shouldUseCronToRunSteps() {
+    public function shouldUseCronToRunSteps()
+    {
         return $this->scopeConfig->getValue(self::USE_CRON_TO_RUN_STEPS_XML_PATH);
     }
 

@@ -4,12 +4,11 @@ namespace MageSuite\Importer\Observer;
 
 class ImportProductsBunchObserver implements \Magento\Framework\Event\ObserverInterface
 {
-    /**
-     * @var \MageSuite\Importer\Services\Import\ProductRelationsManager
-     */
-    private $productRelationsManager;
+    protected \MageSuite\Importer\Services\Import\ProductRelationsManager $productRelationsManager;
 
-    public function __construct(\MageSuite\Importer\Services\Import\ProductRelationsManager $productRelationsManager) {
+    public function __construct(
+        \MageSuite\Importer\Services\Import\ProductRelationsManager $productRelationsManager
+    ) {
         $this->productRelationsManager = $productRelationsManager;
     }
 

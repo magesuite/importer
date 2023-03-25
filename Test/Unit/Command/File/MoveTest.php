@@ -58,7 +58,7 @@ class MoveTest extends \PHPUnit\Framework\TestCase
 
     public function tearDown(): void
     {
-        if(file_exists($this->assetsDirectory.'/target_path')) {
+        if (file_exists($this->assetsDirectory.'/target_path')) {
             unlink($this->assetsDirectory.'/target_path');
         }
     }

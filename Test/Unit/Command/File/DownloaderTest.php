@@ -8,11 +8,13 @@ abstract class DownloaderTest extends \PHPUnit\Framework\TestCase
 
     protected $fileDownloaderDouble;
 
-    public function testItImplementsCommandInterface() {
+    public function testItImplementsCommandInterface()
+    {
         $this->assertInstanceOf(\MageSuite\Importer\Command\Command::class, $this->command);
     }
 
-    public function testItProperlySetsServerConfiguration() {
+    public function testItProperlySetsServerConfiguration()
+    {
         $expectations = [
             ['setProtocol', 'ftp'],
             ['setHost', 'domain.com'],
@@ -20,7 +22,7 @@ abstract class DownloaderTest extends \PHPUnit\Framework\TestCase
             ['setPassword', 'pass'],
         ];
 
-        foreach($expectations as $expectation) {
+        foreach ($expectations as $expectation) {
             list($expectedMethod, $expectedArgument) = $expectation;
 
             $this->fileDownloaderDouble

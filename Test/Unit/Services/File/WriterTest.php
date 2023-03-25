@@ -28,11 +28,10 @@ class WriterTest extends \PHPUnit\Framework\TestCase
 
     public function tearDown(): void
     {
-        if(!file_exists($this->filePath)) {
+        if (!file_exists($this->filePath)) {
             return;
         }
 
         unlink($this->filePath);
     }
-
 }

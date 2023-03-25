@@ -4,37 +4,19 @@ namespace MageSuite\Importer\Services\Import;
 
 class FailedImportDetector
 {
-    const SECONDS_IN_HOUR = 3600;
-    const ERROR_MESSAGE = 'Step took too long to execute';
+    public const SECONDS_IN_HOUR = 3600;
 
-    /**
-     * @var \MageSuite\Importer\Model\Collections\ImportStepFactory
-     */
-    protected $importStepCollectionFactory;
-
-    /**
-     * @var \Magento\Framework\Event\ManagerInterface
-     */
-    protected $eventManager;
-
-    /**
-     * @var \Magento\Framework\Stdlib\DateTime\DateTime
-     */
-    protected $dateTime;
-
-    /**
-     * @var \MageSuite\Importer\Helper\Config
-     */
-    protected $config;
-
+    protected \MageSuite\Importer\Model\Collections\ImportStepFactory $importStepCollectionFactory;
+    protected \Magento\Framework\Event\ManagerInterface $eventManager;
+    protected \Magento\Framework\Stdlib\DateTime\DateTime $dateTime;
+    protected \MageSuite\Importer\Helper\Config $config;
 
     public function __construct(
         \MageSuite\Importer\Model\Collections\ImportStepFactory $importStepCollectionFactory,
         \Magento\Framework\Event\ManagerInterface $eventManager,
         \MageSuite\Importer\Helper\Config $config,
         \Magento\Framework\Stdlib\DateTime\DateTime $dateTime
-    )
-    {
+    ) {
         $this->importStepCollectionFactory = $importStepCollectionFactory;
         $this->eventManager = $eventManager;
         $this->dateTime = $dateTime;
@@ -45,7 +27,7 @@ class FailedImportDetector
     {
         $runningSteps = $this->getRunningSteps();
 
-        if(empty($runningSteps)) {
+        if (empty($runningSteps)) {
             return;
         }
 
@@ -56,7 +38,11 @@ class FailedImportDetector
                 continue;
             }
 
-            $this->eventManager->dispatch('import_command_error', ['step' => $step, 'error' => __(self::ERROR_MESSAGE), 'was_final_attempt' => true, 'attempt' => 1]);
+            $this->eventManager->dispatch('import_command_error', [
+                'step' => $step,
+                'error' => __('Step took too long to execute'),
+                'was_final_attempt' => true,
+                'attempt' => 1]);
         }
     }
 
@@ -71,10 +57,9 @@ class FailedImportDetector
         return false;
     }
 
-    protected function getRunningSteps() {
-        /** @var \MageSuite\Importer\Model\Collections\ImportStep $collection */
+    protected function getRunningSteps()
+    {
         $collection = $this->importStepCollectionFactory->create();
-
         $collection->addFieldToFilter('status', ['eq' => \MageSuite\Importer\Model\ImportStep::STATUS_IN_PROGRESS]);
 
         return $collection->getItems();

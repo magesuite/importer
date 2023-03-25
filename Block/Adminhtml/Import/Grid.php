@@ -17,5 +17,4 @@ class Grid extends \Magento\Backend\Block\Widget\Grid\Container
         $this->_headerText = __('Import Logs');
         $this->removeButton('add');
     }
-
 }

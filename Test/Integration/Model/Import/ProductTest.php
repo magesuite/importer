@@ -288,7 +288,6 @@ class ProductTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($this->isImageInGallery($product, '/m/a/magento_image.jpg'));
     }
 
-
     /**
      * @magentoDbIsolation disabled
      * @magentoDataFixture Magento/ConfigurableProduct/_files/product_configurable.php

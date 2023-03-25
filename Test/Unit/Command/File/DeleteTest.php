@@ -41,7 +41,7 @@ class DeleteTest extends \PHPUnit\Framework\TestCase
 
     public function tearDown(): void
     {
-        if(file_exists($this->assetsDirectory.'/file_to_be_deleted')) {
+        if (file_exists($this->assetsDirectory.'/file_to_be_deleted')) {
             unlink($this->assetsDirectory.'/file_to_be_deleted');
         }
     }

@@ -222,9 +222,9 @@ class Product extends \Magento\CatalogImportExport\Model\Import\Product
         $baseFilePath = strtolower(basename($fileName));
         $filePath = \Magento\Framework\File\Uploader::getDispretionPath($baseFilePath) . '/' . $baseFilePath;
 
-        if(strpos($this->_getUploader()->getTmpDir(), BP) !== 0){
+        if (strpos($this->_getUploader()->getTmpDir(), BP) !== 0) {
             $uploadedFilePath = BP . '/' . $this->_getUploader()->getTmpDir() . '/' . $fileName;
-        }else{
+        } else {
             $uploadedFilePath = $this->_getUploader()->getTmpDir() . '/' . $fileName;
         }
 

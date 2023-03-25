@@ -11,22 +11,26 @@ class CommandFactoryTest extends \PHPUnit\Framework\TestCase
         $this->factory = \Magento\TestFramework\ObjectManager::getInstance()->create(\MageSuite\Importer\Services\Command\Factory::class);
     }
 
-    public function testItImplementsCommandFactoryInterface() {
+    public function testItImplementsCommandFactoryInterface()
+    {
         $this->assertInstanceOf(\MageSuite\Importer\Command\CommandFactory::class, $this->factory);
     }
 
-    public function testItReturnsNullWhenCommandDoesNotExist() {
+    public function testItReturnsNullWhenCommandDoesNotExist()
+    {
         $this->assertNull($this->factory->create('non_existing_command'));
     }
 
     /**
      * @dataProvider getTypesToCommandClassesMapping
      */
-    public function testItReturnsCorrectCommand($type, $expectedClass) {
+    public function testItReturnsCorrectCommand($type, $expectedClass)
+    {
         $this->assertInstanceOf($expectedClass, $this->factory->create($type));
     }
 
-    public static function getTypesToCommandClassesMapping() {
+    public static function getTypesToCommandClassesMapping()
+    {
         return [
             ['download', \MageSuite\Importer\Command\File\Download::class],
             ['download_newest', \MageSuite\Importer\Command\File\DownloadNewest::class],

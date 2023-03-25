@@ -33,7 +33,7 @@ class Validator extends \Magento\CatalogImportExport\Model\Import\Product\Valida
 
         if (!$this->isRequiredAttributeValid($attrCode, $attrParams, $rowData)) {
             $valid = false;
-            if(isset($rowData['sku']) and !empty($rowData['sku'])) {
+            if (isset($rowData['sku']) and !empty($rowData['sku'])) {
                 $this->_addMessages(
                     [
                         sprintf(
@@ -188,5 +188,4 @@ class Validator extends \Magento\CatalogImportExport\Model\Import\Product\Valida
         }
         return $valid;
     }
-
 }

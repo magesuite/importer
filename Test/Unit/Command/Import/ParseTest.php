@@ -21,11 +21,13 @@ class ParseTest extends \PHPUnit\Framework\TestCase
         $this->command = new \MageSuite\Importer\Command\Import\Parse($this->objectManagerMock);
     }
 
-    public function testItImplementsCommandInterface() {
+    public function testItImplementsCommandInterface()
+    {
         $this->assertInstanceOf(\MageSuite\Importer\Command\Command::class, $this->command);
     }
 
-    public function testItCreatesParserClassAndExecutesParsing() {
+    public function testItCreatesParserClassAndExecutesParsing()
+    {
         $parser = $this->getMockBuilder(\MageSuite\Importer\Command\Parser::class)->getMock();
 
         $configuration = [

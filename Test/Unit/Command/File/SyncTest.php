@@ -14,7 +14,8 @@ class SyncTest extends DownloaderTest
         $this->command = new \MageSuite\Importer\Command\File\Sync($this->fileDownloaderDouble);
     }
 
-    public function testItSyncsFolders() {
+    public function testItSyncsFolders()
+    {
         $this->fileDownloaderDouble
             ->expects($this->atLeastOnce())
             ->method('sync')

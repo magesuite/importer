@@ -44,7 +44,8 @@ class Product
         $this->fileAdapterFactory = $fileAdapterFactory;
     }
 
-    public function setImportImagesFileDir($directory) {
+    public function setImportImagesFileDir($directory)
+    {
         $this->importer->setImportImagesFileDir($directory);
         $this->fileImporter->setImportImagesFileDir($directory);
     }
@@ -75,7 +76,8 @@ class Product
         $this->executeBehaviorSpecificTasks($behavior);
     }
 
-    public function importFromFile($filePath, $behavior = self::BEHAVIOR_UPDATE) {
+    public function importFromFile($filePath, $behavior = self::BEHAVIOR_UPDATE)
+    {
         $this->fileImporter->setImportAdapterFactory($this->fileAdapterFactory);
         $returnValue = $this->fileImporter->processImport($filePath);
 
@@ -84,13 +86,14 @@ class Product
         return $returnValue;
     }
 
-    public function getLogTrace() {
+    public function getLogTrace()
+    {
         return $this->fileImporter->getLogTrace();
     }
 
     private function executeBehaviorSpecificTasks($behavior)
     {
-        if($behavior == self::BEHAVIOR_SYNC) {
+        if ($behavior == self::BEHAVIOR_SYNC) {
             $importedSkus = \MageSuite\Importer\Model\ImportedProductsAggregator::getSkus();
             $notImportedSkus = $this->getNotImportedSkus($importedSkus);
 
@@ -98,7 +101,8 @@ class Product
         }
     }
 
-    private function getNotImportedSkus($importedSkus) {
+    private function getNotImportedSkus($importedSkus)
+    {
         $select = $this->connection->select()
             ->from(
                 ['cpe' => $this->connection->getTableName('catalog_product_entity')],
@@ -111,7 +115,7 @@ class Product
 
     private function deleteProductsBySkus($skusToDelete)
     {
-        if(empty($skusToDelete)) {
+        if (empty($skusToDelete)) {
             return;
         }
 

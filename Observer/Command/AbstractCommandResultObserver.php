@@ -22,7 +22,8 @@ class AbstractCommandResultObserver
         $this->importStatus = $importStatus;
     }
 
-    protected function recalculateCurrentImportStatus($importId) {
+    protected function recalculateCurrentImportStatus($importId)
+    {
         $status = $this->importStatus->getByImportId($importId);
 
         $import = $this->importRepository->getById($importId);

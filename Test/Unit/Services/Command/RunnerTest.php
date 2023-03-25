@@ -4,61 +4,25 @@ namespace MageSuite\Importer\Test\Unit\Services\Command;
 
 class RunnerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var
-     */
-    private $commandMock;
-
-    /**
-     * @var \MageSuite\Importer\Services\Command\Runner
-     */
-    private $commandRunner;
-
-    /**
-     * @var
-     */
-    private $commandFactoryStub;
-
-
-    /**
-     * @var
-     */
-    private $importRepositoryStub;
-
-    /**
-     * @var
-     */
-    private $eventManagerMock;
-
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $lockManagerMock;
-
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $loggerMock;
+    protected ?\PHPUnit\Framework\MockObject\MockObject $commandMock;
+    protected ?\MageSuite\Importer\Services\Command\Runner $commandRunner;
+    protected ?\PHPUnit\Framework\MockObject\MockObject $commandFactoryStub;
+    protected ?\PHPUnit\Framework\MockObject\MockObject $importRepositoryStub;
+    protected ?\PHPUnit\Framework\MockObject\MockObject $eventManagerMock;
+    protected ?\PHPUnit\Framework\MockObject\MockObject $lockManagerMock;
+    protected ?\PHPUnit\Framework\MockObject\MockObject $loggerMock;
 
     public function setUp(): void
     {
-        $this->commandFactoryStub = $this
-            ->getMockBuilder(\MageSuite\Importer\Command\CommandFactory::class)
-            ->getMock();
-
+        $this->commandFactoryStub = $this->getMockBuilder(\MageSuite\Importer\Command\CommandFactory::class)->getMock();
         $this->commandMock = $this->getMockBuilder(\MageSuite\Importer\Command\Command::class)->getMock();
-
         $this->importRepositoryStub = $this->getMockBuilder(\MageSuite\Importer\Api\ImportRepositoryInterface::class)->getMock();
-
         $this->eventManagerMock = $this->getMockBuilder(\Magento\Framework\Event\ManagerInterface::class)->getMock();
-
         $lockManager = $this->getMockBuilder(\Magento\Framework\Lock\LockManagerInterface::class)->getMock();
         $this->lockManagerMock = $this->getMockBuilder(\MageSuite\Importer\Services\Notification\LockManager::class)
             ->setConstructorArgs([$lockManager])
             ->getMock();
-
         $this->loggerMock = $this->getMockBuilder(\Psr\Log\LoggerInterface::class)->getMock();
-
         $this->commandRunner = new \MageSuite\Importer\Services\Command\Runner(
             $this->commandFactoryStub,
             $this->importRepositoryStub,
@@ -68,7 +32,8 @@ class RunnerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testItRunsCommand() {
+    public function testItRunsCommand()
+    {
         $importIdentifier = 'import_identifier';
         $importId = 'import_id';
 
@@ -99,7 +64,8 @@ class RunnerTest extends \PHPUnit\Framework\TestCase
         $this->commandRunner->runCommand($importId, $importIdentifier, 'validate');
     }
 
-    public function testItDoesNotRunCommandWhenItsLocked() {
+    public function testItDoesNotRunCommandWhenItsLocked()
+    {
         $importIdentifier = 'import_identifier';
         $importId = 'import_id';
 
@@ -133,7 +99,8 @@ class RunnerTest extends \PHPUnit\Framework\TestCase
         $this->commandRunner->runCommand($importId, $importIdentifier, 'download');
     }
 
-    public function testItThrowsEventWhenCommandRunningStarts() {
+    public function testItThrowsEventWhenCommandRunningStarts()
+    {
         $importId = 'import_id';
         $importIdentifier = 'import_identifier';
 
@@ -152,12 +119,11 @@ class RunnerTest extends \PHPUnit\Framework\TestCase
         $this->commandRunner->runCommand($importId, $importIdentifier, 'download');
     }
 
-    public function testItThrowsEventWhenCommandIsFinished() {
+    public function testItThrowsEventWhenCommandIsFinished()
+    {
         $importId = 'import_id';
         $importIdentifier = 'import_identifier';
-
         $importStep = $this->prepareDoublesForEventTest($importId, $importIdentifier);
-
 
         $this->commandMock->method('execute')->willReturn('output');
         $this->lockManagerMock->method('canAcquireLock')->with(1)->willReturn(true);
@@ -174,11 +140,8 @@ class RunnerTest extends \PHPUnit\Framework\TestCase
     {
         $importId = 'import_id';
         $importIdentifier = 'import_identifier';
-
         $importStep = $this->prepareDoublesForEventTest($importId, $importIdentifier);
-
         $exceptionThrown = new \Exception('exception');
-
         $this->lockManagerMock->method('canAcquireLock')->with(1)->willReturn(true);
 
         $this->commandMock
@@ -204,7 +167,6 @@ class RunnerTest extends \PHPUnit\Framework\TestCase
 
         $importId = 'import_id';
         $importIdentifier = 'import_identifier';
-
         $importSteps = [];
 
         $this->importRepositoryStub->method('getConfigurationById')->with($importIdentifier)->willReturn([
@@ -245,7 +207,8 @@ class RunnerTest extends \PHPUnit\Framework\TestCase
     /**
      * @return \MageSuite\Importer\Model\ImportStep
      */
-    private function createImportStepObject($status, $identifier, $id) {
+    private function createImportStepObject($status, $identifier, $id)
+    {
         return \Magento\TestFramework\ObjectManager::getInstance()
             ->create(\MageSuite\Importer\Model\ImportStep::class)
             ->setId($id)
@@ -253,10 +216,11 @@ class RunnerTest extends \PHPUnit\Framework\TestCase
             ->setIdentifier($identifier);
     }
 
-    private function createImportSteps($steps) {
+    private function createImportSteps($steps)
+    {
         $importSteps = [];
 
-        foreach($steps as $step) {
+        foreach ($steps as $step) {
             $importSteps[] = $this->createImportStepObject($step[0], $step[1], $step[2]);
         }
 
@@ -269,8 +233,11 @@ class RunnerTest extends \PHPUnit\Framework\TestCase
      */
     private function prepareDoublesForEventTest($importId, $importIdentifier)
     {
-        $importStep = $this->createImportStepObject(\MageSuite\Importer\Model\ImportStep::STATUS_PENDING,
-            'download', 1);
+        $importStep = $this->createImportStepObject(
+            \MageSuite\Importer\Model\ImportStep::STATUS_PENDING,
+            'download',
+            1
+        );
 
         $this->importRepositoryStub->method('getConfigurationById')->with($importIdentifier)->willReturn([
             'steps' => [

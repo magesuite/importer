@@ -11,8 +11,7 @@ class FileAdapterFactory
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $objectManager,
         $instanceName = 'MageSuite\Importer\Model\Import\Adapter\FileAdapter'
-    )
-    {
+    ) {
         $this->objectManager = $objectManager;
         $this->instanceName = $instanceName;
     }

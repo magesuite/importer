@@ -26,7 +26,7 @@ class DisableIndexer
 
     public function aroundUpdateMview(\Magento\Indexer\Model\Processor $subject, callable $proceed)
     {
-        if(!$this->isIndexerEnabled()) {
+        if (!$this->isIndexerEnabled()) {
             throw new \Exception("Indexers are disabled");
         }
 
@@ -35,7 +35,7 @@ class DisableIndexer
 
     public function aroundReindexAllInvalid(\Magento\Indexer\Model\Processor $subject, callable $proceed)
     {
-        if(!$this->isIndexerEnabled()) {
+        if (!$this->isIndexerEnabled()) {
             throw new \Exception("Indexers are disabled");
         }
 

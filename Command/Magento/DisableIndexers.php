@@ -17,8 +17,7 @@ class DisableIndexers implements \MageSuite\Importer\Command\Command
     public function __construct(
         \Magento\Framework\App\Config\Storage\WriterInterface $configWriter,
         \MageSuite\Importer\Model\Command\KillIndexers $killIndexers
-    )
-    {
+    ) {
         $this->configWriter = $configWriter;
         $this->killIndexers = $killIndexers;
     }

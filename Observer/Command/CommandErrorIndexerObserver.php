@@ -11,8 +11,7 @@ class CommandErrorIndexerObserver implements \Magento\Framework\Event\ObserverIn
 
     public function __construct(
         \MageSuite\Importer\Command\Magento\EnableIndexers $enableIndexersCommand
-    )
-    {
+    ) {
         $this->enableIndexersCommand = $enableIndexersCommand;
     }
 
@@ -25,7 +24,7 @@ class CommandErrorIndexerObserver implements \Magento\Framework\Event\ObserverIn
     {
         $wasFinalAttempt = $observer->getData('was_final_attempt');
 
-        if(!$wasFinalAttempt) {
+        if (!$wasFinalAttempt) {
             return;
         }
 

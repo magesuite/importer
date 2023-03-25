@@ -14,7 +14,8 @@ class DownloadNewestTest extends DownloaderTest
         $this->command = new \MageSuite\Importer\Command\File\DownloadNewest($this->fileDownloaderDouble);
     }
 
-    public function testItDownloadsNewestFile() {
+    public function testItDownloadsNewestFile()
+    {
         $this->fileDownloaderDouble
             ->expects($this->atLeastOnce())
             ->method('downloadNewest')

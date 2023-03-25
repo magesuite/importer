@@ -31,7 +31,7 @@ class FileAdapter extends \Magento\ImportExport\Model\Import\AbstractSource
 
         $colNames = array_keys(json_decode($this->fileHandler->current(), true));
 
-        $this->fileHandler = fopen($filePath,'r');
+        $this->fileHandler = fopen($filePath, 'r');
 
         parent::__construct($colNames);
     }
@@ -61,7 +61,6 @@ class FileAdapter extends \Magento\ImportExport\Model\Import\AbstractSource
     public function rewind()
     {
         $this->_position = 0;
-
     }
 
     /**
@@ -71,8 +70,8 @@ class FileAdapter extends \Magento\ImportExport\Model\Import\AbstractSource
      */
     public function current()
     {
-        if($this->_position == 0) {
-            $this->fileHandler = fopen($this->filePath,'r');
+        if ($this->_position == 0) {
+            $this->fileHandler = fopen($this->filePath, 'r');
         }
 
         $values = json_decode(fgets($this->fileHandler), true);
@@ -128,21 +127,21 @@ class FileAdapter extends \Magento\ImportExport\Model\Import\AbstractSource
 
     protected function convertArrayToString($values)
     {
-        if(! is_array($values)) {
+        if (! is_array($values)) {
             throw new \InvalidArgumentException('array expected');
         }
 
-        foreach($values as $key => $value) {
-            if(!is_array($value)) {
+        foreach ($values as $key => $value) {
+            if (!is_array($value)) {
                 continue;
             }
 
             $variations = [];
 
-            foreach($value as $row) {
+            foreach ($value as $row) {
                 $attributes = [];
 
-                foreach($row as $attributeName => $attributeValue) {
+                foreach ($row as $attributeName => $attributeValue) {
                     $attributes[] = sprintf("%s=%s", $attributeName, $attributeValue);
                 }
 

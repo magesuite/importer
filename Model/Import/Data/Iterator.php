@@ -38,7 +38,8 @@ class Iterator implements \Iterator
         return $this->lastId;
     }
 
-    public function getRowsCount() {
+    public function getRowsCount()
+    {
         $select = $this->connection->select()->from(
             $this->connection->getTableName('importexport_importdata'),
             ['cnt' => 'count(*)']

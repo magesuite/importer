@@ -4,14 +4,10 @@ namespace MageSuite\Importer\Cron;
 
 class Scheduler
 {
-    /**
-     * @var \MageSuite\Importer\Services\Import\Scheduler
-     */
-    private $scheduler;
+    protected \MageSuite\Importer\Services\Import\Scheduler $scheduler;
 
     public function __construct(\MageSuite\Importer\Services\Import\Scheduler $scheduler)
     {
-
         $this->scheduler = $scheduler;
     }
 
@@ -22,9 +18,9 @@ class Scheduler
      * @param $name
      * @param array $arguments
      */
-    public function __call ($name, array $arguments)
+    public function __call($name, array $arguments)
     {
-        if(preg_match('/schedule([a-zA-Z+])/', $name)) {
+        if (preg_match('/schedule([a-zA-Z+])/', $name)) {
             $importIdentifier = strtolower(preg_replace('/(.)([A-Z])/', '$1_$2', $name));
             $importIdentifier = str_replace('schedule_', '', $importIdentifier);
 

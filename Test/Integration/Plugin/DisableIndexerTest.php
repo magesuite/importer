@@ -33,10 +33,11 @@ class DisableIndexerTest extends \PHPUnit\Framework\TestCase
     /**
      * @magentoAdminConfigFixture indexer/indexing/enabled 1
      */
-    public function testAroundUpdateMviewIndexerIsEnabled() {
+    public function testAroundUpdateMviewIndexerIsEnabled()
+    {
         $wasCalled = false;
 
-        $this->plugin->aroundUpdateMview($this->indexerProcessorDummy, function() use(&$wasCalled) {
+        $this->plugin->aroundUpdateMview($this->indexerProcessorDummy, function () use (&$wasCalled) {
             $wasCalled = true;
         });
 
@@ -51,16 +52,18 @@ class DisableIndexerTest extends \PHPUnit\Framework\TestCase
     {
         $this->expectException(\Exception::class);
 
-        $this->plugin->aroundUpdateMview($this->indexerProcessorDummy, function() {});
+        $this->plugin->aroundUpdateMview($this->indexerProcessorDummy, function () {
+        });
     }
 
     /**
      * @magentoAdminConfigFixture indexer/indexing/enabled 1
      */
-    public function testReindexAllInvalidIndexerIsEnabled() {
+    public function testReindexAllInvalidIndexerIsEnabled()
+    {
         $wasCalled = false;
 
-        $this->plugin->aroundReindexAllInvalid($this->indexerProcessorDummy, function() use(&$wasCalled) {
+        $this->plugin->aroundReindexAllInvalid($this->indexerProcessorDummy, function () use (&$wasCalled) {
             $wasCalled = true;
         });
 
@@ -75,7 +78,8 @@ class DisableIndexerTest extends \PHPUnit\Framework\TestCase
     {
         $this->expectException(\Exception::class);
 
-        $this->plugin->aroundReindexAllInvalid($this->indexerProcessorDummy, function() {});
+        $this->plugin->aroundReindexAllInvalid($this->indexerProcessorDummy, function () {
+        });
     }
 
     public static function disableIndexerFixture()

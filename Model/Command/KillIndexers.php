@@ -20,8 +20,7 @@ class KillIndexers
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Psr\Log\LoggerInterface $logger
-    )
-    {
+    ) {
         $this->connection = $resourceConnection->getConnection();
         $this->logger = $logger;
     }
@@ -45,7 +44,7 @@ class KillIndexers
             ]
         );
 
-        for($attempt = 0; $attempt < self::AMOUNT_OF_ATTEMPTS_TO_KILL_PROCESSES; $attempt++) {
+        for ($attempt = 0; $attempt < self::AMOUNT_OF_ATTEMPTS_TO_KILL_PROCESSES; $attempt++) {
             $this->killAll('group=index');
 
             sleep(self::DELAY_BETWEEN_ATTEMPTS);

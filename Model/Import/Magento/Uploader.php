@@ -61,11 +61,11 @@ class Uploader extends \Magento\CatalogImportExport\Model\Import\Uploader
         return $result;
     }
 
-    private function renameDownloadedFile($url){
+    private function renameDownloadedFile($url)
+    {
         $path = parse_url($url, PHP_URL_PATH);
         $splitedPath = explode("/", $path);
 
         return end($splitedPath);
     }
-
 }

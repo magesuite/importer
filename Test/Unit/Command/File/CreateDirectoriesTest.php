@@ -24,37 +24,39 @@ class CreateDirectoriesTest extends \PHPUnit\Framework\TestCase
         $this->assetsDirectoryRelativeToMainDirectory = str_replace(BP . '/', '', $this->assetsDirectory);
     }
 
-    public function testItCreatesMultipleDirectoriesProperly() {
+    public function testItCreatesMultipleDirectoriesProperly()
+    {
         $directories = [];
 
-        foreach($this->directoriesPaths as $directoryPath) {
+        foreach ($this->directoriesPaths as $directoryPath) {
             $directories[] = $this->assetsDirectoryRelativeToMainDirectory . $directoryPath;
         }
 
-        foreach($this->directoriesPaths as $directoryPath) {
+        foreach ($this->directoriesPaths as $directoryPath) {
             $this->assertFalse(is_dir($this->assetsDirectory . $directoryPath));
         }
 
         $this->command->execute(['directories_paths' => $directories]);
 
-        foreach($this->directoriesPaths as $directoryPath) {
+        foreach ($this->directoriesPaths as $directoryPath) {
             $this->assertTrue(is_dir($this->assetsDirectory . $directoryPath));
         }
     }
 
-    public function testItDoesNotCreateDirectoryWhenItDoesExist() {
+    public function testItDoesNotCreateDirectoryWhenItDoesExist()
+    {
         $this->command->execute(['directories_paths' => [$this->assetsDirectoryRelativeToMainDirectory . '/existing_directory']]);
     }
 
     public function tearDown(): void
     {
-        foreach($this->directoriesPaths as $directoryPath) {
-            if(is_dir($this->assetsDirectory . $directoryPath)) {
+        foreach ($this->directoriesPaths as $directoryPath) {
+            if (is_dir($this->assetsDirectory . $directoryPath)) {
                 rmdir($this->assetsDirectory . $directoryPath);
             }
         }
 
-        if(is_dir($this->assetsDirectory . '/var')) {
+        if (is_dir($this->assetsDirectory . '/var')) {
             rmdir($this->assetsDirectory . '/var');
         }
     }

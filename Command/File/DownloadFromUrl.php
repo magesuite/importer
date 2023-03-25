@@ -15,7 +15,7 @@ class DownloadFromUrl extends AbstractDownload implements \MageSuite\Importer\Co
 
         $contents = file_get_contents($configuration['remote_url']);
 
-        file_put_contents( $configuration['target_path'], $contents);
+        file_put_contents($configuration['target_path'], $contents);
 
         return true;
     }

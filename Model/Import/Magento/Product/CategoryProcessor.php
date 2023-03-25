@@ -16,7 +16,7 @@ class CategoryProcessor extends \Magento\CatalogImportExport\Model\Import\Produc
      */
     protected function upsertCategory($categoryPath)
     {
-        if(is_numeric($categoryPath)) {
+        if (is_numeric($categoryPath)) {
             return $categoryPath;
         }
 

@@ -32,4 +32,3 @@ $product
     ]])
     ->setCanSaveCustomOptions(true)
     ->save();
-

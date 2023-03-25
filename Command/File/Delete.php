@@ -11,13 +11,13 @@ class Delete implements \MageSuite\Importer\Command\Command
      */
     public function execute($configuration)
     {
-        if(!isset($configuration['path'])) {
+        if (!isset($configuration['path'])) {
             throw new \InvalidArgumentException('Source path must be defined');
         }
 
         $path = BP . '/' . $configuration['path'];
 
-        if(!file_exists($path)) {
+        if (!file_exists($path)) {
             return;
         }
 

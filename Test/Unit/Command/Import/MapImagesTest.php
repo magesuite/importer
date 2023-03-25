@@ -3,7 +3,6 @@
 namespace MageSuite\Importer\Test\Unit\Command\Import;
 
 class MapImagesTest extends \PHPUnit\Framework\TestCase
-
 {
     /**
      * @var \MageSuite\Importer\Command\Import\Import
@@ -31,14 +30,16 @@ class MapImagesTest extends \PHPUnit\Framework\TestCase
         $this->assetsDirectoryRelativeToMainDirectory = str_replace(BP . DIRECTORY_SEPARATOR, '', $this->assetsDirectory);
     }
 
-    public function testItImplementsCommandInterface() {
+    public function testItImplementsCommandInterface()
+    {
         $this->assertInstanceOf(\MageSuite\Importer\Command\Command::class, $this->command);
     }
 
-    public function testItProperlyMapsImages() {
+    public function testItProperlyMapsImages()
+    {
         $importWithImagesFilePath = $this->assetsDirectory . DIRECTORY_SEPARATOR . 'import_file_with_images';
 
-        if(file_exists($importWithImagesFilePath)) {
+        if (file_exists($importWithImagesFilePath)) {
             unlink($importWithImagesFilePath);
         }
 
@@ -56,5 +57,4 @@ class MapImagesTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEquals('{"sku":"SKU","base_image":"SKU.jpg"}', $targetFileContents);
     }
-
 }

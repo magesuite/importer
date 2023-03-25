@@ -14,7 +14,8 @@ class DownloadTest extends DownloaderTest
         $this->command = new \MageSuite\Importer\Command\File\Download($this->fileDownloaderDouble);
     }
 
-    public function testItDownloadsFile() {
+    public function testItDownloadsFile()
+    {
         $this->fileDownloaderDouble
             ->expects($this->atLeastOnce())
             ->method('download')

@@ -41,13 +41,13 @@ class ShowServerStatusLog extends \Magento\Backend\App\Action
 
         $logData = json_decode($step->getServerStatusLog(), true);
 
-        if(empty($logData)) {
+        if (empty($logData)) {
             return $result;
         }
 
         $output = new \Symfony\Component\Console\Output\BufferedOutput();
 
-        foreach($logData as $attempt => $serverStatusLog) {
+        foreach ($logData as $attempt => $serverStatusLog) {
             $output->writeln('Attempt '.$attempt);
             $output->writeln(str_repeat('-', 100));
 
@@ -56,8 +56,8 @@ class ShowServerStatusLog extends \Magento\Backend\App\Action
             $output->writeln('');
         }
 
-       $result->setContents(sprintf('<pre>%s</pre>', $output->fetch()));
+        $result->setContents(sprintf('<pre>%s</pre>', $output->fetch()));
 
-       return $result;
+        return $result;
     }
 }

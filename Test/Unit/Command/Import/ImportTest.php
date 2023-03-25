@@ -21,11 +21,13 @@ class ImportTest extends \PHPUnit\Framework\TestCase
         $this->command = new \MageSuite\Importer\Command\Import\Import($this->importerMock);
     }
 
-    public function testItImplementsCommandInterface() {
+    public function testItImplementsCommandInterface()
+    {
         $this->assertInstanceOf(\MageSuite\Importer\Command\Command::class, $this->command);
     }
 
-    public function testItPassesPathsProperlyWithDefaultOptions() {
+    public function testItPassesPathsProperlyWithDefaultOptions()
+    {
 
         $configuration = [
             'source_path' => 'var/import',
@@ -50,7 +52,8 @@ class ImportTest extends \PHPUnit\Framework\TestCase
         $this->command->execute($configuration);
     }
 
-    public function testItSetsValidationStrategyProperly() {
+    public function testItSetsValidationStrategyProperly()
+    {
         $configuration = [
             'source_path' => 'var/import',
             'images_directory_path' => 'var/import/images',
@@ -65,7 +68,8 @@ class ImportTest extends \PHPUnit\Framework\TestCase
         $this->command->execute($configuration);
     }
 
-    public function testItSetsBehaviorProperly() {
+    public function testItSetsBehaviorProperly()
+    {
         $configuration = [
             'source_path' => 'var/import',
             'images_directory_path' => 'var/import/images',

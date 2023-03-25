@@ -4,10 +4,7 @@ namespace MageSuite\Importer\Command\Import;
 
 class Parse implements \MageSuite\Importer\Command\Command
 {
-    /**
-     * @var \Magento\Framework\ObjectManagerInterface
-     */
-    private $objectManager;
+    protected \Magento\Framework\ObjectManagerInterface $objectManager;
 
     public function __construct(\Magento\Framework\ObjectManagerInterface $objectManager)
     {

@@ -4,18 +4,18 @@ namespace MageSuite\Importer\Model;
 
 class ImportStep extends \Magento\Framework\Model\AbstractModel
 {
-    const STATUS_PENDING = 1;
-    const STATUS_IN_PROGRESS = 2;
-    const STATUS_DONE = 3;
-    const STATUS_ERROR = 4;
-
+    public const STATUS_PENDING = 1;
+    public const STATUS_IN_PROGRESS = 2;
+    public const STATUS_DONE = 3;
+    public const STATUS_ERROR = 4;
 
     protected function _construct()
     {
-        $this->_init('MageSuite\Importer\Model\ResourceModel\ImportStep');
+        $this->_init(\MageSuite\Importer\Model\ResourceModel\ImportStep::class);
     }
 
-    public function getReadableStatus() {
+    public function getReadableStatus()
+    {
         $readableStatuses = [
             self::STATUS_PENDING => __('Pending'),
             self::STATUS_IN_PROGRESS => __('In progress'),

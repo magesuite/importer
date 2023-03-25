@@ -25,7 +25,8 @@ class ImportRepositoryTest extends \PHPUnit\Framework\TestCase
      * @magentoDbIsolation enabled
      * @magentoDataFixture loadActiveImport
      */
-    public function testItReturnsActiveImportWhenItExists() {
+    public function testItReturnsActiveImportWhenItExists()
+    {
         $activeImport = $this->repository->getActiveImport();
 
         $this->assertNotNull($activeImport->getId());
@@ -36,17 +37,20 @@ class ImportRepositoryTest extends \PHPUnit\Framework\TestCase
      * @magentoDbIsolation enabled
      * @magentoDataFixture loadFinishedImports
      */
-    public function testItDoesNotReturnActiveImportWhenAllImportsAreDoneOrHaveError() {
+    public function testItDoesNotReturnActiveImportWhenAllImportsAreDoneOrHaveError()
+    {
         $activeImport = $this->repository->getActiveImport();
 
         $this->assertNull($activeImport->getId());
     }
 
-    public static function loadActiveImport() {
+    public static function loadActiveImport()
+    {
         require __DIR__.'/../_files/active_import.php';
     }
 
-    public static function loadFinishedImports() {
+    public static function loadFinishedImports()
+    {
         require __DIR__.'/../_files/finished_import.php';
     }
 }

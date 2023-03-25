@@ -4,21 +4,19 @@ namespace MageSuite\Importer\Model;
 
 class FileImporter extends \FireGento\FastSimpleImport\Model\Importer
 {
-    /**
-     * @var \Magento\ImportExport\Model\Import
-     */
-    private $importModel;
+    protected \Magento\ImportExport\Model\Import $importModel;
 
     public function processImport($filePath)
     {
         $this->importModel = $this->createImportModel();
         $errorAgregator = $this->importModel->getErrorAggregator();
 
-        if (!$this->validateData($filePath) and
-            (
-                $this->getPrivateProperty($errorAgregator, 'validationStrategy') == \Magento\ImportExport\Model\Import\ErrorProcessing\ProcessingErrorAggregatorInterface::VALIDATION_STRATEGY_STOP_ON_ERROR and
-                $errorAgregator->hasFatalExceptions()
-            )
+        if (!$this->validateData($filePath) &&
+            $this->getPrivateProperty(
+                $errorAgregator,
+                'validationStrategy'
+            ) === $this->getValidationStrategyStopOnError() &&
+            $errorAgregator->hasFatalExceptions()
         ) {
             $message = $this->getLogTrace() . PHP_EOL;
 
@@ -31,8 +29,10 @@ class FileImporter extends \FireGento\FastSimpleImport\Model\Importer
             $this->importModel->addLogComment($this->getErrorMessages());
         }
 
-        if (
-            $this->getPrivateProperty($errorAgregator, 'validationStrategy') == \Magento\ImportExport\Model\Import\ErrorProcessing\ProcessingErrorAggregatorInterface::VALIDATION_STRATEGY_SKIP_ERRORS and
+        if ($this->getPrivateProperty(
+            $errorAgregator,
+            'validationStrategy'
+        ) === $this->getValidationStrategySkipErrors() &&
             $errorAgregator->hasFatalExceptions()
         ) {
             $this->importModel->addLogComment($this->getErrorMessages());
@@ -43,7 +43,7 @@ class FileImporter extends \FireGento\FastSimpleImport\Model\Importer
 
     public function validateData($filePath)
     {
-        $source = $this->importAdapterFactory->create(array('filePath' => $filePath));
+        $source = $this->importAdapterFactory->create(['filePath' => $filePath]);
         $this->validationResult = $this->importModel->validateSource($source);
         $this->addToLogTrace($this->importModel);
 
@@ -56,14 +56,9 @@ class FileImporter extends \FireGento\FastSimpleImport\Model\Importer
         $this->_handleImportResult($this->importModel);
     }
 
-    /**
-     * @param $message
-     * @return string
-     */
-    private function getErrorMessage()
+    protected function getErrorMessage()
     {
         $message = '';
-
         $errors = $this->importModel->getErrorAggregator()->getAllErrors();
 
         foreach ($errors as $error) {
@@ -72,7 +67,7 @@ class FileImporter extends \FireGento\FastSimpleImport\Model\Importer
 
         return $message;
     }
-    
+
     protected function getPrivateProperty($object, $propertyName)
     {
         $reflection = new \ReflectionClass($object);
@@ -83,4 +78,13 @@ class FileImporter extends \FireGento\FastSimpleImport\Model\Importer
         return $property->getValue($object);
     }
 
+    protected function getValidationStrategyStopOnError():string
+    {
+        return \Magento\ImportExport\Model\Import\ErrorProcessing\ProcessingErrorAggregatorInterface::VALIDATION_STRATEGY_STOP_ON_ERROR;
+    }
+
+    protected function getValidationStrategySkipErrors():string
+    {
+        return \Magento\ImportExport\Model\Import\ErrorProcessing\ProcessingErrorAggregatorInterface::VALIDATION_STRATEGY_SKIP_ERRORS;
+    }
 }
