@@ -6,9 +6,9 @@ class DownloadFromUrl extends AbstractDownload implements \MageSuite\Importer\Co
 {
     protected \Magento\Framework\Filesystem\Io\File $fileIo;
 
-    public function __construct()
+    public function __construct(\Magento\Framework\Filesystem\Io\File $fileIo)
     {
-        $this->fileIo = new \Magento\Framework\Filesystem\Io\File();
+        $this->fileIo = $fileIo;
     }
 
     /**

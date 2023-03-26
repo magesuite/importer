@@ -5,6 +5,7 @@ namespace MageSuite\Importer\Test\Unit\Command\File;
 class CreateDirectoriesTest extends \PHPUnit\Framework\TestCase
 {
     protected ?\MageSuite\Importer\Command\File\CreateDirectories $command = null;
+    protected ?\Magento\Framework\Filesystem\Io\File $fileIo = null;
     protected $assetsDirectory;
     protected $assetsDirectoryRelativeToMainDirectory;
 
@@ -15,7 +16,8 @@ class CreateDirectoriesTest extends \PHPUnit\Framework\TestCase
 
     public function setUp(): void
     {
-        $this->command = new \MageSuite\Importer\Command\File\CreateDirectories();
+        $this->fileIo = new \Magento\Framework\Filesystem\Io\File();
+        $this->command = new \MageSuite\Importer\Command\File\CreateDirectories($this->fileIo);
         $this->assetsDirectory = realpath(__DIR__.'/../assets');
         $this->assetsDirectoryRelativeToMainDirectory = str_replace(BP . '/', '', $this->assetsDirectory);
     }
@@ -48,12 +50,12 @@ class CreateDirectoriesTest extends \PHPUnit\Framework\TestCase
     {
         foreach ($this->directoriesPaths as $directoryPath) {
             if (is_dir($this->assetsDirectory . $directoryPath)) {
-                rmdir($this->assetsDirectory . $directoryPath);
+                $this->fileIo->rmdir($this->assetsDirectory . $directoryPath, true);
             }
         }
 
         if (is_dir($this->assetsDirectory . '/var')) {
-            rmdir($this->assetsDirectory . '/var');
+            $this->fileIo->rmdir($this->assetsDirectory . '/var', true);
         }
     }
 }

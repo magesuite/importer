@@ -6,9 +6,9 @@ class Delete implements \MageSuite\Importer\Command\Command
 {
     protected \Magento\Framework\Filesystem\Io\File $fileIo;
 
-    public function __construct()
+    public function __construct(\Magento\Framework\Filesystem\Io\File $fileIo)
     {
-        $this->fileIo = new \Magento\Framework\Filesystem\Io\File();
+        $this->fileIo = $fileIo;
     }
 
     /**

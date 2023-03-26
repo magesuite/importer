@@ -4,10 +4,7 @@ namespace MageSuite\Importer\Command\File;
 
 abstract class AbstractDownload implements \MageSuite\Importer\Command\Command
 {
-    /**
-     * @var \Creativestyle\LFTP\File\Downloader
-     */
-    protected $fileDownloader;
+    protected \Creativestyle\LFTP\File\Downloader $fileDownloader;
 
     public function __construct(\Creativestyle\LFTP\File\Downloader $fileDownloader)
     {

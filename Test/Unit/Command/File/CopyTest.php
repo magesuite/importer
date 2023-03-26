@@ -13,8 +13,8 @@ class CopyTest extends \PHPUnit\Framework\TestCase
     {
         $this->assetsDirectory = realpath(__DIR__ . '/../assets');
         $this->assetsDirectoryRelativeToMainDirectory = str_replace(BP . '/', '', $this->assetsDirectory);
-        $this->command = new \MageSuite\Importer\Command\File\Copy();
         $this->fileIo = new \Magento\Framework\Filesystem\Io\File();
+        $this->command = new \MageSuite\Importer\Command\File\Copy($this->fileIo);
     }
 
     public function testItThrowsExceptionWhenSourcePathIsNotDefined()
