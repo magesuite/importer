@@ -38,6 +38,8 @@ class ImageManager
 
         foreach ($imagesFileSizes as $path => $fileSize) {
             $check = $this->wasImagePreviouslyUploaded($path, $fileSize);
+            $this->uploadedImages[$path] = $fileSize;
+
             switch ($check) {
                 case self::IMAGE_DIFFERENT_SIZE:
                     $imageMetadataToUpdate[$path] = $fileSize;
@@ -46,13 +48,12 @@ class ImageManager
                     $imageMetadataToInsert[] = ['size' => $fileSize, 'path' => $path];
                     break;
             }
-            $this->uploadedImages[$path] = $fileSize;
         }
 
         if (!empty($imageMetadataToInsert)) {
             $this->connection->insertMultiple(
                 $this->connection->getTableName('images_metadata'),
-                $imageMetadataInsert
+                $imageMetadataToInsert
             );
         }
 
@@ -79,7 +80,6 @@ class ImageManager
     public function addImageFileSizeForUpdate(string $path, $size):void
     {
         $this->imagesFileSizes[$path] = $size;
-        $this->uploadedImages[$path] = $size;
     }
 
     public function updateImageFileSizes():void
