@@ -109,6 +109,20 @@ class ProductTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * @magentoDataFixture MageSuite_Importer::Test/Integration/_files/url_rewrite.php
+     * @magentoDbIsolation disabled
+     */
+    public function testProductHasUrlConflictException()
+    {
+        $this->expectException(\Exception::class);
+        $this->expectErrorMessageMatches('(\d+)');
+
+        $productSku = 'simple';
+        $productData = $this->getProductImportArray($productSku, []);
+        $this->simpleProductImporter->importProductsFromData($productData);
+    }
+
+    /**
      * @magentoDataFixture Magento/Catalog/_files/products_upsell.php
      * @magentoDataFixture Magento/Catalog/_files/second_product_simple.php
      */
@@ -282,7 +296,6 @@ class ProductTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($this->isImageInGallery($product, '/m/a/magento_image_new.jpg'));
         $this->assertTrue($this->isImageInGallery($product, '/m/a/magento_image.jpg'));
     }
-
 
     /**
      * @magentoDataFixture Magento/ConfigurableProduct/_files/product_configurable.php

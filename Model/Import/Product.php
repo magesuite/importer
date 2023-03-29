@@ -6,26 +6,31 @@ class Product
 {
     const BEHAVIOR_SYNC = 'sync';
     const BEHAVIOR_UPDATE = 'update';
+    const IMPORT_FILE_TYPE = 'file';
+    const IMPORT_DATA_TYPE = 'productData';
+    const EXCLUDE_EXCEPTION_PROPERTIES = [
+        'trace'
+    ];
 
     /**
      * @var \FireGento\FastSimpleImport\Model\Adapters\NestedArrayAdapterFactory
      */
-    private $nestedArrayAdapterFactory;
+    protected $nestedArrayAdapterFactory;
 
     /**
      * @var \Magento\Framework\DB\Adapter\AdapterInterface
      */
-    private $connection;
+    protected $connection;
 
     /**
      * @var \MageSuite\Importer\Model\FileImporter
      */
-    private $fileImporter;
+    protected $fileImporter;
 
     /**
      * @var Adapter\FileAdapterFactory
      */
-    private $fileAdapterFactory;
+    protected $fileAdapterFactory;
 
     public function __construct(
         \FireGento\FastSimpleImport\Model\Importer $importer,
@@ -44,7 +49,8 @@ class Product
         $this->fileAdapterFactory = $fileAdapterFactory;
     }
 
-    public function setImportImagesFileDir($directory) {
+    public function setImportImagesFileDir($directory)
+    {
         $this->importer->setImportImagesFileDir($directory);
         $this->fileImporter->setImportImagesFileDir($directory);
     }
@@ -69,28 +75,73 @@ class Product
 
     public function importProductsFromData($productData, $behavior = self::BEHAVIOR_UPDATE)
     {
-        $this->importer->setImportAdapterFactory($this->nestedArrayAdapterFactory);
-        $this->importer->processImport($productData);
-
-        $this->executeBehaviorSpecificTasks($behavior);
+        $this->processImport($productData, self::IMPORT_DATA_TYPE, $behavior);
     }
 
-    public function importFromFile($filePath, $behavior = self::BEHAVIOR_UPDATE) {
-        $this->fileImporter->setImportAdapterFactory($this->fileAdapterFactory);
-        $returnValue = $this->fileImporter->processImport($filePath);
+    public function importFromFile($filePath, $behavior = self::BEHAVIOR_UPDATE)
+    {
+        return $this->processImport($filePath, self::IMPORT_FILE_TYPE, $behavior);
+    }
+
+    public function processImport($productData, $source, $behavior)
+    {
+        try {
+            if ($source === self::IMPORT_FILE_TYPE) {
+                $this->fileImporter->setImportAdapterFactory($this->fileAdapterFactory);
+                $returnValue = $this->fileImporter->processImport($productData);
+            } else if ($source === self::IMPORT_DATA_TYPE) {
+                $this->importer->setImportAdapterFactory($this->nestedArrayAdapterFactory);
+                $returnValue = $this->importer->processImport($productData);
+            }
+        } catch (\Exception $e) {
+            $this->processException($e);
+        }
 
         $this->executeBehaviorSpecificTasks($behavior);
 
         return $returnValue;
     }
 
-    public function getLogTrace() {
+    protected function processException($e)
+    {
+        $exceptionProperties = [];
+        $reflectionClass = new \ReflectionClass($e);
+        $classProperties = $reflectionClass->getProperties();
+
+        while ($this->connection->getTransactionLevel() > 0) {
+            $this->connection->rollBack();
+        }
+
+        foreach ($classProperties as $property) {
+            if (in_array($property->name, self::EXCLUDE_EXCEPTION_PROPERTIES)) {
+                continue;
+            }
+            $p = $reflectionClass->getProperty($property->name);
+            $p->setAccessible(true);
+            $propertyValue = $p->getValue($e);
+            if (!is_null($propertyValue)) {
+                $exceptionProperties[] = [
+                    'name' => $property->name,
+                    'value' => $p->getValue($e),
+                ];
+            }
+        }
+
+        $exceptionMessage = implode(' | ', array_map(function ($entry) {
+            return $entry['name'] . ': ' . (is_array($entry['value']) ? var_export($entry['value'], true) : $entry['value']);
+        }, $exceptionProperties));
+
+        throw new \Exception($exceptionMessage);
+    }
+
+    public function getLogTrace()
+    {
         return $this->fileImporter->getLogTrace();
     }
 
     private function executeBehaviorSpecificTasks($behavior)
     {
-        if($behavior == self::BEHAVIOR_SYNC) {
+        if ($behavior == self::BEHAVIOR_SYNC) {
             $importedSkus = \MageSuite\Importer\Model\ImportedProductsAggregator::getSkus();
             $notImportedSkus = $this->getNotImportedSkus($importedSkus);
 
@@ -98,7 +149,8 @@ class Product
         }
     }
 
-    private function getNotImportedSkus($importedSkus) {
+    private function getNotImportedSkus($importedSkus)
+    {
         $select = $this->connection->select()
             ->from(
                 ['cpe' => 'catalog_product_entity'],
@@ -111,7 +163,7 @@ class Product
 
     private function deleteProductsBySkus($skusToDelete)
     {
-        if(empty($skusToDelete)) {
+        if (empty($skusToDelete)) {
             return;
         }
 
