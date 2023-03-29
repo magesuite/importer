@@ -20,6 +20,13 @@
                     <ticket_id>KRG-2326</ticket_id>
                 </entry>
             </tag>
+            <tag version="2.6.8" date="2023-01-03">
+                <entry>
+                    <type>FIX</type>
+                    <overview>Added url conflict exception logging when importing products.</overview>
+                    <ticket_id>ROT-1157</ticket_id>
+                </entry>
+            </tag>
         </changelog>
     </module>
 </config>

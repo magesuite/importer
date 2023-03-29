@@ -16,24 +16,24 @@ class Runner
      */
     protected $logger;
 
-    private $configuration;
+    protected $configuration;
 
-    private $steps;
+    protected $steps;
 
     /**
      * @var \MageSuite\Importer\Command\CommandFactory
      */
-    private $commandFactory;
+    protected $commandFactory;
 
     /**
      * @var \MageSuite\Importer\Api\ImportRepositoryInterface
      */
-    private $importRepository;
+    protected $importRepository;
 
     /**
      * @var \Magento\Framework\Event\ManagerInterface
      */
-    private $eventManager;
+    protected $eventManager;
 
     /**
      *
@@ -45,8 +45,7 @@ class Runner
         \Magento\Framework\Event\ManagerInterface $eventManager,
         \MageSuite\Importer\Services\Notification\LockManager $lockManager,
         \Psr\Log\LoggerInterface $logger
-    )
-    {
+    ) {
         $this->commandFactory = $commandFactory;
         $this->importRepository = $importRepository;
         $this->eventManager = $eventManager;
@@ -71,7 +70,6 @@ class Runner
             }
         }
     }
-
 
     /**
      * @param $configuration
@@ -104,19 +102,18 @@ class Runner
 
         try {
             $output = $command->execute($stepConfiguration);
-
             $this->eventManager->dispatch('import_command_done', ['step' => $step, 'output' => $output]);
         } catch (\Exception $e) {
             $wasFinalAttempt = (bool)($attempt == $this->getAmountOfRetries($stepConfiguration));
-
             $this->eventManager->dispatch('import_command_error', ['attempt' => $attempt, 'step' => $step, 'error' => $e->getMessage(), 'was_final_attempt' => $wasFinalAttempt]);
         }
 
         $this->lockManager->unlock($step->getId());
     }
 
-    public function getAmountOfRetries($stepConfiguration) {
-        if(isset($stepConfiguration['amount_of_retries']) && is_numeric($stepConfiguration['amount_of_retries'])) {
+    public function getAmountOfRetries($stepConfiguration)
+    {
+        if (isset($stepConfiguration['amount_of_retries']) && is_numeric($stepConfiguration['amount_of_retries'])) {
             return $stepConfiguration['amount_of_retries'];
         }
 
