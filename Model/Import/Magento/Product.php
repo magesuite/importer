@@ -4,10 +4,10 @@ namespace MageSuite\Importer\Model\Import\Magento;
 
 class Product extends \Magento\CatalogImportExport\Model\Import\Product
 {
-    protected $validatedRows = [];
+    protected array $validatedRows = [];
     protected ?\MageSuite\Importer\Services\Import\ImageManager $imageManager = null;
     protected ?\MageSuite\ThumbnailRemove\Service\ThumbnailRemover $thumbnailRemover = null;
-    protected $productEntityLinkField;
+    protected string $productEntityLinkField;
 
     protected function getExistingImages($bunch)
     {
@@ -218,11 +218,10 @@ class Product extends \Magento\CatalogImportExport\Model\Import\Product
 
         $baseFilePath = strtolower(basename($fileName));
         $filePath = \Magento\Framework\File\Uploader::getDispretionPath($baseFilePath) . '/' . $baseFilePath;
+        $uploadedFilePath = $this->_getUploader()->getTmpDir() . '/' . $fileName;
 
         if (strpos($this->_getUploader()->getTmpDir(), BP) !== 0) {
-            $uploadedFilePath = BP . '/' . $this->_getUploader()->getTmpDir() . '/' . $fileName;
-        } else {
-            $uploadedFilePath = $this->_getUploader()->getTmpDir() . '/' . $fileName;
+            $uploadedFilePath = BP . '/' . $uploadedFilePath;
         }
 
         $fileSize = @filesize($uploadedFilePath);
@@ -233,7 +232,7 @@ class Product extends \Magento\CatalogImportExport\Model\Import\Product
         }
 
         $imageManager->addImageFileSizeForUpdate($filePath, $fileSize);
-        
+
         return parent::uploadMediaFiles($fileName, true);
     }
 
@@ -247,7 +246,7 @@ class Product extends \Magento\CatalogImportExport\Model\Import\Product
         return $this->imageManager;
     }
 
-    protected function getThumbnailRemover()
+    protected function getThumbnailRemover():\MageSuite\ThumbnailRemove\Service\ThumbnailRemover:
     {
         if ($this->thumbnailRemover == null) {
             $this->thumbnailRemover = \Magento\Framework\App\ObjectManager::getInstance()
@@ -257,7 +256,7 @@ class Product extends \Magento\CatalogImportExport\Model\Import\Product
         return $this->thumbnailRemover;
     }
 
-    protected function getProductEntityLinkField()
+    protected function getProductEntityLinkField():string
     {
         if (!$this->productEntityLinkField) {
             $this->productEntityLinkField = $this->getMetadataPool()
