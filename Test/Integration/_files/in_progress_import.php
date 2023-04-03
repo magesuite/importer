@@ -2,14 +2,14 @@
 
 $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
 
-$import = $objectManager->create('MageSuite\Importer\Model\Import');
+$import = $objectManager->create(\MageSuite\Importer\Model\Import::class);
 
 $import->setImportIdentifier('in_progress_import')
     ->setHash('in_progress')
     ->setStatus(\MageSuite\Importer\Model\ImportStep::STATUS_IN_PROGRESS)
     ->save();
 
-$importStep = $objectManager->create('MageSuite\Importer\Model\ImportStep');
+$importStep = $objectManager->create(\MageSuite\Importer\Model\ImportStep::class);
 
 $importStep->setIdentifier('import')
     ->setImportId($import->getId())

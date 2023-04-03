@@ -4,7 +4,8 @@ namespace MageSuite\Importer\Services;
 
 class CsvValidator
 {
-    public function isValid($contents) {
+    public function isValid($contents)
+    {
         return true;
     }
 }

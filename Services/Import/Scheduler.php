@@ -4,23 +4,10 @@ namespace MageSuite\Importer\Services\Import;
 
 class Scheduler
 {
-    /**
-     * @var \MageSuite\Importer\Model\ImportFactory
-     */
-    protected $importFactory;
-    /**
-     * @var \MageSuite\Importer\Model\ImportStepFactory
-     */
-    protected $importStepFactory;
-    /**
-     * @var \MageSuite\Importer\Api\ImportRepositoryInterface
-     */
-    protected $importRepository;
-
-    /**
-     * @var \MageSuite\Importer\Command\Magento\DisableIndexers
-     */
-    protected $disableIndexers;
+    protected \MageSuite\Importer\Model\ImportFactory $importFactory;
+    protected \MageSuite\Importer\Model\ImportStepFactory $importStepFactory;
+    protected \MageSuite\Importer\Api\ImportRepositoryInterface $importRepository;
+    protected \MageSuite\Importer\Command\Magento\DisableIndexers $disableIndexers;
 
     public function __construct(
         \MageSuite\Importer\Model\ImportFactory $importFactory,
@@ -34,22 +21,20 @@ class Scheduler
         $this->disableIndexers = $disableIndexers;
     }
 
-    public function scheduleImport($importIdentifier) {
+    public function scheduleImport($importIdentifier)
+    {
         $configuration = $this->importRepository->getConfigurationById($importIdentifier);
 
         /** @var \MageSuite\Importer\Model\Import $import */
         $import = $this->importFactory->create();
-
         $import->setHash(uniqid());
         $import->setImportIdentifier($importIdentifier);
         $import->save();
 
-
-        foreach($configuration['steps'] as $identifier => $step) {
+        foreach ($configuration['steps'] as $identifier => $step) {
             $importStep = $this->importStepFactory->create();
             $importStep->setImportId($import->getId());
             $importStep->setIdentifier($identifier);
-
             $importStep->save();
         }
 

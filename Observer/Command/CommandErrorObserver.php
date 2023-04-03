@@ -2,9 +2,9 @@
 
 namespace MageSuite\Importer\Observer\Command;
 
-class CommandErrorObserver extends AbstractCommandResultObserver  implements \Magento\Framework\Event\ObserverInterface
+class CommandErrorObserver extends AbstractCommandResultObserver implements \Magento\Framework\Event\ObserverInterface
 {
-    const ERROR_MESSAGE = "%s\n Error at attempt #%s on %s: \n %s";
+    public const ERROR_MESSAGE = "%s\n Error at attempt #%s on %s: \n %s";
 
     /**
      * @var \Magento\Framework\Stdlib\DateTime\DateTime
@@ -15,8 +15,7 @@ class CommandErrorObserver extends AbstractCommandResultObserver  implements \Ma
         \MageSuite\Importer\Api\ImportRepositoryInterface $importRepository,
         \MageSuite\Importer\Model\ImportStatus $importStatus,
         \Magento\Framework\Stdlib\DateTime\DateTime $dateTime
-    )
-    {
+    ) {
         parent::__construct($importRepository, $importStatus);
 
         $this->dateTime = $dateTime;
@@ -48,7 +47,7 @@ class CommandErrorObserver extends AbstractCommandResultObserver  implements \Ma
 
         $step->setError($newError);
 
-        if($wasFinalAttempt) {
+        if ($wasFinalAttempt) {
             $step->setStatus(\MageSuite\Importer\Model\ImportStep::STATUS_ERROR);
             $step->setFinishedAt(time());
         } else {

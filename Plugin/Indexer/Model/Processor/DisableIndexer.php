@@ -1,20 +1,17 @@
 <?php
 
-namespace MageSuite\Importer\Plugin;
+namespace MageSuite\Importer\Plugin\Indexer\Model\Processor;
 
 class DisableIndexer
 {
-    const INDEXER_ENABLED_XML_SECTION = 'indexer/indexing';
+    public const INDEXER_ENABLED_XML_SECTION = 'indexer/indexing';
+    public const INDEXER_ENABLED_XML_PATH = 'indexer/indexing/enabled';
 
-    const INDEXER_ENABLED_XML_PATH = 'indexer/indexing/enabled';
+    protected \Magento\Config\Model\ResourceModel\Config\Data\CollectionFactory $configCollectionFactory;
 
-    /**
-     * @var \Magento\Config\Model\ResourceModel\Config\Data\CollectionFactory
-     */
-    protected $configCollectionFactory;
-
-    public function __construct(\Magento\Config\Model\ResourceModel\Config\Data\CollectionFactory $configCollectionFactory)
-    {
+    public function __construct(
+        \Magento\Config\Model\ResourceModel\Config\Data\CollectionFactory $configCollectionFactory
+    ) {
         $this->configCollectionFactory = $configCollectionFactory;
     }
 
@@ -26,7 +23,7 @@ class DisableIndexer
 
     public function aroundUpdateMview(\Magento\Indexer\Model\Processor $subject, callable $proceed)
     {
-        if(!$this->isIndexerEnabled()) {
+        if (!$this->isIndexerEnabled()) {
             throw new \Exception("Indexers are disabled");
         }
 
@@ -35,7 +32,7 @@ class DisableIndexer
 
     public function aroundReindexAllInvalid(\Magento\Indexer\Model\Processor $subject, callable $proceed)
     {
-        if(!$this->isIndexerEnabled()) {
+        if (!$this->isIndexerEnabled()) {
             throw new \Exception("Indexers are disabled");
         }
 

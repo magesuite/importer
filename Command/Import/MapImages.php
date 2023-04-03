@@ -4,10 +4,7 @@ namespace MageSuite\Importer\Command\Import;
 
 class MapImages implements \MageSuite\Importer\Command\Command
 {
-    /**
-     * @var \MageSuite\Importer\Services\Import\ImageMapper
-     */
-    private $imageMapper;
+    protected \MageSuite\Importer\Services\Import\ImageMapper $imageMapper;
 
     public function __construct(\MageSuite\Importer\Services\Import\ImageMapper $imageMapper)
     {
@@ -22,7 +19,6 @@ class MapImages implements \MageSuite\Importer\Command\Command
     {
         $sourceFileHandle = fopen(BP . DIRECTORY_SEPARATOR . $configuration['source_path'], "r");
         $targetFileHandle = fopen(BP . DIRECTORY_SEPARATOR . $configuration['target_path'], "w");
-
         $imagesDirectoryPath = BP . DIRECTORY_SEPARATOR . $configuration['images_directory_path'];
 
         if ($sourceFileHandle) {

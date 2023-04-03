@@ -2,7 +2,7 @@
 
 namespace MageSuite\Importer\Test\Unit\Command\File;
 
-class DownloadNewestTest extends DownloaderTest
+class DownloadNewestTest extends AbstractDownloader
 {
     public function setUp(): void
     {
@@ -14,7 +14,8 @@ class DownloadNewestTest extends DownloaderTest
         $this->command = new \MageSuite\Importer\Command\File\DownloadNewest($this->fileDownloaderDouble);
     }
 
-    public function testItDownloadsNewestFile() {
+    public function testItDownloadsNewestFile()
+    {
         $this->fileDownloaderDouble
             ->expects($this->atLeastOnce())
             ->method('downloadNewest')

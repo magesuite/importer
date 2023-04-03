@@ -5,17 +5,14 @@ namespace MageSuite\Importer\Test\Unit\Services\File;
 class WriterTest extends \PHPUnit\Framework\TestCase
 {
     protected $filePath;
-
-    /**
-     * @var \MageSuite\Importer\Services\File\Writer
-     */
-    protected $writer;
+    protected ?\MageSuite\Importer\Services\File\Writer $writer = null;
+    protected ?\Magento\Framework\Filesystem\Io\File $fileIo = null;
 
     public function setUp(): void
     {
         $this->filePath = __DIR__ . '/../assets/write_test';
-
         $this->writer = new \MageSuite\Importer\Services\File\Writer($this->filePath);
+        $this->fileIo = new \Magento\Framework\Filesystem\Io\File();
     }
 
     public function testItWritesToFileProperly()
@@ -28,11 +25,10 @@ class WriterTest extends \PHPUnit\Framework\TestCase
 
     public function tearDown(): void
     {
-        if(!file_exists($this->filePath)) {
+        if (!$this->fileIo->fileExists($this->filePath)) {
             return;
         }
 
-        unlink($this->filePath);
+        $this->fileIo->rm($this->filePath);
     }
-
 }

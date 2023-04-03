@@ -2,8 +2,6 @@
 
 namespace MageSuite\Importer\Config\Backend\Validation;
 
-use Magento\Framework\Exception\LocalizedException;
-
 class EmailAddresses extends \Magento\Framework\App\Config\Value
 {
 
@@ -12,9 +10,11 @@ class EmailAddresses extends \Magento\Framework\App\Config\Value
         $value = $this->getValue();
         $addresses = array_map('trim', explode("\n", $value));
 
-        foreach($addresses AS $address){
+        foreach ($addresses as $address) {
             if (!\Zend_Validate::is($address, 'EmailAddress')) {
-                throw new LocalizedException(__('Please correct the email address: "%1".', $address));
+                throw new \Magento\Framework\Exception\LocalizedException(
+                    __('Please correct the email address: "%1".', $address)
+                );
             }
         }
 

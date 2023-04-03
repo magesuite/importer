@@ -47,13 +47,11 @@ class AdvancedPricing extends \Magento\AdvancedPricingImportExport\Model\Import\
                     ];
                 }
             }
-            if (\Magento\ImportExport\Model\Import::BEHAVIOR_REPLACE == $behavior) {
-                if ($listSku) {
-                    $this->processCountNewPrices($tierPrices);
-                    if ($this->deleteProductTierPrices(array_unique($listSku), self::TABLE_TIER_PRICE)) {
-                        $this->saveProductPrices($tierPrices, self::TABLE_TIER_PRICE);
-                        $this->setUpdatedAt($listSku);
-                    }
+            if (\Magento\ImportExport\Model\Import::BEHAVIOR_REPLACE == $behavior && $listSku) {
+                $this->processCountNewPrices($tierPrices);
+                if ($this->deleteProductTierPrices(array_unique($listSku), self::TABLE_TIER_PRICE)) {
+                    $this->saveProductPrices($tierPrices, self::TABLE_TIER_PRICE);
+                    $this->setUpdatedAt($listSku);
                 }
             } elseif (\Magento\ImportExport\Model\Import::BEHAVIOR_APPEND == $behavior) {
                 $this->processCountExistingPrices($tierPrices, self::TABLE_TIER_PRICE)

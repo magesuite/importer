@@ -5,34 +5,34 @@ namespace MageSuite\Importer\Services\Import;
 class ProductRelationsManager
 {
     /**
-     * @var \Magento\Framework\EntityManager\MetadataPool
+     * @var
      */
-    protected $metadataPool;
+    protected \Magento\Framework\EntityManager\MetadataPool $metadataPool;
 
     /**
-     * @var \Magento\Framework\App\ResourceConnection
+     * @var
      */
-    protected $resourceConnection;
+    protected \Magento\Framework\App\ResourceConnection $resourceConnection;
 
     /**
-     * @var \Magento\Framework\DB\Adapter\AdapterInterface
+     * @var
      */
-    protected $connection;
+    protected \Magento\Framework\DB\Adapter\AdapterInterface $connection;
 
     /**
-     * @var \Magento\Catalog\Model\ResourceModel\Product
+     * @var
      */
-    protected $productResourceModel;
+    protected \Magento\Catalog\Model\ResourceModel\Product $productResourceModel;
 
     /**
-     * @var \Magento\Catalog\Model\ResourceModel\Product\Link
+     * @var
      */
-    protected $productLinkResourceModel;
+    protected \Magento\Catalog\Model\ResourceModel\Product\Link $productLinkResourceModel;
 
     /**
-     * @var \MageSuite\Importer\Services\Import\MediaGalleryImagesManager
+     * @var
      */
-    protected $imagesManager;
+    protected \MageSuite\Importer\Services\Import\MediaGalleryImagesManager $imagesManager;
 
     protected $productEntityLinkField;
 
@@ -56,7 +56,8 @@ class ProductRelationsManager
      * @param $products
      * @param $skuProcessor
      */
-    public function deleteRelations($products, $skuProcessor) {
+    public function deleteRelations($products, $skuProcessor)
+    {
         $productIdsToDeleteCategories = [];
         $productIdsToDeleteRelatedProducts = [];
         $productIdsToDeleteCrosssellProducts = [];
@@ -68,7 +69,7 @@ class ProductRelationsManager
         $imagesChanges = [];
 
         foreach ($products as $product) {
-            if(empty($skuProcessor->getNewSku($product['sku']))) {
+            if (empty($skuProcessor->getNewSku($product['sku']))) {
                 continue;
             }
 
@@ -95,18 +96,12 @@ class ProductRelationsManager
                 $productIdsToDeleteUpSellProducts[] = $productId;
             }
 
-            if(array_key_exists('configurable_variations', $product)) {
+            if (array_key_exists('configurable_variations', $product)) {
                 $productIdsToDeleteConfigurableVariations[] = $productId;
             }
 
             if ($this->productHasImagesChanges($product)) {
-                $imagesChanges[$productId] = [];
-
-                foreach ($this->imagesManager->getImportArrayKeysContainingImagesChanges() as $key) {
-                    if (array_key_exists($key, $product)) {
-                        $imagesChanges[$productId][$key] = ($product[$key] === null) ? '' : $product[$key];
-                    }
-                }
+                $imagesChanges[$productId] = $this->getProductImagesChanges($product);
             }
         }
 
@@ -114,12 +109,18 @@ class ProductRelationsManager
 
         $this->deleteCategoriesRelations($productIdsToDeleteCategories);
 
-        $this->deleteLinks($productIdsToDeleteRelatedProducts,
-            \Magento\Catalog\Model\Product\Link::LINK_TYPE_RELATED);
-        $this->deleteLinks($productIdsToDeleteCrosssellProducts,
-            \Magento\Catalog\Model\Product\Link::LINK_TYPE_CROSSSELL);
-        $this->deleteLinks($productIdsToDeleteUpSellProducts,
-            \Magento\Catalog\Model\Product\Link::LINK_TYPE_UPSELL);
+        $this->deleteLinks(
+            $productIdsToDeleteRelatedProducts,
+            \Magento\Catalog\Model\Product\Link::LINK_TYPE_RELATED
+        );
+        $this->deleteLinks(
+            $productIdsToDeleteCrosssellProducts,
+            \Magento\Catalog\Model\Product\Link::LINK_TYPE_CROSSSELL
+        );
+        $this->deleteLinks(
+            $productIdsToDeleteUpSellProducts,
+            \Magento\Catalog\Model\Product\Link::LINK_TYPE_UPSELL
+        );
 
         $this->deleteConfigurableProductRelations($productIdsToDeleteConfigurableVariations);
     }
@@ -153,12 +154,25 @@ class ProductRelationsManager
         return false;
     }
 
+    protected function getProductImagesChanges(array $product):array
+    {
+        $imagesChanges = [];
+
+        foreach ($this->imagesManager->getImportArrayKeysContainingImagesChanges() as $key) {
+            if (array_key_exists($key, $product)) {
+                $imagesChanges[$key] = $product[$key] ?? '';
+            }
+        }
+
+        return $imagesChanges;
+    }
+
     /**
      * @param $productIds
      */
     protected function deleteConfigurableProductRelations($productIds)
     {
-        if(empty($productIds)) {
+        if (empty($productIds)) {
             return;
         }
 
@@ -178,7 +192,7 @@ class ProductRelationsManager
      */
     protected function deleteCategoriesRelations($productIds)
     {
-        if(empty($productIds)) {
+        if (empty($productIds)) {
             return;
         }
 

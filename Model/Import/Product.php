@@ -4,33 +4,18 @@ namespace MageSuite\Importer\Model\Import;
 
 class Product
 {
-    const BEHAVIOR_SYNC = 'sync';
-    const BEHAVIOR_UPDATE = 'update';
+    public const BEHAVIOR_SYNC = 'sync';
+    public const BEHAVIOR_UPDATE = 'update';
     const IMPORT_FILE_TYPE = 'file';
     const IMPORT_DATA_TYPE = 'productData';
     const EXCLUDE_EXCEPTION_PROPERTIES = [
         'trace'
     ];
 
-    /**
-     * @var \FireGento\FastSimpleImport\Model\Adapters\NestedArrayAdapterFactory
-     */
-    protected $nestedArrayAdapterFactory;
-
-    /**
-     * @var \Magento\Framework\DB\Adapter\AdapterInterface
-     */
-    protected $connection;
-
-    /**
-     * @var \MageSuite\Importer\Model\FileImporter
-     */
-    protected $fileImporter;
-
-    /**
-     * @var Adapter\FileAdapterFactory
-     */
-    protected $fileAdapterFactory;
+    protected \FireGento\FastSimpleImport\Model\Adapters\NestedArrayAdapterFactory $nestedArrayAdapterFactory;
+    protected \Magento\Framework\DB\Adapter\AdapterInterface $connection;
+    protected \MageSuite\Importer\Model\FileImporter $fileImporter;
+    protected \MageSuite\Importer\Model\Import\Adapter\FileAdapterFactory $fileAdapterFactory;
 
     public function __construct(
         \FireGento\FastSimpleImport\Model\Importer $importer,
@@ -39,12 +24,9 @@ class Product
         \MageSuite\Importer\Model\Import\Adapter\FileAdapterFactory $fileAdapterFactory,
         \Magento\Framework\App\ResourceConnection $resourceConnection
     ) {
-
         $this->connection = $resourceConnection->getConnection();
-
         $this->importer = $importer;
         $this->nestedArrayAdapterFactory = $nestedArrayAdapterFactory;
-
         $this->fileImporter = $fileImporter;
         $this->fileAdapterFactory = $fileAdapterFactory;
     }
@@ -139,7 +121,7 @@ class Product
         return $this->fileImporter->getLogTrace();
     }
 
-    private function executeBehaviorSpecificTasks($behavior)
+    protected function executeBehaviorSpecificTasks($behavior)
     {
         if ($behavior == self::BEHAVIOR_SYNC) {
             $importedSkus = \MageSuite\Importer\Model\ImportedProductsAggregator::getSkus();
@@ -149,7 +131,7 @@ class Product
         }
     }
 
-    private function getNotImportedSkus($importedSkus)
+    protected function getNotImportedSkus($importedSkus)
     {
         $select = $this->connection->select()
             ->from(
@@ -161,7 +143,7 @@ class Product
         return $this->connection->fetchAll($select);
     }
 
-    private function deleteProductsBySkus($skusToDelete)
+    protected function deleteProductsBySkus($skusToDelete)
     {
         if (empty($skusToDelete)) {
             return;
@@ -169,7 +151,6 @@ class Product
 
         $this->importer->setBehavior(\Magento\ImportExport\Model\Import::BEHAVIOR_DELETE);
         $this->importer->setEntityCode('catalog_product');
-
         $this->importer->processImport($skusToDelete);
     }
 }

@@ -29,7 +29,8 @@ class DisableIndexersTest extends \PHPUnit\Framework\TestCase
     /**
      * @magentoAdminConfigFixture indexer/indexing/enabled 0
      **/
-    public function testItDisablesIndexers() {
+    public function testItDisablesIndexers()
+    {
         $this->command->execute([]);
 
         $this->assertEquals('0', $this->scopeConfig->getValue('indexer/indexing/enabled'));

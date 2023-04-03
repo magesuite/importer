@@ -26,7 +26,8 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider getImportIdentifiers
      */
-    public function testItSchedulesImportWithProperIdentifier($methodName, $importIdentifier) {
+    public function testItSchedulesImportWithProperIdentifier($methodName, $importIdentifier)
+    {
         $this->schedulerMock->expects($this->once())
             ->method('scheduleImport')
             ->with($importIdentifier);
@@ -34,7 +35,8 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $this->cronScheduler->{$methodName}();
     }
 
-    public static function getImportIdentifiers() {
+    public static function getImportIdentifiers()
+    {
         return [
             ['scheduleProductsImport', 'products_import'],
             ['scheduleStock', 'stock'],

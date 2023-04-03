@@ -6,44 +6,34 @@ class Dispatcher
 {
     const STEP_COMMAND = BP . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'magento importer:import:run_step %s %s > /dev/null &';
 
-    /**
-     * @var \MageSuite\Importer\Api\ImportRepositoryInterface
-     */
-    private $importRepository;
-
-    private $configuration;
-
-    private $steps;
-    /**
-     * @var \Magento\Framework\App\Shell
-     */
-    private $shell;
+    protected \MageSuite\Importer\Api\ImportRepositoryInterface $importRepository;
+    protected $configuration;
+    protected $steps;
+    protected \Magento\Framework\App\Shell $shell;
 
     public function __construct(
         \MageSuite\Importer\Api\ImportRepositoryInterface $importRepository,
         \Magento\Framework\App\Shell $shell
-    )
-    {
+    ) {
         $this->importRepository = $importRepository;
         $this->shell = $shell;
     }
 
-    public function dispatch() {
+    public function dispatch()
+    {
         $import = $this->importRepository->getActiveImport();
 
-        if($import->getId() == 0) {
+        if ($import->getId() == 0) {
             return;
         }
 
         $importId = $import->getId();
-
         $this->configuration = $this->importRepository->getConfigurationById($import->getImportIdentifier());
         $this->steps = $this->importRepository->getStepsByImportId($importId);
-
         $stepsToRun = [];
 
-        foreach($this->steps as $step) {
-            if($this->canRunStep($step)) {
+        foreach ($this->steps as $step) {
+            if ($this->canRunStep($step)) {
                 $stepsToRun[] = $step;
             }
         }
@@ -51,15 +41,15 @@ class Dispatcher
         $this->runSteps($stepsToRun, $importId);
     }
 
-    private function canRunStep($step)
+    protected function canRunStep($step)
     {
-        if($step->getStatus() != \MageSuite\Importer\Model\ImportStep::STATUS_PENDING) {
+        if ($step->getStatus() != \MageSuite\Importer\Model\ImportStep::STATUS_PENDING) {
             return false;
         }
 
         $stepDefinition = $this->configuration['steps'][$step->getIdentifier()];
 
-        if(!isset($stepDefinition['depends']) OR empty($stepDefinition['depends'])) {
+        if (!isset($stepDefinition['depends']) || empty($stepDefinition['depends'])) {
             return true;
         }
 
@@ -68,11 +58,11 @@ class Dispatcher
         return $this->allDependendStepsHaveDoneStatus($dependendStepsIdentifiers);
     }
 
-    private function allDependendStepsHaveDoneStatus($dependendStepsIdentifiers)
+    protected function allDependendStepsHaveDoneStatus($dependendStepsIdentifiers)
     {
-        foreach($dependendStepsIdentifiers as $dependencyIdentifier) {
-            foreach($this->steps as $step) {
-                if($step->getIdentifier() == $dependencyIdentifier AND $step->getStatus() != \MageSuite\Importer\Model\ImportStep::STATUS_DONE) {
+        foreach ($dependendStepsIdentifiers as $dependencyIdentifier) {
+            foreach ($this->steps as $step) {
+                if ($step->getIdentifier() == $dependencyIdentifier && $step->getStatus() != \MageSuite\Importer\Model\ImportStep::STATUS_DONE) {
                     return false;
                 }
             }
@@ -81,13 +71,13 @@ class Dispatcher
         return true;
     }
 
-    private function runSteps($stepsToRun, $importId)
+    protected function runSteps($stepsToRun, $importId)
     {
-        if(empty($stepsToRun)) {
+        if (empty($stepsToRun)) {
             return;
         }
 
-        foreach($stepsToRun as $step) {
+        foreach ($stepsToRun as $step) {
             $this->shell->execute(self::STEP_COMMAND, [$importId, $step->getIdentifier()]);
         }
     }

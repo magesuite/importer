@@ -18,7 +18,7 @@ class Writer
      */
     public function writeLine($line)
     {
-        if($this->lineNumber > 1) {
+        if ($this->lineNumber > 1) {
             $line = PHP_EOL . $line;
         }
 
@@ -27,7 +27,8 @@ class Writer
         $this->lineNumber++;
     }
 
-    public function __destruct() {
+    public function __destruct()
+    {
         fclose($this->fileHandler);
     }
 }

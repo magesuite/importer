@@ -13,8 +13,7 @@ class LogServerStatusBeforeCommandExecution extends AbstractCommandResultObserve
         \MageSuite\Importer\Api\ImportRepositoryInterface $importRepository,
         \MageSuite\Importer\Model\ImportStatus $importStatus,
         \MageSuite\ServerStatusLogger\Model\GenerateCurrentStatus $generateServerStatus
-    )
-    {
+    ) {
         parent::__construct($importRepository, $importStatus);
 
         $this->generateServerStatus = $generateServerStatus;
@@ -32,7 +31,7 @@ class LogServerStatusBeforeCommandExecution extends AbstractCommandResultObserve
 
         $currentLog = json_decode($step->getServerStatusLog(), true);
 
-        if(!is_array($currentLog)) {
+        if (!is_array($currentLog)) {
             $currentLog = [];
         }
 

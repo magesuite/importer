@@ -6,8 +6,6 @@ class Sync extends AbstractDownload implements \MageSuite\Importer\Command\Comma
 {
     /**
      * Syncs folders
-     * @param $configuration
-     * @return mixed
      */
     public function execute($configuration)
     {

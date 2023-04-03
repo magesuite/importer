@@ -4,41 +4,16 @@ namespace MageSuite\Importer\Services\Command;
 
 class Runner
 {
-    const DEFAULT_AMOUNT_OF_RETRIES = 5;
+    public const DEFAULT_AMOUNT_OF_RETRIES = 5;
 
-    /**
-     * @var \MageSuite\Importer\Services\Notification\LockManager
-     */
-    protected $lockManager;
-
-    /**
-     * @var \Psr\Log\LoggerInterface
-     */
-    protected $logger;
-
+    protected \MageSuite\Importer\Services\Notification\LockManager $lockManager;
+    protected \Psr\Log\LoggerInterface $logger;
     protected $configuration;
-
     protected $steps;
+    protected \MageSuite\Importer\Command\CommandFactory $commandFactory;
+    protected \MageSuite\Importer\Api\ImportRepositoryInterface $importRepository;
+    protected \Magento\Framework\Event\ManagerInterface $eventManager;
 
-    /**
-     * @var \MageSuite\Importer\Command\CommandFactory
-     */
-    protected $commandFactory;
-
-    /**
-     * @var \MageSuite\Importer\Api\ImportRepositoryInterface
-     */
-    protected $importRepository;
-
-    /**
-     * @var \Magento\Framework\Event\ManagerInterface
-     */
-    protected $eventManager;
-
-    /**
-     *
-     * @param \MageSuite\Importer\Command\CommandFactory $commandFactory
-     */
     public function __construct(
         \MageSuite\Importer\Command\CommandFactory $commandFactory,
         \MageSuite\Importer\Api\ImportRepositoryInterface $importRepository,
@@ -71,11 +46,7 @@ class Runner
         }
     }
 
-    /**
-     * @param $configuration
-     * @param $step
-     */
-    private function runStepCommand($step)
+    protected function runStepCommand($step)
     {
         if (!$this->lockManager->canAcquireLock($step->getId())) {
             $this->logger->debug(sprintf('Import step %s tried to execute concurrently.', $step->getIdentifier()));
@@ -83,13 +54,9 @@ class Runner
         }
 
         $this->lockManager->lock($step->getId());
-
         $stepDefinition = $this->configuration['steps'][$step->getIdentifier()];
-
         $commandType = $stepDefinition['type'];
-
         $stepConfiguration = isset($stepDefinition['configuration']) ? $stepDefinition['configuration'] : [];
-
         $command = $this->commandFactory->create($commandType);
 
         if ($command == null) {
@@ -97,7 +64,6 @@ class Runner
         }
 
         $attempt = $step->getRetriesCount()+1;
-
         $this->eventManager->dispatch('import_command_executes', ['step' => $step, 'attempt' => $attempt]);
 
         try {

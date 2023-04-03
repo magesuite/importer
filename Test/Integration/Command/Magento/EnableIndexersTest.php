@@ -29,7 +29,8 @@ class EnableIndexersTest extends \PHPUnit\Framework\TestCase
     /**
      * @magentoAdminConfigFixture indexer/indexing/enabled 1
      **/
-    public function testItEnablesIndexers() {
+    public function testItEnablesIndexers()
+    {
         $this->command->execute([]);
 
         $this->assertEquals('1', $this->scopeConfig->getValue('indexer/indexing/enabled'));

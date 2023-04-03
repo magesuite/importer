@@ -210,7 +210,7 @@ class TransactionCommitAndRollbackTest extends \PHPUnit\Framework\TestCase
         }
     }
 
-    private function isImageInGallery(\Magento\Catalog\Model\Product $product, $imagePath)
+    protected function isImageInGallery(\Magento\Catalog\Model\Product $product, $imagePath)
     {
         $mediaGallery = $product->getData('media_gallery');
 

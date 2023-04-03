@@ -2,7 +2,7 @@
 
 namespace MageSuite\Importer\Test\Unit\Services\Command;
 
-class CommandDispatcherTest extends \PHPUnit\Framework\TestCase
+class DispatcherTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \MageSuite\Importer\Services\Command\Dispatcher
@@ -36,7 +36,8 @@ class CommandDispatcherTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testItFinishesWorkWhenThereIsNoActiveImport() {
+    public function testItFinishesWorkWhenThereIsNoActiveImport()
+    {
         $this->importRepositoryStub
             ->method('getActiveImport')
             ->willReturn($this->createImportObject(0));
@@ -44,7 +45,8 @@ class CommandDispatcherTest extends \PHPUnit\Framework\TestCase
         $this->assertNull($this->commandDispatcher->dispatch());
     }
 
-    public function testItDispatchesAllCommandsThatArePossibleToRun() {
+    public function testItDispatchesAllCommandsThatArePossibleToRun()
+    {
         $importId = 1;
 
         $importSteps = $this->createImportSteps([
@@ -78,23 +80,26 @@ class CommandDispatcherTest extends \PHPUnit\Framework\TestCase
         $this->commandDispatcher->dispatch();
     }
 
-    private function createImportObject($importId) {
+    protected function createImportObject($importId)
+    {
         return \Magento\TestFramework\ObjectManager::getInstance()
             ->create(\MageSuite\Importer\Model\Import::class)
             ->setId($importId);
     }
 
-    private function createImportStepObject($status, $identifier) {
+    protected function createImportStepObject($status, $identifier)
+    {
         return \Magento\TestFramework\ObjectManager::getInstance()
             ->create(\MageSuite\Importer\Model\ImportStep::class)
             ->setStatus($status)
             ->setIdentifier($identifier);
     }
 
-    private function createImportSteps($steps) {
+    protected function createImportSteps($steps)
+    {
         $importSteps = [];
 
-        foreach($steps as $step) {
+        foreach ($steps as $step) {
             $importSteps[] = $this->createImportStepObject($step[0], $step[1]);
         }
 

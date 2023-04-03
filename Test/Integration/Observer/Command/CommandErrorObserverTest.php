@@ -79,7 +79,8 @@ class CommandErrorObserverTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(\MageSuite\Importer\Model\ImportStep::STATUS_ERROR, $import->getStatus());
     }
 
-    protected function getStep() {
+    protected function getStep()
+    {
         $import = $this->getImport();
 
         $importStep = $this->objectManager->get(\MageSuite\Importer\Model\ImportStep::class);
@@ -88,7 +89,8 @@ class CommandErrorObserverTest extends \PHPUnit\Framework\TestCase
         return $importStep;
     }
 
-    protected function getImport() {
+    protected function getImport()
+    {
         $import = $this->objectManager->create(\MageSuite\Importer\Model\Import::class);
         $import->load('in_progress', 'hash');
 

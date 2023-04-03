@@ -4,10 +4,8 @@ namespace MageSuite\Importer\Test\Unit\Command\File;
 
 class DeleteTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var \MageSuite\Importer\Command\File\CreateDirectories
-     */
-    protected $command;
+    protected ?\MageSuite\Importer\Command\File\Delete $command = null;
+    protected ?\Magento\Framework\Filesystem\Io\File $fileIo = null;
     protected $assetsDirectory;
     protected $assetsDirectoryRelativeToMainDirectory;
 
@@ -15,8 +13,8 @@ class DeleteTest extends \PHPUnit\Framework\TestCase
     {
         $this->assetsDirectory = realpath(__DIR__ . '/../assets');
         $this->assetsDirectoryRelativeToMainDirectory = str_replace(BP . '/', '', $this->assetsDirectory);
-
-        $this->command = new \MageSuite\Importer\Command\File\Delete();
+        $this->fileIo = new \Magento\Framework\Filesystem\Io\File();
+        $this->command = new \MageSuite\Importer\Command\File\Delete($this->fileIo);
     }
 
     public function testItThrowsExceptionWhenPathIsNotDefined()
@@ -28,21 +26,24 @@ class DeleteTest extends \PHPUnit\Framework\TestCase
 
     public function testItDeletesFile()
     {
-        copy($this->assetsDirectory.'/existing_file', $this->assetsDirectory.'/file_to_be_deleted');
+        $this->fileIo->cp(
+            $this->assetsDirectory.'/existing_file',
+            $this->assetsDirectory.'/file_to_be_deleted'
+        );
 
-        $this->assertTrue(file_exists($this->assetsDirectory.'/file_to_be_deleted'));
+        $this->assertTrue($this->fileIo->fileExists($this->assetsDirectory.'/file_to_be_deleted'));
 
         $this->command->execute([
             'path' => $this->assetsDirectoryRelativeToMainDirectory . '/file_to_be_deleted'
         ]);
 
-        $this->assertFalse(file_exists($this->assetsDirectory.'/file_to_be_deleted'));
+        $this->assertFalse($this->fileIo->fileExists($this->assetsDirectory.'/file_to_be_deleted'));
     }
 
     public function tearDown(): void
     {
-        if(file_exists($this->assetsDirectory.'/file_to_be_deleted')) {
-            unlink($this->assetsDirectory.'/file_to_be_deleted');
+        if ($this->fileIo->fileExists($this->assetsDirectory.'/file_to_be_deleted')) {
+            $this->fileIo->rm($this->assetsDirectory.'/file_to_be_deleted');
         }
     }
 }

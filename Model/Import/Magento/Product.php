@@ -4,19 +4,10 @@ namespace MageSuite\Importer\Model\Import\Magento;
 
 class Product extends \Magento\CatalogImportExport\Model\Import\Product
 {
-    protected $validatedRows = [];
-
-    /**
-     * @var \MageSuite\Importer\Services\Import\ImageManager
-     */
-    protected $imageManager = null;
-
-    /**
-     * @var \MageSuite\ThumbnailRemove\Service\ThumbnailRemover
-     */
-    protected $thumbnailRemover = null;
-
-    protected $productEntityLinkField;
+    protected array $validatedRows = [];
+    protected ?\MageSuite\Importer\Services\Import\ImageManager $imageManager = null;
+    protected ?\MageSuite\ThumbnailRemove\Service\ThumbnailRemover $thumbnailRemover = null;
+    protected string $productEntityLinkField;
 
     protected function getExistingImages($bunch)
     {
@@ -140,6 +131,7 @@ class Product extends \Magento\CatalogImportExport\Model\Import\Product
                 } else {
                     $row['qty'] = 0;
                 }
+
                 if (!isset($stockData[$rowData[self::COL_SKU]])) {
                     $stockData[$rowData[self::COL_SKU]] = $row;
                 }
@@ -181,16 +173,21 @@ class Product extends \Magento\CatalogImportExport\Model\Import\Product
         return $this->_dataSourceModel;
     }
 
-    private function getStockItems($productIdsToGetStockItems)
+    protected function getStockItems($productIdsToGetStockItems)
     {
         $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
 
         /** @var \Magento\CatalogInventory\Api\StockItemCriteriaInterface $criteria */
-        $criteria = $objectManager->create('Magento\CatalogInventory\Api\StockItemCriteriaInterfaceFactory')->create();
+        $criteria = $objectManager
+            ->create(\Magento\CatalogInventory\Api\StockItemCriteriaInterfaceFactory::class)
+            ->create();
 
         $criteria->setProductsFilter([$productIdsToGetStockItems]);
-        $collection = $objectManager->get('Magento\CatalogInventory\Api\StockItemRepositoryInterface')->getList($criteria);
-        $stockItemFactory = $objectManager->get('\Magento\CatalogInventory\Api\Data\StockItemInterfaceFactory');
+        $collection = $objectManager
+            ->get(\Magento\CatalogInventory\Api\StockItemRepositoryInterface::class)
+            ->getList($criteria);
+        $stockItemFactory = $objectManager
+            ->get(\Magento\CatalogInventory\Api\Data\StockItemInterfaceFactory::class);
 
         $stockItems = [];
 
@@ -211,9 +208,8 @@ class Product extends \Magento\CatalogImportExport\Model\Import\Product
         return $stockItems;
     }
 
-    protected function uploadMediaFiles($fileName, $renameFileOff = false)
+    protected function uploadMediaFiles($fileName, $renameFileOff = false):string
     {
-        /** @var \MageSuite\Importer\Services\Import\ImageManager $imageManager */
         $imageManager = $this->getImageManager();
 
         if (preg_match('/^\bhttps?:\/\//i', $fileName)) {
@@ -222,33 +218,25 @@ class Product extends \Magento\CatalogImportExport\Model\Import\Product
 
         $baseFilePath = strtolower(basename($fileName));
         $filePath = \Magento\Framework\File\Uploader::getDispretionPath($baseFilePath) . '/' . $baseFilePath;
+        $uploadedFilePath = $this->_getUploader()->getTmpDir() . '/' . $fileName;
 
-        if(strpos($this->_getUploader()->getTmpDir(), BP) !== 0){
-            $uploadedFilePath = BP . '/' . $this->_getUploader()->getTmpDir() . '/' . $fileName;
-        }else{
-            $uploadedFilePath = $this->_getUploader()->getTmpDir() . '/' . $fileName;
+        if (strpos($this->_getUploader()->getTmpDir(), BP) !== 0) {
+            $uploadedFilePath = BP . '/' . $uploadedFilePath;
         }
 
         $fileSize = @filesize($uploadedFilePath);
-
         $imagePreviouslyUploaded = $imageManager->wasImagePreviouslyUploaded($filePath, $fileSize);
-        $imageManager->addImageFileSizeForUpdate($filePath, $fileSize);
 
-        if ($imagePreviouslyUploaded == \MageSuite\Importer\Services\Import\ImageManager::IMAGE_IDENTICAL) {
+        if ($imagePreviouslyUploaded === \MageSuite\Importer\Services\Import\ImageManager::IMAGE_IDENTICAL) {
             return $filePath;
         }
 
-        $return = parent::uploadMediaFiles($fileName, true);
+        $imageManager->addImageFileSizeForUpdate($filePath, $fileSize);
 
-        $imageManager->insertImageMetadata($filePath, $fileSize);
-
-        return $return;
+        return parent::uploadMediaFiles($fileName, true);
     }
 
-    /**
-     * @return mixed
-     */
-    protected function getImageManager()
+    protected function getImageManager():\MageSuite\Importer\Services\Import\ImageManager
     {
         if ($this->imageManager == null) {
             $this->imageManager = \Magento\Framework\App\ObjectManager::getInstance()
@@ -258,10 +246,7 @@ class Product extends \Magento\CatalogImportExport\Model\Import\Product
         return $this->imageManager;
     }
 
-    /**
-     * @return mixed
-     */
-    protected function getThumbnailRemover()
+    protected function getThumbnailRemover():\MageSuite\ThumbnailRemove\Service\ThumbnailRemover:
     {
         if ($this->thumbnailRemover == null) {
             $this->thumbnailRemover = \Magento\Framework\App\ObjectManager::getInstance()
@@ -271,7 +256,7 @@ class Product extends \Magento\CatalogImportExport\Model\Import\Product
         return $this->thumbnailRemover;
     }
 
-    protected function getProductEntityLinkField()
+    protected function getProductEntityLinkField():string
     {
         if (!$this->productEntityLinkField) {
             $this->productEntityLinkField = $this->getMetadataPool()

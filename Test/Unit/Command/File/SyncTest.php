@@ -2,7 +2,7 @@
 
 namespace MageSuite\Importer\Test\Unit\Command\File;
 
-class SyncTest extends DownloaderTest
+class SyncTest extends AbstractDownloader
 {
     public function setUp(): void
     {
@@ -14,7 +14,8 @@ class SyncTest extends DownloaderTest
         $this->command = new \MageSuite\Importer\Command\File\Sync($this->fileDownloaderDouble);
     }
 
-    public function testItSyncsFolders() {
+    public function testItSyncsFolders()
+    {
         $this->fileDownloaderDouble
             ->expects($this->atLeastOnce())
             ->method('sync')

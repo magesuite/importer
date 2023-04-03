@@ -4,29 +4,15 @@ namespace MageSuite\Importer\Block\Adminhtml\Import\Grid\Column\Renderer;
 
 class Status extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\AbstractRenderer
 {
-    /**
-     * @var \Magento\Framework\Registry
-     */
-    protected $registry;
+    protected \Magento\Framework\Registry $registry;
+    protected \MageSuite\Importer\Model\ImportStatus $importStatus;
 
-    /**
-     * @var \MageSuite\Importer\Model\ImportStatus
-     */
-    private $importStatus;
-
-    /**
-     * Status constructor.
-     * @param \Magento\Framework\Registry $registry
-     * @param \Magento\Backend\Block\Context $context
-     * @param array $data
-     */
     public function __construct(
         \Magento\Framework\Registry $registry,
         \Magento\Backend\Block\Context $context,
         \MageSuite\Importer\Model\ImportStatus $importStatus,
         array $data = []
-    )
-    {
+    ) {
         parent::__construct($context, $data);
 
         $this->registry = $registry;
@@ -44,7 +30,8 @@ class Status extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Abstract
         return $this->getStatus($row['status']);
     }
 
-    protected function getStatus($status) {
+    protected function getStatus($status)
+    {
         $statuses = [
             \MageSuite\Importer\Model\ImportStep::STATUS_ERROR => '<span class="grid-severity-critical">ERROR</span>',
             \MageSuite\Importer\Model\ImportStep::STATUS_DONE => '<span class="grid-severity-notice">DONE</span>',
@@ -54,6 +41,4 @@ class Status extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Abstract
 
         return $statuses[$status];
     }
-
-
 }

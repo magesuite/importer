@@ -11,7 +11,8 @@ class ImportRunningFlag
         return $this->isRunning;
     }
 
-    public function setIsRunning(bool $value) {
+    public function setIsRunning(bool $value)
+    {
         $this->isRunning = $value;
     }
 }

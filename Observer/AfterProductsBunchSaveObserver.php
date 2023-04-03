@@ -12,11 +12,11 @@ class AfterProductsBunchSaveObserver implements \Magento\Framework\Event\Observe
     {
         $products = $observer->getData('bunch');
 
-        if(empty($products)) {
+        if (empty($products)) {
             return;
         }
 
-        foreach($products as $product) {
+        foreach ($products as $product) {
             \MageSuite\Importer\Model\ImportedProductsAggregator::addSku($product['sku']);
         }
     }

@@ -4,15 +4,8 @@ namespace MageSuite\Importer\Console\Command;
 
 class DetectFailedImports extends \Symfony\Component\Console\Command\Command
 {
-    /**
-     * @var \MageSuite\Importer\Services\Import\FailedImportDetectorFactory
-     */
-    protected $failedImportDetectorFactory;
-
-    /**
-     * @var \Magento\Framework\App\State
-     */
-    protected $state;
+    protected \MageSuite\Importer\Services\Import\FailedImportDetectorFactory $failedImportDetectorFactory;
+    protected \Magento\Framework\App\State $state;
 
     public function __construct(
         \Magento\Framework\App\State $state,
@@ -38,11 +31,12 @@ class DetectFailedImports extends \Symfony\Component\Console\Command\Command
         try {
             $this->state->setAreaCode(\Magento\Framework\App\Area::AREA_FRONTEND);
         } catch (\Exception $e) {
-
+            return \Magento\Framework\Console\Cli::RETURN_FAILURE;
         }
 
         $failedImportDetector = $this->failedImportDetectorFactory->create();
-
         $failedImportDetector->markFailedImports();
+
+        return \Magento\Framework\Console\Cli::RETURN_SUCCESS;
     }
 }

@@ -5,11 +5,7 @@ namespace MageSuite\Importer\Command\Import;
 class Import implements \MageSuite\Importer\Command\Command
 {
     protected $magentoBuiltInBehaviors = ['replace'];
-
-    /**
-     * @var \MageSuite\Importer\Model\Import\Product
-     */
-    private $importer;
+    protected \MageSuite\Importer\Model\Import\Product $importer;
 
     public function __construct(\MageSuite\Importer\Model\Import\Product $importer)
     {
@@ -24,7 +20,7 @@ class Import implements \MageSuite\Importer\Command\Command
     {
         $sourcePath = BP . DIRECTORY_SEPARATOR . $configuration['source_path'];
 
-        if(isset($configuration['images_directory_path'])) {
+        if (isset($configuration['images_directory_path'])) {
             $imagesDirectoryPath = $configuration['images_directory_path'];
             $this->importer->setImportImagesFileDir($imagesDirectoryPath);
         }
@@ -33,7 +29,7 @@ class Import implements \MageSuite\Importer\Command\Command
         $behavior = $this->getBehavior($configuration);
         $entityCode = $this->getEntityCode($configuration);
 
-        if(in_array($behavior, $this->magentoBuiltInBehaviors)) {
+        if (in_array($behavior, $this->magentoBuiltInBehaviors)) {
             $this->importer->setBehavior($behavior);
         }
 
@@ -49,7 +45,7 @@ class Import implements \MageSuite\Importer\Command\Command
      */
     protected function getValidationStrategy($configuration)
     {
-        if (isset($configuration['validation_strategy']) AND $configuration['validation_strategy'] == 'skip') {
+        if (isset($configuration['validation_strategy']) && $configuration['validation_strategy'] == 'skip') {
             return \Magento\ImportExport\Model\Import\ErrorProcessing\ProcessingErrorAggregatorInterface::VALIDATION_STRATEGY_SKIP_ERRORS;
         }
 
@@ -62,18 +58,18 @@ class Import implements \MageSuite\Importer\Command\Command
      */
     protected function getBehavior($configuration)
     {
-        if (isset($configuration['behavior']) AND $configuration['behavior'] == 'sync') {
+        if (isset($configuration['behavior']) && $configuration['behavior'] == 'sync') {
             return \MageSuite\Importer\Model\Import\Product::BEHAVIOR_SYNC;
-        }
-        else if (isset($configuration['behavior']) AND $configuration['behavior'] == 'replace') {
+        } elseif (isset($configuration['behavior']) && $configuration['behavior'] == 'replace') {
             return \Magento\ImportExport\Model\Import::BEHAVIOR_REPLACE;
         }
 
         return \MageSuite\Importer\Model\Import\Product::BEHAVIOR_UPDATE;
     }
 
-    protected function getEntityCode($configuration) {
-        if (isset($configuration['entity_code']) and !empty($configuration['entity_code'])) {
+    protected function getEntityCode($configuration)
+    {
+        if (isset($configuration['entity_code']) && !empty($configuration['entity_code'])) {
             return $configuration['entity_code'];
         }
 

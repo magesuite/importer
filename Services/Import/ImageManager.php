@@ -4,27 +4,20 @@ namespace MageSuite\Importer\Services\Import;
 
 class ImageManager
 {
-    const IMAGE_IDENTICAL = 1;
-    const IMAGE_DOESNT_EXIST = 2;
-    const IMAGE_DIFFERENT_SIZE = 3;
-    /**
-     * @var \Magento\Framework\DB\Adapter\AdapterInterface
-     */
-    protected $connection;
+    public const IMAGE_IDENTICAL = 1;
+    public const IMAGE_DOESNT_EXIST = 2;
+    public const IMAGE_DIFFERENT_SIZE = 3;
 
-    protected $uploadedImages = null;
-
-    /**
-     * @var array
-     */
-    protected $imagesFileSizes = [];
+    protected \Magento\Framework\DB\Adapter\AdapterInterface $connection;
+    protected ?array $uploadedImages = null;
+    protected array $imagesFileSizes = [];
 
     public function __construct(\Magento\Framework\App\ResourceConnection $resourceConnection)
     {
         $this->connection = $resourceConnection->getConnection();
     }
 
-    public function wasImagePreviouslyUploaded($path, $size)
+    public function wasImagePreviouslyUploaded(string $path, $size):int
     {
         if (!isset($this->getUploadedImages()[$path])) {
             return self::IMAGE_DOESNT_EXIST;
@@ -37,47 +30,102 @@ class ImageManager
         return self::IMAGE_IDENTICAL;
     }
 
-    public function insertImageMetadata($path, $size)
+    public function updateMultipleImageMetadata(?array $imagesFileSizes = null):void
     {
-        $this->connection->insertOnDuplicate('images_metadata', ['path' => $path, 'size' => $size], ['size']);
+        $imagesFileSizes = $imagesFileSizes ?? $this->imagesFileSizes;
+        $imageMetadataToInsert = [];
+        $imageMetadataToUpdate = [];
 
-        $this->uploadedImages[$path] = $size;
-    }
+        foreach ($imagesFileSizes as $path => $fileSize) {
+            $check = $this->wasImagePreviouslyUploaded($path, $fileSize);
+            $this->uploadedImages[$path] = $fileSize;
 
-    public function addImageFileSizeForUpdate($path, $size) {
-        $this->imagesFileSizes[$path] = $size;
-    }
-
-    public function updateImageFileSizes() {
-        if(empty($this->imagesFileSizes)) {
-            return;
+            switch ($check) {
+                case self::IMAGE_DIFFERENT_SIZE:
+                    $imageMetadataToUpdate[$path] = $fileSize;
+                    break;
+                case self::IMAGE_DOESNT_EXIST:
+                    $imageMetadataToInsert[] = ['size' => $fileSize, 'path' => $path];
+                    break;
+            }
         }
 
-        $table = $this->connection->getTableName('catalog_product_entity_media_gallery');
-
-        foreach($this->imagesFileSizes as $path => $fileSize) {
-            $this->connection->update(
-                $table,
-                ['file_size' => $fileSize],
-                ['value = ?' => $path]
+        if (!empty($imageMetadataToInsert)) {
+            $this->connection->insertMultiple(
+                $this->connection->getTableName('images_metadata'),
+                $imageMetadataToInsert
             );
         }
 
-        $this->imagesFileSizes = [];
+        if (!empty($imageMetadataToUpdate)) {
+            $conditions = [];
+            foreach ($imageMetadataToUpdate as $path => $fileSize) {
+                $case = $this->connection->quoteInto('?', $path);
+                $result = $this->connection->quoteInto('?', $fileSize);
+                $conditions[$case] = $result;
+            }
+
+            $value = $this->connection->getCaseSql('path', $conditions, 'size');
+            $where = ['path IN (?)' => array_keys($this->imagesFileSizes)];
+            $this->connection->update($this->connection->getTableName('images_metadata'), ['size' => $value], $where);
+        }
     }
 
-    public function resetUploadedImagesData() {
-        $this->uploadedImages = null;
-    }
-
-    protected function getUploadedImages()
+    public function insertImageMetadata($path, $size):void
     {
-        if ($this->uploadedImages == null) {
-            $select = $this->connection->select()->from($this->connection->getTableName('images_metadata'), ['path', 'size']);
+        $this->connection->insertOnDuplicate('images_metadata', ['path' => $path, 'size' => $size], ['size']);
+        $this->uploadedImages[$path] = $size;
+    }
 
-            $this->uploadedImages = $this->connection->fetchPairs($select);
+    public function addImageFileSizeForUpdate(string $path, $size):void
+    {
+        $this->imagesFileSizes[$path] = $size;
+    }
+
+    public function updateImageFileSizes():void
+    {
+        if (empty($this->imagesFileSizes)) {
+            return;
+        }
+
+        $conditions = [];
+        foreach ($this->imagesFileSizes as $path => $fileSize) {
+            $case = $this->connection->quoteInto('?', $path);
+            $result = $this->connection->quoteInto('?', $fileSize);
+            $conditions[$case] = $result;
+        }
+
+        $value = $this->connection->getCaseSql('value', $conditions, 'file_size');
+        $this->connection->update(
+            $this->connection->getTableName('catalog_product_entity_media_gallery'),
+            ['file_size' => $value],
+            ['value IN (?)' => array_keys($this->imagesFileSizes)]
+        );
+
+        $this->updateMultipleImageMetadata();
+        $this->resetImagesFileSizesData();
+    }
+
+    protected function getUploadedImages():array
+    {
+        if ($this->uploadedImages === null) {
+            $select = $this->connection->select()->from(
+                $this->connection->getTableName('images_metadata'),
+                ['path', 'size']
+            );
+            $this->uploadedImages = $this->connection->fetchPairs($select) ?? [];
         }
 
         return $this->uploadedImages;
+    }
+
+    public function resetUploadedImagesData():void
+    {
+        $this->uploadedImages = null;
+    }
+
+    public function resetImagesFileSizesData():void
+    {
+        $this->imagesFileSizes = [];
     }
 }

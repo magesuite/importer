@@ -20,4 +20,3 @@ $mediaDirectory = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->g
 
 $mediaDirectory->delete($config->getBaseMediaPath());
 $mediaDirectory->delete($config->getBaseTmpMediaPath());
-

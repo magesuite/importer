@@ -3,7 +3,6 @@
 
 namespace MageSuite\Importer\Model\ResourceModel;
 
-
 class Import extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 {
     protected function _construct()

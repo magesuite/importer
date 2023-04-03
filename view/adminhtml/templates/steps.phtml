@@ -28,18 +28,18 @@
 
     <tbody>
 
-    <?php foreach ($steps as $step): ?>
+    <?php foreach ($steps as $step) : ?>
     <tr data-role="row" title="#" class="even _clickable">
         <td class="a-left indexer-title col-indexer_title  ">
             <?= $step->getIdentifier() ?>
         </td>
         <td class="a-left indexer-title col-indexer_title  ">
-            <?php if(!empty($step->getStartedAt())): ?>
+            <?php if (!empty($step->getStartedAt())) : ?>
                 <?= $block->getDate($step->getStartedAt()) ?>
             <?php endif; ?>
         </td>
         <td class="a-left indexer-title col-indexer_title  ">
-            <?php if(!empty($step->getFinishedAt())): ?>
+            <?php if (!empty($step->getFinishedAt())) : ?>
                 <?= $block->getDate($step->getFinishedAt()) ?>
             <?php endif; ?>
         </td>

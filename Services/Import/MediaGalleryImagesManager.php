@@ -46,12 +46,13 @@ class MediaGalleryImagesManager
         $this->attributesIdsToCodes = $this->getAttributesIdsToCodes();
     }
 
-
-    public function getImportArrayKeysContainingImagesChanges() {
+    public function getImportArrayKeysContainingImagesChanges()
+    {
         return $this->keysContainingImageChanges;
     }
 
-    public function deleteImages($imagesChanges) {
+    public function deleteImages($imagesChanges)
+    {
         $productsIds = array_keys($imagesChanges);
 
         $allProductImages = $this->getAllProductImages($productsIds);
@@ -154,12 +155,13 @@ class MediaGalleryImagesManager
      * @param $specialImages
      * @return array
      */
-    public function getExistingAdditionalImages($allProductImages, $specialImages)  {
+    public function getExistingAdditionalImages($allProductImages, $specialImages)
+    {
         $additionalImages = [];
 
         foreach ($allProductImages as $productId => $images) {
             foreach ($images as $imagePath => $imageId) {
-                if (!isset($specialImages[$productId]) or !in_array($imagePath, $specialImages[$productId])) {
+                if (!isset($specialImages[$productId]) || !in_array($imagePath, $specialImages[$productId])) {
                     $additionalImages[$productId][$imagePath] = $imageId;
                 }
             }
@@ -180,19 +182,20 @@ class MediaGalleryImagesManager
         $imagesChanges,
         $existingSpecialImages,
         $productImagesIds
-    )
-    {
+    ) {
         $possibleImagesToDelete = [];
 
         foreach ($existingSpecialImages as $productId => $images) {
             foreach ($images as $specialImageType => $imagePath) {
-                if (isset($imagesChanges[$productId][$specialImageType])) {
-                    if(isset($productImagesIds[$productId][$imagePath])) {
-                        $possibleImagesToDelete[$productId][$imagePath] = $productImagesIds[$productId][$imagePath];
-                    }
-
-                    $existingSpecialImages[$productId][$specialImageType] = $imagesChanges[$productId][$specialImageType];
+                if (!isset($imagesChanges[$productId][$specialImageType])) {
+                    continue;
                 }
+
+                if (isset($productImagesIds[$productId][$imagePath])) {
+                    $possibleImagesToDelete[$productId][$imagePath] = $productImagesIds[$productId][$imagePath];
+                }
+
+                $existingSpecialImages[$productId][$specialImageType] = $imagesChanges[$productId][$specialImageType];
             }
         }
 
@@ -214,7 +217,7 @@ class MediaGalleryImagesManager
         $imagesIdsToDelete = [];
 
         foreach ($imagesChanges as $productId => $imagesTypes) {
-            if (isset($existingAdditionalImages[$productId]) and array_key_exists('additional_images', $imagesChanges[$productId])) {
+            if (isset($existingAdditionalImages[$productId]) && array_key_exists('additional_images', $imagesChanges[$productId])) {
                 $imagesIdsToDelete = array_merge_recursive($imagesIdsToDelete, array_values($existingAdditionalImages[$productId]));
             }
         }
@@ -247,7 +250,6 @@ class MediaGalleryImagesManager
                 ]
             );
         }
-
     }
 
     protected function deleteImagesFromDatabase($imagesIds)

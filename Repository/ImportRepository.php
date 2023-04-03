@@ -4,35 +4,12 @@ namespace MageSuite\Importer\Repository;
 
 class ImportRepository implements \MageSuite\Importer\Api\ImportRepositoryInterface
 {
-    /**
-     * @var \MageSuite\Importer\Model\ResourceModel\Import
-     */
-    private $importResourceModel;
-
-    /**
-     * @var \MageSuite\Importer\Model\ImportFactory
-     */
-    private $importFactory;
-
-    /**
-     * @var \MageSuite\Importer\Model\Collections\ImportStepFactory
-     */
-    private $importStepCollectionFactory;
-
-    /**
-     * @var \MageSuite\Importer\Model\ResourceModel\ImportStep
-     */
-    private $importStepResourceModel;
-
-    /**
-     * @var \MageSuite\Importer\Model\Collections\ImportFactory
-     */
-    private $importCollectionFactory;
-
-    /**
-     * @var ImportConfiguration
-     */
-    private $importConfiguration;
+    protected \MageSuite\Importer\Model\ResourceModel\Import $importResourceModel;
+    protected \MageSuite\Importer\Model\ImportFactory $importFactory;
+    protected \MageSuite\Importer\Model\Collections\ImportStepFactory $importStepCollectionFactory;
+    protected \MageSuite\Importer\Model\ResourceModel\ImportStep $importStepResourceModel;
+    protected \MageSuite\Importer\Model\Collections\ImportFactory $importCollectionFactory;
+    protected ImportConfiguration $importConfiguration;
 
     public function __construct(
         \MageSuite\Importer\Model\ResourceModel\Import $importResourceModel,
@@ -41,8 +18,7 @@ class ImportRepository implements \MageSuite\Importer\Api\ImportRepositoryInterf
         \MageSuite\Importer\Model\Collections\ImportStepFactory $importStepCollectionFactory,
         \MageSuite\Importer\Model\Collections\ImportFactory $importCollectionFactory,
         ImportConfiguration $importConfiguration
-    )
-    {
+    ) {
         $this->importResourceModel = $importResourceModel;
         $this->importFactory = $importFactory;
         $this->importStepCollectionFactory = $importStepCollectionFactory;

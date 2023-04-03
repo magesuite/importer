@@ -6,6 +6,6 @@ class Import extends \Magento\Framework\Model\AbstractModel
 {
     protected function _construct()
     {
-        $this->_init('MageSuite\Importer\Model\ResourceModel\Import');
+        $this->_init(\MageSuite\Importer\Model\ResourceModel\Import::class);
     }
 }
