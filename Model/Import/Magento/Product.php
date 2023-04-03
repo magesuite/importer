@@ -4,7 +4,7 @@ namespace MageSuite\Importer\Model\Import\Magento;
 
 class Product extends \Magento\CatalogImportExport\Model\Import\Product
 {
-    protected array $validatedRows = [];
+    protected $validatedRows = [];
     protected ?\MageSuite\Importer\Services\Import\ImageManager $imageManager = null;
     protected ?\MageSuite\ThumbnailRemove\Service\ThumbnailRemover $thumbnailRemover = null;
     protected string $productEntityLinkField;
