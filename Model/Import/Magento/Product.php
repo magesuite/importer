@@ -246,7 +246,7 @@ class Product extends \Magento\CatalogImportExport\Model\Import\Product
         return $this->imageManager;
     }
 
-    protected function getThumbnailRemover():\MageSuite\ThumbnailRemove\Service\ThumbnailRemover:
+    protected function getThumbnailRemover():\MageSuite\ThumbnailRemove\Service\ThumbnailRemover
     {
         if ($this->thumbnailRemover == null) {
             $this->thumbnailRemover = \Magento\Framework\App\ObjectManager::getInstance()
