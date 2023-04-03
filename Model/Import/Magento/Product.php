@@ -7,7 +7,7 @@ class Product extends \Magento\CatalogImportExport\Model\Import\Product
     protected $validatedRows = [];
     protected ?\MageSuite\Importer\Services\Import\ImageManager $imageManager = null;
     protected ?\MageSuite\ThumbnailRemove\Service\ThumbnailRemover $thumbnailRemover = null;
-    protected string $productEntityLinkField;
+    protected string $productEntityLinkField = '';
 
     protected function getExistingImages($bunch)
     {
