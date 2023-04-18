@@ -27,6 +27,13 @@
                     <ticket_id>ROT-1157</ticket_id>
                 </entry>
             </tag>
+            <tag version="2.6.9" date="2023-01-03">
+                <entry>
+                    <type>REFACTOR</type>
+                    <overview>Move checki isIndexerEnabled method to configuration helper.</overview>
+                    <ticket_id>ROT-1270</ticket_id>
+                </entry>
+            </tag>
         </changelog>
     </module>
 </config>
