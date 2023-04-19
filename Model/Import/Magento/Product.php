@@ -168,7 +168,7 @@ class Product extends \Magento\CatalogImportExport\Model\Import\Product
         return $value;
     }
 
-    public function getDataSourceModel()
+    public function getDataSourceModel(): \Magento\ImportExport\Model\ResourceModel\Import\Data
     {
         return $this->_dataSourceModel;
     }
