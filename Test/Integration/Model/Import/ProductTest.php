@@ -33,6 +33,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * @magentoDataFixture MageSuite_Importer::Test/Integration/_files/products_cleanup.php
      * @magentoDataFixture Magento/Catalog/_files/second_product_simple.php
      * @magentoDataFixture Magento/Catalog/_files/product_simple.php
      */
@@ -94,20 +95,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @magentoDataFixture MageSuite_Importer::Test/Integration/_files/url_rewrite.php
-     * @magentoDbIsolation disabled
-     */
-    public function testProductHasUrlConflictException()
-    {
-        $this->expectException(\Exception::class);
-        $this->expectErrorMessageMatches('(\d+)');
-
-        $productSku = 'simple';
-        $productData = $this->getProductImportArray($productSku, []);
-        $this->simpleProductImporter->importProductsFromData($productData);
-    }
-
-    /**
+     * @magentoDataFixture MageSuite_Importer::Test/Integration/_files/products_cleanup.php
      * @magentoDataFixture Magento/Catalog/_files/products_upsell.php
      * @magentoDataFixture Magento/Catalog/_files/second_product_simple.php
      */
@@ -347,6 +335,20 @@ class ProductTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($this->isImageInGallery($product, '/n/e/new_product_small.jpeg'));
         $this->assertTrue($this->isImageInGallery($product, '/n/e/new_product_additional_0.jpeg'));
         $this->assertTrue($this->isImageInGallery($product, '/n/e/new_product_additional_1.jpeg'));
+    }
+
+    /**
+     * @magentoDataFixture MageSuite_Importer::Test/Integration/_files/url_rewrite.php
+     * @magentoDbIsolation disabled
+     */
+    public function testProductHasUrlConflictException()
+    {
+        $this->expectException(\Exception::class);
+        $this->expectErrorMessageMatches('(\d+)');
+
+        $productSku = 'simple';
+        $productData = $this->getProductImportArray($productSku, []);
+        $this->simpleProductImporter->importProductsFromData($productData);
     }
 
     /**
