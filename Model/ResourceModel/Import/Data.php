@@ -16,11 +16,12 @@ class Data extends \Magento\ImportExport\Model\ResourceModel\Import\Data
 
     public function deleteLastBunch()
     {
-        $bunchId = $this->_iterator->getLastBunchId();
+        $iterator = $this->getIterator();
+        $bunchId = $iterator->getLastBunchId();
         $deleteCondition = $this->getConnection()->quoteInto('id = ?', $bunchId);
         $this->getConnection()->delete($this->getMainTable(), $deleteCondition);
 
-        $this->_iterator->previous();
-        $this->_iterator->recalculateRowsCount();
+        $iterator->previous();
+        $iterator->recalculateRowsCount();
     }
 }

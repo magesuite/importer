@@ -133,6 +133,7 @@ class TransactionCommitAndRollbackTest extends \PHPUnit\Framework\TestCase
      * @magentoAppIsolation enabled
      * @magentoDbIsolation disabled
      * @magentoConfigFixture current_store general/file/bunch_size 1
+     * @magentoDataFixture MageSuite_Importer::Test/Integration/_files/import_cleanup.php
      * @magentoDataFixture Magento/Catalog/_files/multiple_products.php
      * @magentoDataFixture multipleConfigurableProductsFixture
      * @magentoDataFixture dropdownAttributeFixture
