@@ -62,6 +62,8 @@ class RunStep extends \Symfony\Component\Console\Command\Command
 
         $commandRunnerFactory = $this->commandRunnerFactory->create();
         $commandRunnerFactory->runCommand($importId, $importIdentifier, $stepIdentifier);
+
+        return 0;
     }
 
     protected function getImportIdentifier($importId)
