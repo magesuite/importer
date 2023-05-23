@@ -63,7 +63,7 @@ class RunStep extends \Symfony\Component\Console\Command\Command
         $commandRunnerFactory = $this->commandRunnerFactory->create();
         $commandRunnerFactory->runCommand($importId, $importIdentifier, $stepIdentifier);
 
-        return 0;
+        return \Magento\Framework\Console\Cli::RETURN_SUCCESS;
     }
 
     protected function getImportIdentifier($importId)

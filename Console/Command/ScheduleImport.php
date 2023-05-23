@@ -48,5 +48,7 @@ class ScheduleImport extends \Symfony\Component\Console\Command\Command
 
         $scheduler = $this->schedulerFactory->create();
         $scheduler->scheduleImport($importIdentifier);
+
+        return \Magento\Framework\Console\Cli::RETURN_SUCCESS;
     }
 }
