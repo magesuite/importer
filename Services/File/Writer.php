@@ -5,6 +5,7 @@ namespace MageSuite\Importer\Services\File;
 class Writer
 {
     protected $fileHandler;
+    protected $lineNumber;
 
     public function __construct($filePath)
     {
