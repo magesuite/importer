@@ -12,6 +12,7 @@ class Product
         'trace'
     ];
 
+    protected \FireGento\FastSimpleImport\Model\Importer $importer;
     protected \FireGento\FastSimpleImport\Model\Adapters\NestedArrayAdapterFactory $nestedArrayAdapterFactory;
     protected \Magento\Framework\DB\Adapter\AdapterInterface $connection;
     protected \MageSuite\Importer\Model\FileImporter $fileImporter;
