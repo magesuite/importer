@@ -81,13 +81,13 @@ class DisableIndexerTest extends \PHPUnit\Framework\TestCase
     public static function disableIndexerFixture()
     {
         $configWriter = self::getConfigWriter();
-        $configWriter->save(\MageSuite\Importer\Plugin\DisableIndexer::INDEXER_ENABLED_XML_PATH, '0');
+        $configWriter->save(\MageSuite\Importer\Helper\Config::INDEXER_ENABLED_XML_PATH, '0');
     }
 
     public static function disableIndexerFixtureRollback()
     {
         $configWriter = self::getConfigWriter();
-        $configWriter->save(\MageSuite\Importer\Plugin\DisableIndexer::INDEXER_ENABLED_XML_PATH, '1');
+        $configWriter->save(\MageSuite\Importer\Helper\Config::INDEXER_ENABLED_XML_PATH, '1');
     }
 
     protected static function getConfigWriter()
