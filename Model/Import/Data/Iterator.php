@@ -4,33 +4,18 @@ namespace MageSuite\Importer\Model\Import\Data;
 
 class Iterator implements \Iterator
 {
-    /**
-     * @var \Magento\Framework\DB\Adapter\AdapterInterface
-     */
-    protected $connection;
-
-    /**
-     * @var \Magento\Framework\App\Resource
-     */
-    private $resource;
-
-    protected $rowsCount;
-
-    protected $index = 0;
-
-    protected $lastId = null;
+    protected \Magento\Framework\DB\Adapter\AdapterInterface $connection;
+    protected \Magento\Framework\App\ResourceConnection $resource;
+    protected int $maxId = 0;
+    protected int $lastId = 0;
 
     public function __construct(\Magento\Framework\App\ResourceConnection $resource)
     {
         $this->resource = $resource;
-        $this->connection = $resource->getConnection(\Magento\Framework\App\ResourceConnection::DEFAULT_CONNECTION);
-
-        $this->rowsCount = $this->getRowsCount();
-    }
-
-    public function recalculateRowsCount()
-    {
-        $this->rowsCount = $this->getRowsCount();
+        $this->connection = $resource->getConnection(
+            \Magento\Framework\App\ResourceConnection::DEFAULT_CONNECTION
+        );
+        $this->maxId = $this->getMaxId();
     }
 
     public function getLastBunchId()
@@ -38,52 +23,58 @@ class Iterator implements \Iterator
         return $this->lastId;
     }
 
-    public function getRowsCount() {
+    public function getMaxId()
+    {
         $select = $this->connection->select()->from(
-            'importexport_importdata',
-            ['cnt' => 'count(*)']
+            $this->connection->getTableName('importexport_importdata'),
+            ['max' => 'MAX(id)']
         );
 
         return $this->connection->fetchOne($select);
     }
 
-    public function current()
+    public function current(): mixed
     {
         $select = $this->connection
             ->select()
-            ->from('importexport_importdata', ['id', 'data'])
+            ->from($this->connection->getTableName('importexport_importdata'), ['id', 'data'])
             ->order('id ASC')
-            ->limit(1, $this->index);
+            ->where('id >= ?', $this->key())
+            ->limit(1);
 
         $stmt = $this->connection->query($select);
         $row = $stmt->fetch();
+
+        if (empty($row)) {
+            return false;
+        }
 
         $this->lastId = $row['id'];
         return [$row['data']];
     }
 
-    public function next()
+    public function next(): void
     {
-        $this->index++;
+        $this->lastId++;
     }
 
-    public function previous()
+    public function previous(): void
     {
-        $this->index--;
+        $this->lastId--;
     }
 
-    public function key()
+    public function key(): mixed
     {
-        return $this->index;
+        return $this->lastId;
     }
 
-    public function valid()
+    public function valid(): bool
     {
-        return $this->index < $this->rowsCount;
+        return $this->lastId <= $this->maxId;
     }
 
-    public function rewind()
+    public function rewind(): void
     {
-        $this->index = 0;
+        $this->lastId = 0;
     }
 }
