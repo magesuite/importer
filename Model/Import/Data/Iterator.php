@@ -6,9 +6,8 @@ class Iterator implements \Iterator
 {
     protected \Magento\Framework\DB\Adapter\AdapterInterface $connection;
     protected \Magento\Framework\App\ResourceConnection $resource;
-    protected $rowsCount;
-    protected $index = 0;
-    protected $lastId = null;
+    protected int $maxId = 0;
+    protected int $lastId = 0;
 
     public function __construct(\Magento\Framework\App\ResourceConnection $resource)
     {
@@ -16,12 +15,7 @@ class Iterator implements \Iterator
         $this->connection = $resource->getConnection(
             \Magento\Framework\App\ResourceConnection::DEFAULT_CONNECTION
         );
-        $this->rowsCount = $this->getRowsCount();
-    }
-
-    public function recalculateRowsCount()
-    {
-        $this->rowsCount = $this->getRowsCount();
+        $this->maxId = $this->getMaxId();
     }
 
     public function getLastBunchId()
@@ -29,11 +23,11 @@ class Iterator implements \Iterator
         return $this->lastId;
     }
 
-    public function getRowsCount()
+    public function getMaxId()
     {
         $select = $this->connection->select()->from(
             $this->connection->getTableName('importexport_importdata'),
-            ['cnt' => 'count(*)']
+            ['max' => 'MAX(id)']
         );
 
         return $this->connection->fetchOne($select);
@@ -45,7 +39,8 @@ class Iterator implements \Iterator
             ->select()
             ->from($this->connection->getTableName('importexport_importdata'), ['id', 'data'])
             ->order('id ASC')
-            ->limit(1, $this->index);
+            ->where('id >= ?', $this->key())
+            ->limit(1);
 
         $stmt = $this->connection->query($select);
         $row = $stmt->fetch();
@@ -60,26 +55,26 @@ class Iterator implements \Iterator
 
     public function next(): void
     {
-        $this->index++;
+        $this->lastId++;
     }
 
-    public function previous()
+    public function previous(): void
     {
-        $this->index--;
+        $this->lastId--;
     }
 
     public function key(): mixed
     {
-        return $this->index;
+        return $this->lastId;
     }
 
     public function valid(): bool
     {
-        return $this->index < $this->rowsCount;
+        return $this->lastId <= $this->maxId;
     }
 
     public function rewind(): void
     {
-        $this->index = 0;
+        $this->lastId = 0;
     }
 }

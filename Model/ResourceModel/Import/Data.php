@@ -22,6 +22,5 @@ class Data extends \Magento\ImportExport\Model\ResourceModel\Import\Data
         $this->getConnection()->delete($this->getMainTable(), $deleteCondition);
 
         $iterator->previous();
-        $iterator->recalculateRowsCount();
     }
 }
