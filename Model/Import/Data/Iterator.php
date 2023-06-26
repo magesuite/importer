@@ -6,7 +6,7 @@ class Iterator implements \Iterator
 {
     protected \Magento\Framework\DB\Adapter\AdapterInterface $connection;
     protected \Magento\Framework\App\ResourceConnection $resource;
-    protected int $maxId = 0;
+    protected ?int $maxId = null;
     protected int $lastId = 0;
 
     public function __construct(\Magento\Framework\App\ResourceConnection $resource)
@@ -18,19 +18,22 @@ class Iterator implements \Iterator
         $this->maxId = $this->getMaxId();
     }
 
-    public function getLastBunchId()
+    public function getLastBunchId(): int
     {
         return $this->lastId;
     }
 
-    public function getMaxId()
+    public function getMaxId(): int
     {
-        $select = $this->connection->select()->from(
-            $this->connection->getTableName('importexport_importdata'),
-            ['max' => 'MAX(id)']
-        );
+        if ($this->maxId === null) {
+            $select = $this->connection->select()->from(
+                $this->connection->getTableName('importexport_importdata'),
+                ['MAX(id)']
+            );
+            $this->maxId = (int)$this->connection->fetchOne($select);
+        }
 
-        return $this->connection->fetchOne($select);
+        return $this->maxId;
     }
 
     public function current(): mixed
@@ -41,7 +44,6 @@ class Iterator implements \Iterator
             ->order('id ASC')
             ->where('id >= ?', $this->key())
             ->limit(1);
-
         $stmt = $this->connection->query($select);
         $row = $stmt->fetch();
 
@@ -70,11 +72,16 @@ class Iterator implements \Iterator
 
     public function valid(): bool
     {
-        return $this->lastId <= $this->maxId;
+        return $this->getMaxId() > 0 && $this->lastId <= $this->getMaxId();
     }
 
     public function rewind(): void
     {
         $this->lastId = 0;
+    }
+
+    public function resetMaxId(): void
+    {
+        $this->maxId = null;
     }
 }
