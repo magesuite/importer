@@ -14,13 +14,20 @@ class Data extends \Magento\ImportExport\Model\ResourceModel\Import\Data
         );
     }
 
-    public function deleteLastBunch()
+    public function getIteratorForCustomQuery($ids)
     {
-        $iterator = $this->getIterator();
-        $bunchId = $iterator->getLastBunchId();
+        return \Magento\Framework\App\ObjectManager::getInstance()->create(
+            \MageSuite\Importer\Model\Import\Data\Iterator::class
+        );
+    }
+
+    public function deleteLastBunch(): void
+    {
+        $bunchId = $this->_iterator->getLastBunchId();
         $deleteCondition = $this->getConnection()->quoteInto('id = ?', $bunchId);
         $this->getConnection()->delete($this->getMainTable(), $deleteCondition);
 
-        $iterator->previous();
+        $this->_iterator->previous();
+        $this->_iterator->recalculateRowsTotal();
     }
 }

@@ -5,17 +5,22 @@ namespace MageSuite\Importer\Model\Import\Data;
 class Iterator implements \Iterator
 {
     protected \Magento\Framework\DB\Adapter\AdapterInterface $connection;
-    protected \Magento\Framework\App\ResourceConnection $resource;
-    protected ?int $maxId = null;
-    protected int $lastId = 0;
+
+    protected int $rowsTotal;
+
+    protected int $index = 0;
+
+    protected ?int $lastId = null;
 
     public function __construct(\Magento\Framework\App\ResourceConnection $resource)
     {
-        $this->resource = $resource;
-        $this->connection = $resource->getConnection(
-            \Magento\Framework\App\ResourceConnection::DEFAULT_CONNECTION
-        );
-        $this->maxId = $this->getMaxId();
+        $this->connection = $resource->getConnection();
+        $this->rowsTotal = $this->getRowsTotal();
+    }
+
+    public function recalculateRowsTotal(): void
+    {
+        $this->rowsTotal = $this->getRowsTotal();
     }
 
     public function getLastBunchId(): int
@@ -23,17 +28,14 @@ class Iterator implements \Iterator
         return $this->lastId;
     }
 
-    public function getMaxId(): int
+    public function getRowsTotal(): int
     {
-        if ($this->maxId === null) {
-            $select = $this->connection->select()->from(
-                $this->connection->getTableName('importexport_importdata'),
-                ['MAX(id)']
-            );
-            $this->maxId = (int)$this->connection->fetchOne($select);
-        }
+        $select = $this->connection->select()->from(
+            $this->connection->getTableName('importexport_importdata'),
+            ['cnt' => 'count(*)']
+        );
 
-        return $this->maxId;
+        return $this->connection->fetchOne($select);
     }
 
     public function current(): mixed
@@ -42,8 +44,8 @@ class Iterator implements \Iterator
             ->select()
             ->from($this->connection->getTableName('importexport_importdata'), ['id', 'data'])
             ->order('id ASC')
-            ->where('id >= ?', $this->key())
-            ->limit(1);
+            ->limit(1, $this->index);
+
         $stmt = $this->connection->query($select);
         $row = $stmt->fetch();
 
@@ -57,31 +59,26 @@ class Iterator implements \Iterator
 
     public function next(): void
     {
-        $this->lastId++;
+        $this->index++;
     }
 
     public function previous(): void
     {
-        $this->lastId--;
+        $this->index--;
     }
 
     public function key(): mixed
     {
-        return $this->lastId;
+        return $this->index;
     }
 
     public function valid(): bool
     {
-        return $this->getMaxId() > 0 && $this->lastId <= $this->getMaxId();
+        return $this->index < $this->rowsTotal;
     }
 
     public function rewind(): void
     {
-        $this->lastId = 0;
-    }
-
-    public function resetMaxId(): void
-    {
-        $this->maxId = null;
+        $this->index = 0;
     }
 }
