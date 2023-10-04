@@ -48,7 +48,7 @@ class Iterator implements \Iterator
         $row = $stmt->fetch();
 
         if (empty($row)) {
-            return false;
+            return [];
         }
 
         $this->lastId = $row['id'];
