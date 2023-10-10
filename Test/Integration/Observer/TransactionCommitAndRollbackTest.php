@@ -161,6 +161,24 @@ class TransactionCommitAndRollbackTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * @magentoAppIsolation enabled
+     * @magentoDbIsolation disabled
+     * @magentoConfigFixture current_store general/file/bunch_size 3
+     * @magentoDataFixture MageSuite_Importer::Test/Integration/_files/import_cleanup.php
+     * @magentoDataFixture multipleConfigurableProductsFixture
+     * @magentoDataFixture dropdownAttributeFixture
+     */
+    public function testItRollbacksProductsCorrectlyWhenBunchSizeIsBigger()
+    {
+        $importCommand = $this->objectManager->create(\MageSuite\Importer\Command\Import\Import::class);
+        $importCommand->execute([
+            'source_path' => $this->pathToImportFiles . 'import_bunch_size.json',
+            'behavior' => \MageSuite\Importer\Model\Import\Product::BEHAVIOR_UPDATE,
+            'images_directory_path' => __DIR__ . '/../_files/images'
+        ]);
+    }
+
+    /**
      * @retyrn void
      */
     protected function tearDown(): void
