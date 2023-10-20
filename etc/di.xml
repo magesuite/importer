@@ -98,4 +98,8 @@
     <type name="Magento\ImportExport\Model\Import\Entity\AbstractEntity">
         <plugin name="ignore_default_values_for_bestseller_attributes" type="MageSuite\Importer\Plugin\ImportExport\Model\Import\Entity\AbstractEntity\SetRunningImportFlag"/>
     </type>
+
+    <type name="MageSuite\ServerStatusLogger\Model\StatusResolver\MviewState">
+        <plugin name="disable_mview_state" type="MageSuite\Importer\Plugin\ServerStatusLogger\Model\StatusResolver\DisableMviewState"/>
+    </type>
 </config>
