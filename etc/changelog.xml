@@ -27,6 +27,13 @@
                     <ticket_id>ROT-1157</ticket_id>
                 </entry>
             </tag>
+            <tag version="3.1.12" date="2023-10-20">
+                <entry>
+                    <type>FEAT</type>
+                    <overview>Skip counting the indexes during the import.</overview>
+                    <ticket_id>ROT-1302</ticket_id>
+                </entry>
+            </tag>
         </changelog>
     </module>
 </config>

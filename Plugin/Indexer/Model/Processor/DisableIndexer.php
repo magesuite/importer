@@ -4,26 +4,22 @@ namespace MageSuite\Importer\Plugin\Indexer\Model\Processor;
 
 class DisableIndexer
 {
-    public const INDEXER_ENABLED_XML_SECTION = 'indexer/indexing';
-    public const INDEXER_ENABLED_XML_PATH = 'indexer/indexing/enabled';
+    protected \MageSuite\Importer\Helper\Config $config;
 
-    protected \Magento\Config\Model\ResourceModel\Config\Data\CollectionFactory $configCollectionFactory;
-
-    public function __construct(
-        \Magento\Config\Model\ResourceModel\Config\Data\CollectionFactory $configCollectionFactory
-    ) {
-        $this->configCollectionFactory = $configCollectionFactory;
+    public function __construct(\MageSuite\Importer\Helper\Config $config)
+    {
+        $this->config = $config;
     }
 
     public function isIndexerEnabled()
     {
-        $indexerConfig = $this->getIndexerConfigFromDatabase();
+        $indexerConfig = $this->config->getIndexerConfigFromDatabase();
         return empty($indexerConfig) ? false : $indexerConfig->getValue() === '1';
     }
 
     public function aroundUpdateMview(\Magento\Indexer\Model\Processor $subject, callable $proceed)
     {
-        if (!$this->isIndexerEnabled()) {
+        if (!$this->config->isIndexerEnabled()) {
             throw new \Exception("Indexers are disabled");
         }
 
@@ -32,22 +28,10 @@ class DisableIndexer
 
     public function aroundReindexAllInvalid(\Magento\Indexer\Model\Processor $subject, callable $proceed)
     {
-        if (!$this->isIndexerEnabled()) {
+        if (!$this->config->isIndexerEnabled()) {
             throw new \Exception("Indexers are disabled");
         }
 
         return $proceed();
-    }
-
-    protected function getIndexerConfigFromDatabase()
-    {
-        $configCollection = $this->configCollectionFactory->create();
-        $configCollection->addScopeFilter(
-            \Magento\Framework\App\Config\ScopeConfigInterface::SCOPE_TYPE_DEFAULT,
-            0,
-            self::INDEXER_ENABLED_XML_SECTION
-        )->addFieldToFilter('path', ['eq' => self::INDEXER_ENABLED_XML_PATH]);
-
-        return current($configCollection->getItems());
     }
 }
