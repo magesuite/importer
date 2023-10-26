@@ -73,7 +73,7 @@ class DisableIndexerTest extends \PHPUnit\Framework\TestCase
     {
         $configWriter = self::getConfigWriter();
         $configWriter->save(
-            \MageSuite\Importer\Plugin\Indexer\Model\Processor\DisableIndexer::INDEXER_ENABLED_XML_PATH,
+            \MageSuite\Importer\Helper\Config::INDEXER_ENABLED_XML_PATH,
             '0'
         );
     }
@@ -82,7 +82,7 @@ class DisableIndexerTest extends \PHPUnit\Framework\TestCase
     {
         $configWriter = self::getConfigWriter();
         $configWriter->save(
-            \MageSuite\Importer\Plugin\Indexer\Model\Processor\DisableIndexer::INDEXER_ENABLED_XML_PATH,
+            \MageSuite\Importer\Helper\Config::INDEXER_ENABLED_XML_PATH,
             '1'
         );
     }
