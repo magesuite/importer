@@ -6,6 +6,10 @@ namespace MageSuite\Importer\Test\Integration\Plugin\ServerStatusLogger\Model\St
 
 class DisableMviewStateTest extends \PHPUnit\Framework\TestCase
 {
+    protected ?\Magento\Framework\App\ObjectManager $objectManager = null;
+    protected ?\Magento\Framework\Mview\View\Collection $mviewCollectionStub = null;
+    protected ?\MageSuite\ServerStatusLogger\Model\GenerateCurrentStatus $generateCurrentStatus  = null;
+
     public function setUp():void
     {
         $this->objectManager = \Magento\TestFramework\ObjectManager::getInstance();
