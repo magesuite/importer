@@ -27,18 +27,25 @@
                     <ticket_id>ROT-1157</ticket_id>
                 </entry>
             </tag>
-            <tag version="3.1.12" date="2023-10-20">
+            <tag version="2.7.1" date="2023-04-16">
+                <entry>
+                    <type>REFACTOR</type>
+                    <overview>Move checki isIndexerEnabled method to configuration helper.</overview>
+                    <ticket_id>ROT-1270</ticket_id>
+                </entry>
+            </tag>
+            <tag version="2.7.4" date="2023-10-20">
                 <entry>
                     <type>FEAT</type>
-                    <overview>Skip counting the indexes during the import.</overview>
+                    <overview> Skip counting the indexes during the import.</overview>
                     <ticket_id>ROT-1302</ticket_id>
                 </entry>
             </tag>
-            <tag version="3.1.13" date="2023-10-20">
+            <tag version="3.1.14" date="2023-11-08">
                 <entry>
                     <type>FEAT</type>
-                    <overview>Fixed the integration test for PHP 8.2 by skipping the counting of indexes during import.</overview>
-                    <ticket_id>ROT-1302</ticket_id>
+                    <overview>Change Import log status in Admin Panel from Error to Warning in case of missing stock import files.</overview>
+                    <ticket_id>SCAFA-932</ticket_id>
                 </entry>
             </tag>
         </changelog>

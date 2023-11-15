@@ -43,4 +43,9 @@
         <observer name="command_error_indexer_observer"
                   instance="MageSuite\Importer\Observer\Command\CommandErrorIndexerObserver"/>
     </event>
+
+    <event name="import_command_warning">
+        <observer name="command_warning_observer"
+                  instance="MageSuite\Importer\Observer\Command\CommandWarningObserver"/>
+    </event>
 </config>

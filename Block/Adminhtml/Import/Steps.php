@@ -27,6 +27,7 @@ class Steps extends \Magento\Backend\Block\Template
     public function getSeverityClass($status)
     {
         $statuses = [
+            \MageSuite\Importer\Model\ImportStep::STATUS_WARNING => 'grid-severity-major',
             \MageSuite\Importer\Model\ImportStep::STATUS_ERROR => 'grid-severity-critical',
             \MageSuite\Importer\Model\ImportStep::STATUS_DONE => 'grid-severity-notice',
             \MageSuite\Importer\Model\ImportStep::STATUS_IN_PROGRESS => 'grid-severity-critical grid-in-progress',
