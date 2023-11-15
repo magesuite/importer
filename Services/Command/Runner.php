@@ -69,8 +69,11 @@ class Runner
         try {
             $output = $command->execute($stepConfiguration);
             $this->eventManager->dispatch('import_command_done', ['step' => $step, 'output' => $output]);
+        } catch (\Magento\Framework\Exception\NotFoundException $e) {
+            $wasFinalAttempt = $attempt == $this->getAmountOfRetries($stepConfiguration);
+            $this->eventManager->dispatch('import_command_warning', ['attempt' => $attempt, 'step' => $step, 'warning' => $e->getMessage(), 'was_final_attempt' => $wasFinalAttempt]);
         } catch (\Exception $e) {
-            $wasFinalAttempt = (bool)($attempt == $this->getAmountOfRetries($stepConfiguration));
+            $wasFinalAttempt = $attempt == $this->getAmountOfRetries($stepConfiguration);
             $this->eventManager->dispatch('import_command_error', ['attempt' => $attempt, 'step' => $step, 'error' => $e->getMessage(), 'was_final_attempt' => $wasFinalAttempt]);
         }
 

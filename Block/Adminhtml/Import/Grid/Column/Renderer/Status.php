@@ -33,6 +33,7 @@ class Status extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Abstract
     protected function getStatus($status)
     {
         $statuses = [
+            \MageSuite\Importer\Model\ImportStep::STATUS_WARNING => '<span class="grid-severity-major">WARNING</span>',
             \MageSuite\Importer\Model\ImportStep::STATUS_ERROR => '<span class="grid-severity-critical">ERROR</span>',
             \MageSuite\Importer\Model\ImportStep::STATUS_DONE => '<span class="grid-severity-notice">DONE</span>',
             \MageSuite\Importer\Model\ImportStep::STATUS_IN_PROGRESS => '<span class="grid-severity-critical grid-in-progress">IN PROGRESS</span>',
