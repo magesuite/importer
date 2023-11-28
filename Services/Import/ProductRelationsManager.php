@@ -154,7 +154,7 @@ class ProductRelationsManager
         return false;
     }
 
-    protected function getProductImagesChanges(array $product):array
+    public function getProductImagesChanges(array $product): array
     {
         $imagesChanges = [];
 
