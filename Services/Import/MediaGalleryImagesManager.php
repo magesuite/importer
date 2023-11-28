@@ -8,13 +8,15 @@ class MediaGalleryImagesManager
         'base_image',
         'small_image',
         'thumbnail_image',
+        'thumbnail',
         'additional_images'
     ];
 
-    protected $attributeCodesToImportArrayMappings = [
-        'image' => 'base_image',
+    protected $importArrayToAttributeCodesMapping = [
+        'base_image' => 'image',
         'small_image' => 'small_image',
-        'thumbnail' => 'thumbnail_image'
+        'thumbnail_image' => 'thumbnail',
+        'thumbnail' => 'thumbnail',
     ];
 
     protected $attributesIdsToCodes;
@@ -103,7 +105,7 @@ class MediaGalleryImagesManager
                 ['attribute_id', 'attribute_code']
             )
             ->where('entity_type_id = ?', '4')
-            ->where('attribute_code IN (?)', array_keys($this->attributeCodesToImportArrayMappings));
+            ->where('attribute_code IN (?)', array_values($this->importArrayToAttributeCodesMapping));
 
         return $this->connection->fetchPairs($select);
     }
@@ -133,8 +135,8 @@ class MediaGalleryImagesManager
         $specialImages = [];
 
         foreach ($images as $image) {
-            $attributeCode = $this->attributesIdsToCodes[ $image['attribute_id'] ];
-            $specialImageType = $this->attributeCodesToImportArrayMappings[ $attributeCode ];
+            $attributeCode = $this->attributesIdsToCodes[$image['attribute_id']];
+            $specialImageType = array_flip($this->importArrayToAttributeCodesMapping)[$attributeCode];
             $productId = $image[$this->getProductEntityLinkField()];
 
             $specialImages[$productId][$specialImageType] = $image['value'];
@@ -219,7 +221,7 @@ class MediaGalleryImagesManager
 
     protected function deleteSpecialImagesAttributes($imagesChanges)
     {
-        $importArrayToAttributeCodesMapping = array_flip($this->attributeCodesToImportArrayMappings);
+        $importArrayToAttributeCodesMapping = $this->importArrayToAttributeCodesMapping;
 
         $attributesToDelete = [];
 
