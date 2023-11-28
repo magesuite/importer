@@ -33,7 +33,7 @@ class Validator extends \Magento\CatalogImportExport\Model\Import\Product\Valida
 
         if (!$this->isRequiredAttributeValid($attrCode, $attrParams, $rowData)) {
             $valid = false;
-            if(isset($rowData['sku']) and !empty($rowData['sku'])) {
+            if (isset($rowData['sku']) and !empty($rowData['sku'])) {
                 $this->_addMessages(
                     [
                         sprintf(
@@ -59,7 +59,7 @@ class Validator extends \Magento\CatalogImportExport\Model\Import\Product\Valida
             return $valid;
         }
 
-        if (!strlen(trim($rowData[$attrCode]))) {
+        if (!strlen(trim((string)$rowData[$attrCode]))) {
             return true;
         }
         switch ($attrParams['type']) {
@@ -152,11 +152,13 @@ class Validator extends \Magento\CatalogImportExport\Model\Import\Product\Valida
             $valid = $this->string->strlen($val) < \Magento\CatalogImportExport\Model\Import\Product::DB_MAX_VARCHAR_LENGTH;
         }
         if (!$valid) {
-            $this->_addMessages([sprintf(
-                self::INVALID_VALUE_LENGTH_ERROR_MESSAGE,
-                $attrCode,
-                isset($this->_rowData['sku']) ? $this->_rowData['sku'] : ''
-            )]);
+            $this->_addMessages([
+                sprintf(
+                    self::INVALID_VALUE_LENGTH_ERROR_MESSAGE,
+                    $attrCode,
+                    isset($this->_rowData['sku']) ? $this->_rowData['sku'] : ''
+                )
+            ]);
         }
         return $valid;
     }

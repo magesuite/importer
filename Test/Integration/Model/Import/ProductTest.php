@@ -164,16 +164,13 @@ class ProductTest extends \PHPUnit\Framework\TestCase
      * @magentoDataFixture Magento/Catalog/_files/product_simple.php
      * @magentoAppIsolation enabled
      * @magentoDataFixture loadProductWithImage
+     * @dataProvider productNewImagesDataProvider
      */
-    public function testImageShouldBeRemovedBecauseItIsReplacedEverywhere()
+    public function testImageShouldBeRemovedBecauseItIsReplacedEverywhere(array $productDataArray)
     {
         $productSku = 'simple';
 
-        $productData = $this->getProductImportArray($productSku, [
-            'base_image' => 'magento_image_replaced.jpg',
-            'small_image' => 'magento_image_replaced.jpg',
-            'thumbnail_image' => 'magento_image_replaced.jpg'
-        ]);
+        $productData = $this->getProductImportArray($productSku, $productDataArray);
 
         $this->simpleProductImporter->importProductsFromData($productData);
 
@@ -182,19 +179,24 @@ class ProductTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse($this->isImageInGallery($product, '/m/a/magento_image.jpg'));
     }
 
+    public function productNewImagesDataProvider(): array
+    {
+        return [
+            [['base_image' => 'magento_image_replaced.jpg', 'small_image' => 'magento_image_replaced.jpg', 'thumbnail_image' => 'magento_image_replaced.jpg']],
+            [['base_image' => 'magento_image_replaced.jpg', 'small_image' => 'magento_image_replaced.jpg', 'thumbnail' => 'magento_image_replaced.jpg']],
+        ];
+    }
+
     /**
      * @magentoDataFixture Magento/Catalog/_files/product_simple.php
      * @magentoDataFixture loadProductWithImage
+     * @dataProvider emptyProductDataProvider
      */
-    public function testSpecialImagesShouldBeEmpty()
+    public function testSpecialImagesShouldBeEmpty(array $productDataArray)
     {
         $productSku = 'simple';
 
-        $productData = $this->getProductImportArray($productSku, [
-            'base_image' => '',
-            'small_image' => '',
-            'thumbnail_image' => ''
-        ]);
+        $productData = $this->getProductImportArray($productSku, $productDataArray);
 
         $this->simpleProductImporter->importProductsFromData($productData);
 
@@ -205,6 +207,14 @@ class ProductTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('', $product->getThumbnailImage());
 
         $this->assertFalse($this->isImageInGallery($product, '/m/a/magento_image.jpg'));
+    }
+
+    public function emptyProductDataProvider(): array
+    {
+        return [
+            [['base_image' => '', 'small_image' => '', 'thumbnail_image' => '']],
+            [['base_image' => '', 'small_image' => '', 'thumbnail' => '']],
+        ];
     }
 
     /**
@@ -251,17 +261,13 @@ class ProductTest extends \PHPUnit\Framework\TestCase
     /**
      * @magentoDataFixture Magento/Catalog/_files/product_simple.php
      * @magentoAppIsolation enabled
+     * @dataProvider productDataProvider
      */
-    public function testImagesShouldBeAddedToProductWithoutImages()
+    public function testImagesShouldBeAddedToProductWithoutImages(array $productDataArray)
     {
         $productSku = 'simple';
 
-        $productData = $this->getProductImportArray($productSku, [
-            'additional_images' => 'magento_image_new.jpg',
-            'base_image' => 'magento_image.jpg',
-            'small_image' => 'magento_image.jpg',
-            'thumbnail_image' => 'magento_image.jpg'
-        ]);
+        $productData = $this->getProductImportArray($productSku, $productDataArray);
 
         $this->ensureImageDoesntExist('/m/a/magento_image_new.jpg');
         $this->ensureImageDoesntExist('/m/a/magento_image.jpg');
@@ -272,6 +278,28 @@ class ProductTest extends \PHPUnit\Framework\TestCase
 
         $this->assertTrue($this->isImageInGallery($product, '/m/a/magento_image_new.jpg'));
         $this->assertTrue($this->isImageInGallery($product, '/m/a/magento_image.jpg'));
+    }
+
+    public function productDataProvider(): array
+    {
+        return [
+            [
+                [
+                    'additional_images' => 'magento_image_new.jpg',
+                    'base_image' => 'magento_image.jpg',
+                    'small_image' => 'magento_image.jpg',
+                    'thumbnail_image' => 'magento_image.jpg',
+                ]
+            ],
+            [
+                [
+                    'additional_images' => 'magento_image_new.jpg',
+                    'base_image' => 'magento_image.jpg',
+                    'small_image' => 'magento_image.jpg',
+                    'thumbnail' => 'magento_image.jpg',
+                ]
+            ],
+        ];
     }
 
     /**

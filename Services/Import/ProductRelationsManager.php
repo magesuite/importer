@@ -51,7 +51,8 @@ class ProductRelationsManager
      * @param $products
      * @param $skuProcessor
      */
-    public function deleteRelations($products, $skuProcessor) {
+    public function deleteRelations($products, $skuProcessor)
+    {
         $productIdsToDeleteCategories = [];
         $productIdsToDeleteRelatedProducts = [];
         $productIdsToDeleteCrosssellProducts = [];
@@ -63,7 +64,7 @@ class ProductRelationsManager
         $imagesChanges = [];
 
         foreach ($products as $product) {
-            if(empty($skuProcessor->getNewSku($product['sku']))) {
+            if (empty($skuProcessor->getNewSku($product['sku']))) {
                 continue;
             }
 
@@ -90,18 +91,12 @@ class ProductRelationsManager
                 $productIdsToDeleteUpSellProducts[] = $productId;
             }
 
-            if(array_key_exists('configurable_variations', $product)) {
+            if (array_key_exists('configurable_variations', $product)) {
                 $productIdsToDeleteConfigurableVariations[] = $productId;
             }
 
             if ($this->productHasImagesChanges($product)) {
-                $imagesChanges[$productId] = [];
-
-                foreach ($this->imagesManager->getImportArrayKeysContainingImagesChanges() as $key) {
-                    if (array_key_exists($key, $product)) {
-                        $imagesChanges[$productId][$key] = ($product[$key] === null) ? '' : $product[$key];
-                    }
-                }
+                $imagesChanges[$productId] = $this->getProductImagesChanges($product);
             }
         }
 
@@ -109,12 +104,18 @@ class ProductRelationsManager
 
         $this->deleteCategoriesRelations($productIdsToDeleteCategories);
 
-        $this->deleteLinks($productIdsToDeleteRelatedProducts,
-            \Magento\Catalog\Model\Product\Link::LINK_TYPE_RELATED);
-        $this->deleteLinks($productIdsToDeleteCrosssellProducts,
-            \Magento\Catalog\Model\Product\Link::LINK_TYPE_CROSSSELL);
-        $this->deleteLinks($productIdsToDeleteUpSellProducts,
-            \Magento\Catalog\Model\Product\Link::LINK_TYPE_UPSELL);
+        $this->deleteLinks(
+            $productIdsToDeleteRelatedProducts,
+            \Magento\Catalog\Model\Product\Link::LINK_TYPE_RELATED
+        );
+        $this->deleteLinks(
+            $productIdsToDeleteCrosssellProducts,
+            \Magento\Catalog\Model\Product\Link::LINK_TYPE_CROSSSELL
+        );
+        $this->deleteLinks(
+            $productIdsToDeleteUpSellProducts,
+            \Magento\Catalog\Model\Product\Link::LINK_TYPE_UPSELL
+        );
 
         $this->deleteConfigurableProductRelations($productIdsToDeleteConfigurableVariations);
     }
@@ -148,12 +149,25 @@ class ProductRelationsManager
         return false;
     }
 
+    public function getProductImagesChanges(array $product): array
+    {
+        $imagesChanges = [];
+
+        foreach ($this->imagesManager->getImportArrayKeysContainingImagesChanges() as $key) {
+            if (array_key_exists($key, $product)) {
+                $imagesChanges[$key] = $product[$key] ?? '';
+            }
+        }
+
+        return $imagesChanges;
+    }
+
     /**
      * @param $productIds
      */
     protected function deleteConfigurableProductRelations($productIds)
     {
-        if(empty($productIds)) {
+        if (empty($productIds)) {
             return;
         }
 
@@ -173,7 +187,7 @@ class ProductRelationsManager
      */
     protected function deleteCategoriesRelations($productIds)
     {
-        if(empty($productIds)) {
+        if (empty($productIds)) {
             return;
         }
 
