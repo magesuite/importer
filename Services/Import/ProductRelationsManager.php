@@ -185,6 +185,11 @@ class ProductRelationsManager
             $this->resourceConnection->getTableName('catalog_product_super_link'),
             $this->connection->quoteInto('parent_id IN (?)', $productIds)
         );
+
+        $this->connection->delete(
+            $this->resourceConnection->getTableName('catalog_product_super_attribute'),
+            $this->connection->quoteInto('product_id IN (?)', $productIds)
+        );
     }
 
     /**
