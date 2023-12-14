@@ -214,7 +214,7 @@ class MediaGalleryImagesManager
         return $imagesIdsToDelete;
     }
 
-    protected function getAdditionalImagesToDelete($imagesChanges, $existingAdditionalImages)
+    public function getAdditionalImagesToDelete($imagesChanges, $existingAdditionalImages)
     {
         $imagesIdsToDelete = [];
 
