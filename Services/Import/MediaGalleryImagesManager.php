@@ -9,7 +9,8 @@ class MediaGalleryImagesManager
         'small_image',
         'thumbnail_image',
         'thumbnail',
-        'additional_images'
+        'additional_images',
+        'on_hover_image',
     ];
 
     protected $importArrayToAttributeCodesMapping = [
@@ -17,6 +18,7 @@ class MediaGalleryImagesManager
         'small_image' => 'small_image',
         'thumbnail_image' => 'thumbnail',
         'thumbnail' => 'thumbnail',
+        'on_hover_image' => 'on_hover_image',
     ];
 
     protected $attributesIdsToCodes;
