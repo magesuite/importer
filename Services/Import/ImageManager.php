@@ -65,8 +65,8 @@ class ImageManager
                 $conditions[$case] = $result;
             }
 
-            $value = $this->connection->getCaseSql('path', $conditions, 'size');
-            $where = ['path IN (?)' => array_keys($this->imagesFileSizes)];
+            $value = $this->connection->getCaseSql('`path`', $conditions, '`size`');
+            $where = ['`path` IN (?)' => array_keys($this->imagesFileSizes)];
             $this->connection->update($this->connection->getTableName('images_metadata'), ['size' => $value], $where);
         }
     }
@@ -95,11 +95,11 @@ class ImageManager
             $conditions[$case] = $result;
         }
 
-        $value = $this->connection->getCaseSql('value', $conditions, 'file_size');
+        $value = $this->connection->getCaseSql('`value`', $conditions, '`file_size`');
         $this->connection->update(
             $this->connection->getTableName('catalog_product_entity_media_gallery'),
             ['file_size' => $value],
-            ['value IN (?)' => array_keys($this->imagesFileSizes)]
+            ['`value` IN (?)' => array_keys($this->imagesFileSizes)]
         );
 
         $this->updateMultipleImageMetadata();
