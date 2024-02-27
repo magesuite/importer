@@ -4,49 +4,25 @@ namespace MageSuite\Importer\Services\Import;
 
 class MediaGalleryImagesManager
 {
-    protected $keysContainingImageChanges = [
-        'base_image',
-        'small_image',
-        'thumbnail_image',
-        'thumbnail',
-        'additional_images',
-        'on_hover_image',
-    ];
-
-    protected $importArrayToAttributeCodesMapping = [
-        'base_image' => 'image',
-        'small_image' => 'small_image',
-        'thumbnail_image' => 'thumbnail',
-        'thumbnail' => 'thumbnail',
-        'on_hover_image' => 'on_hover_image',
-    ];
-
-    protected $attributesIdsToCodes;
-
-    /**
-     * @var \Magento\Framework\App\ResourceConnection
-     */
-    protected $resourceConnection;
-
-    /**
-     * @var \Magento\Framework\DB\Adapter\AdapterInterface
-     */
-    protected $connection;
-
-    /**
-     * @var \Magento\Framework\EntityManager\MetadataPool
-     */
-    protected $metadataPool;
-
-    protected $productEntityLinkField;
+    protected \Magento\Framework\App\ResourceConnection $resourceConnection;
+    protected \Magento\Framework\DB\Adapter\AdapterInterface $connection;
+    protected \Magento\Framework\EntityManager\MetadataPool $metadataPool;
+    protected string $productEntityLinkField = '';
+    protected array $attributesIdsToCodes;
+    protected array $keysContainingImageChanges;
+    protected array $importArrayToAttributeCodesMapping;
 
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resourceConnection,
-        \Magento\Framework\EntityManager\MetadataPool $metadataPool
+        \Magento\Framework\EntityManager\MetadataPool $metadataPool,
+        array $keysContainingImageChanges = [],
+        array $importArrayToAttributeCodesMapping = []
     ) {
         $this->resourceConnection = $resourceConnection;
         $this->connection = $resourceConnection->getConnection();
         $this->metadataPool = $metadataPool;
+        $this->keysContainingImageChanges = $keysContainingImageChanges;
+        $this->importArrayToAttributeCodesMapping = $importArrayToAttributeCodesMapping;
         $this->attributesIdsToCodes = $this->getAttributesIdsToCodes();
     }
 

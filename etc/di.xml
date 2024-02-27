@@ -103,4 +103,25 @@
         <plugin name="disable_mview_state" type="MageSuite\Importer\Plugin\ServerStatusLogger\Model\StatusResolver\DisableMviewState"/>
     </type>
 
+    <type name="Magento\ConfigurableImportExport\Model\Import\Product\Type\Configurable">
+        <plugin name="delete_variations_that_should_no_longer_exist" type="MageSuite\Importer\Plugin\ConfigurableImportExport\Model\Import\Product\Type\Configurable\DeleteVariationsThatShouldNoLongerExist" />
+    </type>
+
+    <type name="MageSuite\Importer\Services\Import\MediaGalleryImagesManager">
+        <arguments>
+            <argument name="keysContainingImageChanges" xsi:type="array">
+                <item name="base_image" xsi:type="string">base_image</item>
+                <item name="small_image" xsi:type="string">small_image</item>
+                <item name="thumbnail_image" xsi:type="string">thumbnail_image</item>
+                <item name="thumbnail" xsi:type="string">thumbnail</item>
+                <item name="additional_images" xsi:type="string">additional_images</item>
+            </argument>
+            <argument name="importArrayToAttributeCodesMapping" xsi:type="array">
+                <item name="base_image" xsi:type="string">image</item>
+                <item name="small_image" xsi:type="string">small_image</item>
+                <item name="thumbnail_image" xsi:type="string">thumbnail</item>
+                <item name="thumbnail" xsi:type="string">thumbnail</item>
+            </argument>
+        </arguments>
+    </type>
 </config>

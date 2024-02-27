@@ -30,9 +30,12 @@ class ProductTest extends \PHPUnit\Framework\TestCase
         $this->directoryWithImages = $this->getFilesDirectoryPathRelativeToMainDirectory();
         $this->simpleProductImporter->setImportImagesFileDir($this->directoryWithImages);
         $this->fileIo = $this->objectManager->get(\Magento\Framework\Filesystem\Io\File::class);
+
+        \MageSuite\Importer\Model\ImportedProductsAggregator::reset();
     }
 
     /**
+     * @magentoAppIsolation enabled
      * @magentoDataFixture MageSuite_Importer::Test/Integration/_files/products_cleanup.php
      * @magentoDataFixture Magento/Catalog/_files/second_product_simple.php
      * @magentoDataFixture Magento/Catalog/_files/product_simple.php
@@ -65,7 +68,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
             'categories' => 'Default Category/Gear,Default Category/Bags'
         ]);
 
-        $this->simpleProductImporter->importProductsFromData($productData);
+        $this->simpleProductImporter->importProductsFromData($productData, \Magento\ImportExport\Model\Import::BEHAVIOR_ADD_UPDATE);
 
         $product = $this->getProductFromRepositoryBySku($productSku);
 
@@ -87,7 +90,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
             'related_skus' => 'simple'
         ]);
 
-        $this->simpleProductImporter->importProductsFromData($productData);
+        $this->simpleProductImporter->importProductsFromData($productData, \Magento\ImportExport\Model\Import::BEHAVIOR_ADD_UPDATE);
 
         $product = $this->getProductFromRepositoryBySku($productSku);
 
@@ -107,7 +110,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
             'upsell_skus' => 'simple2'
         ]);
 
-        $this->simpleProductImporter->importProductsFromData($productData);
+        $this->simpleProductImporter->importProductsFromData($productData, \Magento\ImportExport\Model\Import::BEHAVIOR_ADD_UPDATE);
 
         $product = $this->getProductFromRepositoryBySku($productSku);
 
@@ -126,7 +129,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
             'crosssell_skus' => 'simple2'
         ]);
 
-        $this->simpleProductImporter->importProductsFromData($productData);
+        $this->simpleProductImporter->importProductsFromData($productData, \Magento\ImportExport\Model\Import::BEHAVIOR_ADD_UPDATE);
 
         $product = $this->getProductFromRepositoryBySku($productSku);
 
@@ -145,7 +148,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
 
         $productData = $this->getProductImportArray($productSku, $productDataArray);
 
-        $this->simpleProductImporter->importProductsFromData($productData);
+        $this->simpleProductImporter->importProductsFromData($productData, \Magento\ImportExport\Model\Import::BEHAVIOR_ADD_UPDATE);
 
         $product = $this->getProductFromRepositoryBySku($productSku);
 
@@ -172,7 +175,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
 
         $productData = $this->getProductImportArray($productSku, $productDataArray);
 
-        $this->simpleProductImporter->importProductsFromData($productData);
+        $this->simpleProductImporter->importProductsFromData($productData, \Magento\ImportExport\Model\Import::BEHAVIOR_ADD_UPDATE);
 
         $product = $this->getProductFromRepositoryBySku($productSku);
 
@@ -205,7 +208,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
             'small_image' => 'magento_image_replaced.jpg'
         ]);
 
-        $this->simpleProductImporter->importProductsFromData($productData);
+        $this->simpleProductImporter->importProductsFromData($productData, \Magento\ImportExport\Model\Import::BEHAVIOR_ADD_UPDATE);
 
         $product = $this->getProductFromRepositoryBySku($productSku);
 
@@ -226,7 +229,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
             'additional_images' => ''
         ]);
 
-        $this->simpleProductImporter->importProductsFromData($productData);
+        $this->simpleProductImporter->importProductsFromData($productData, \Magento\ImportExport\Model\Import::BEHAVIOR_ADD_UPDATE);
 
         $product = $this->getProductFromRepositoryBySku($productSku);
 
@@ -249,7 +252,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
         $this->ensureImageDoesntExist('/m/a/magento_image_new.jpg');
         $this->ensureImageDoesntExist('/m/a/magento_image.jpg');
 
-        $this->simpleProductImporter->importProductsFromData($productData);
+        $this->simpleProductImporter->importProductsFromData($productData, \Magento\ImportExport\Model\Import::BEHAVIOR_ADD_UPDATE);
 
         $product = $this->getProductFromRepositoryBySku($productSku);
 
@@ -295,7 +298,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
 
         $this->insertImageMetadata(['magento_image_new.jpg', 'magento_image.jpg']);
 
-        $this->simpleProductImporter->importProductsFromData($productData);
+        $this->simpleProductImporter->importProductsFromData($productData, \Magento\ImportExport\Model\Import::BEHAVIOR_ADD_UPDATE);
 
         $product = $this->getProductFromRepositoryBySku($productSku);
 
@@ -326,7 +329,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
             ]
         ];
 
-        $this->simpleProductImporter->importProductsFromData($productData);
+        $this->simpleProductImporter->importProductsFromData($productData, \Magento\ImportExport\Model\Import::BEHAVIOR_ADD_UPDATE);
 
         $product = $this->getProductFromRepositoryBySku($productSku);
 
@@ -355,7 +358,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
 
         $productData = $this->getProductImportArray($productSku, $additionalFields);
 
-        $this->simpleProductImporter->importProductsFromData($productData);
+        $this->simpleProductImporter->importProductsFromData($productData, \Magento\ImportExport\Model\Import::BEHAVIOR_ADD_UPDATE);
 
         $product = $this->getProductFromRepositoryBySku($productSku);
 
@@ -371,12 +374,16 @@ class ProductTest extends \PHPUnit\Framework\TestCase
      */
     public function testProductHasUrlConflictException()
     {
-        $this->expectException(\Exception::class);
-        $this->expectErrorMessageMatches('(\d+)');
-
         $productSku = 'simple';
         $productData = $this->getProductImportArray($productSku, []);
-        $this->simpleProductImporter->importProductsFromData($productData);
+
+        try {
+            $this->simpleProductImporter->importProductsFromData($productData);
+
+            $this->fail('Exception should be thrown');
+        } catch (\Exception $e) {
+            $this->assertMatchesRegularExpression('/(\d+)/', $e->getMessage(), 'Exception message should contain product id');
+        }
     }
 
     /**
@@ -384,7 +391,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
      */
     protected function getProductFromRepositoryBySku($sku)
     {
-        return $this->productRepository->get($sku);
+        return $this->productRepository->get($sku, false, null, true);
     }
 
     /**

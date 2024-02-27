@@ -2,6 +2,7 @@
 
 namespace MageSuite\Importer\Services\File;
 
+// @phpcs:disable Magento2.Functions.DiscouragedFunction.Discouraged
 class Writer
 {
     protected $fileHandler;

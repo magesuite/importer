@@ -8,7 +8,7 @@ class RunnerTest extends \PHPUnit\Framework\TestCase
     protected ?\MageSuite\Importer\Services\Command\Runner $commandRunner = null;
     protected ?\PHPUnit\Framework\MockObject\MockObject $commandFactoryStub = null;
     protected ?\PHPUnit\Framework\MockObject\MockObject $importRepositoryStub = null;
-    protected ?\PHPUnit\Framework\MockObject\MockObject $eventManagerMock = null;
+    protected ?\MageSuite\Importer\Test\Unit\Services\Command\EventManagerFake $eventManagerFake = null;
     protected ?\PHPUnit\Framework\MockObject\MockObject $lockManagerMock = null;
     protected ?\PHPUnit\Framework\MockObject\MockObject $loggerMock = null;
 
@@ -17,7 +17,7 @@ class RunnerTest extends \PHPUnit\Framework\TestCase
         $this->commandFactoryStub = $this->getMockBuilder(\MageSuite\Importer\Command\CommandFactory::class)->getMock();
         $this->commandMock = $this->getMockBuilder(\MageSuite\Importer\Command\Command::class)->getMock();
         $this->importRepositoryStub = $this->getMockBuilder(\MageSuite\Importer\Api\ImportRepositoryInterface::class)->getMock();
-        $this->eventManagerMock = $this->getMockBuilder(\Magento\Framework\Event\ManagerInterface::class)->getMock();
+        $this->eventManagerFake = new \MageSuite\Importer\Test\Unit\Services\Command\EventManagerFake();
         $lockManager = $this->getMockBuilder(\Magento\Framework\Lock\LockManagerInterface::class)->getMock();
         $this->lockManagerMock = $this->getMockBuilder(\MageSuite\Importer\Services\Notification\LockManager::class)
             ->setConstructorArgs([$lockManager])
@@ -26,7 +26,7 @@ class RunnerTest extends \PHPUnit\Framework\TestCase
         $this->commandRunner = new \MageSuite\Importer\Services\Command\Runner(
             $this->commandFactoryStub,
             $this->importRepositoryStub,
-            $this->eventManagerMock,
+            $this->eventManagerFake,
             $this->lockManagerMock,
             $this->loggerMock
         );
@@ -106,17 +106,22 @@ class RunnerTest extends \PHPUnit\Framework\TestCase
 
         $importStep = $this->prepareDoublesForEventTest($importId, $importIdentifier);
 
-        $this->eventManagerMock
-            ->expects($this->at(0))
-            ->method('dispatch')
-            ->with('import_command_executes', [
-                'step' => $importStep,
-                'attempt' => 1
-            ]);
-
         $this->lockManagerMock->method('canAcquireLock')->with(1)->willReturn(true);
 
         $this->commandRunner->runCommand($importId, $importIdentifier, 'download');
+
+        $dispatchedEvents = $this->eventManagerFake->getDispatchedEvents();
+
+        $this->assertEquals(
+            [
+                'eventName' => 'import_command_executes',
+                'data' => [
+                    'step' => $importStep,
+                    'attempt' => 1
+                ]
+            ],
+            $dispatchedEvents[0]
+        );
     }
 
     public function testItThrowsEventWhenCommandIsFinished()
@@ -128,12 +133,20 @@ class RunnerTest extends \PHPUnit\Framework\TestCase
         $this->commandMock->method('execute')->willReturn('output');
         $this->lockManagerMock->method('canAcquireLock')->with(1)->willReturn(true);
 
-        $this->eventManagerMock
-            ->expects($this->at(1))
-            ->method('dispatch')
-            ->with('import_command_done', ['step' => $importStep, 'output' => 'output']);
-
         $this->commandRunner->runCommand($importId, $importIdentifier, 'download');
+
+        $dispatchedEvents = $this->eventManagerFake->getDispatchedEvents();
+
+        $this->assertEquals(
+            [
+                'eventName' => 'import_command_done',
+                'data' => [
+                    'step' => $importStep,
+                    'output' => 'output'
+                ]
+            ],
+            $dispatchedEvents[1]
+        );
     }
 
     public function testItThrowsEventWhenCommandFailed()
@@ -141,24 +154,29 @@ class RunnerTest extends \PHPUnit\Framework\TestCase
         $importId = 'import_id';
         $importIdentifier = 'import_identifier';
         $importStep = $this->prepareDoublesForEventTest($importId, $importIdentifier);
-        $exceptionThrown = new \Exception('exception');
+        $exceptionThrown = new \Exception('exception'); // phpcs:ignore
         $this->lockManagerMock->method('canAcquireLock')->with(1)->willReturn(true);
 
         $this->commandMock
             ->method('execute')
             ->will($this->throwException($exceptionThrown));
 
-        $this->eventManagerMock
-            ->expects($this->at(1))
-            ->method('dispatch')
-            ->with('import_command_error', [
-                'step' => $importStep,
-                'error' => 'exception',
-                'was_final_attempt' => false,
-                'attempt' => 1
-            ]);
-
         $this->commandRunner->runCommand($importId, $importIdentifier, 'download');
+
+        $dispatchedEvents = $this->eventManagerFake->getDispatchedEvents();
+
+        $this->assertEquals(
+            [
+                'eventName' => 'import_command_error',
+                'data' => [
+                    'step' => $importStep,
+                    'error' => 'exception',
+                    'was_final_attempt' => false,
+                    'attempt' => 1
+                ]
+            ],
+            $dispatchedEvents[1]
+        );
     }
 
     public function testItThrowsExceptionWhenThereAreNoStepsToRun()

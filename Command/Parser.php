@@ -2,6 +2,7 @@
 
 namespace MageSuite\Importer\Command;
 
+// phpcs:disable Magento2.NamingConvention.InterfaceName.WrongInterfaceName
 interface Parser
 {
     /**

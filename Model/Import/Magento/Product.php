@@ -2,11 +2,16 @@
 
 namespace MageSuite\Importer\Model\Import\Magento;
 
+// phpcs:disable Magento2.Functions.DiscouragedFunction.Discouraged
 class Product extends \Magento\CatalogImportExport\Model\Import\Product
 {
+    const INVALID_ROW_DATA = 'invalidRowData';
+
     protected $validatedRows = [];
+    protected array $ids = [];
     protected ?\MageSuite\Importer\Services\Import\ImageManager $imageManager = null;
     protected ?\MageSuite\ThumbnailRemove\Service\ThumbnailRemover $thumbnailRemover = null;
+
     protected string $productEntityLinkField = '';
 
     protected function getExistingImages($bunch)
@@ -17,6 +22,44 @@ class Product extends \Magento\CatalogImportExport\Model\Import\Product
         );
 
         return parent::getExistingImages($bunch);
+    }
+
+    protected function _saveValidatedBunches()
+    {
+        $source = $this->_getSource();
+        $source->rewind();
+
+        while ($source->valid()) {
+            try {
+                $rowData = $source->current();
+            } catch (\InvalidArgumentException $e) {
+                $this->getErrorAggregator()->addError(
+                    self::INVALID_ROW_DATA,
+                    \Magento\ImportExport\Model\Import\ErrorProcessing\ProcessingError::ERROR_LEVEL_WARNING,
+                    null,
+                    $e->getMessage()
+                );
+
+                $source->next();
+                continue;
+            }
+
+            $rowData = $this->executePrivateMethod('_customFieldsMapping', $rowData);
+
+            $this->validateRow($rowData, $source->key());
+
+            $source->next();
+        }
+
+        $this->checkUrlKeyDuplicates();
+        $this->getOptionEntity()->validateAmbiguousData();
+
+        if (!empty($this->_parameters['bunch_grouping_field'])) {
+            $this->saveBunchesByGroupingField();
+            return;
+        }
+
+        \Magento\ImportExport\Model\Import\Entity\AbstractEntity::_saveValidatedBunches();
     }
 
     /**
@@ -75,6 +118,7 @@ class Product extends \Magento\CatalogImportExport\Model\Import\Product
      *
      * @param array $attributesData
      * @return $this
+     * phpcs:disable Standard.TooMany.IfNestedLevel.Found
      */
     protected function _saveStockItem()
     {
@@ -107,6 +151,7 @@ class Product extends \Magento\CatalogImportExport\Model\Import\Product
                 $stockItemDo = $stockItems[$row['product_id']];
                 $existStockData = $stockItemDo->getData();
 
+                // phpcs:ignore Magento2.Performance.ForeachArrayMerge.ForeachArrayMerge
                 $row = array_merge(
                     $this->defaultStockData,
                     array_intersect_key($existStockData, $this->defaultStockData),
@@ -208,7 +253,7 @@ class Product extends \Magento\CatalogImportExport\Model\Import\Product
         return $stockItems;
     }
 
-    protected function uploadMediaFiles($fileName, $renameFileOff = false):string
+    protected function uploadMediaFiles($fileName, $renameFileOff = false): string
     {
         $imageManager = $this->getImageManager();
 
@@ -224,7 +269,7 @@ class Product extends \Magento\CatalogImportExport\Model\Import\Product
             $uploadedFilePath = BP . '/' . $uploadedFilePath;
         }
 
-        $fileSize = @filesize($uploadedFilePath);
+        $fileSize = @filesize($uploadedFilePath); // phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
         $imagePreviouslyUploaded = $imageManager->wasImagePreviouslyUploaded($filePath, $fileSize);
 
         if ($imagePreviouslyUploaded === \MageSuite\Importer\Services\Import\ImageManager::IMAGE_IDENTICAL) {
@@ -236,7 +281,7 @@ class Product extends \Magento\CatalogImportExport\Model\Import\Product
         return parent::uploadMediaFiles($fileName, true);
     }
 
-    protected function getImageManager():\MageSuite\Importer\Services\Import\ImageManager
+    protected function getImageManager(): \MageSuite\Importer\Services\Import\ImageManager
     {
         if ($this->imageManager == null) {
             $this->imageManager = \Magento\Framework\App\ObjectManager::getInstance()
@@ -246,7 +291,7 @@ class Product extends \Magento\CatalogImportExport\Model\Import\Product
         return $this->imageManager;
     }
 
-    protected function getThumbnailRemover():\MageSuite\ThumbnailRemove\Service\ThumbnailRemover
+    protected function getThumbnailRemover(): \MageSuite\ThumbnailRemove\Service\ThumbnailRemover
     {
         if ($this->thumbnailRemover == null) {
             $this->thumbnailRemover = \Magento\Framework\App\ObjectManager::getInstance()
@@ -256,7 +301,7 @@ class Product extends \Magento\CatalogImportExport\Model\Import\Product
         return $this->thumbnailRemover;
     }
 
-    protected function getProductEntityLinkField():string
+    protected function getProductEntityLinkField(): string
     {
         if (!$this->productEntityLinkField) {
             $this->productEntityLinkField = $this->getMetadataPool()
@@ -264,5 +309,97 @@ class Product extends \Magento\CatalogImportExport\Model\Import\Product
                 ->getLinkField();
         }
         return $this->productEntityLinkField;
+    }
+
+    protected function saveBunchesByGroupingField()
+    {
+        $source = $this->_getSource();
+        $skuSet = [];
+
+        $rowsLeftPerGroupId = [];
+
+        $source->rewind();
+
+        while ($source->valid()) {
+            $rowNumber = $source->key();
+
+            try {
+                $rowData = $source->current();
+                $bunchId = $rowData[$this->_parameters['bunch_grouping_field']] ?? null;
+
+                if (!empty($bunchId)) {
+                    $rowsLeftPerGroupId[$bunchId][$rowNumber] = true;
+                }
+
+                $source->next();
+            } catch (\InvalidArgumentException $e) {
+                $source->next();
+                continue;
+            }
+        }
+
+        $source->rewind();
+        $this->_dataSourceModel->cleanProcessedBunches();
+
+        $bunches = [];
+
+        while ($source->valid() || !empty($bunches)) {
+            if (!$source->valid() && !empty($bunches)) {
+                foreach ($bunches as $bunchRows) {
+                    $this->ids[] = $this->_dataSourceModel->saveBunch($this->getEntityTypeCode(), $this->getBehavior(), $bunchRows);
+                }
+
+                unset($bunches);
+                continue;
+            }
+
+            try {
+                $rowNumber = $source->key();
+                $rowData = $source->current();
+
+                if (array_key_exists('sku', $rowData)) {
+                    $skuSet[$rowData['sku']] = true;
+                }
+
+                $bunchId = $rowData[$this->_parameters['bunch_grouping_field']];
+            } catch (\InvalidArgumentException $e) {
+                $this->addRowError($e->getMessage(), $this->_processedRowsCount);
+                $this->_processedRowsCount++;
+                $source->next();
+                continue;
+            }
+
+            $this->_processedRowsCount++;
+
+            if (!$this->validateRow($rowData, $rowNumber)) {
+                unset($rowsLeftPerGroupId[$bunchId][$rowNumber]);
+                $source->next();
+                continue;
+            }
+
+            $rowData = $this->_prepareRowForDb($rowData);
+            $bunches[$bunchId][] = $rowData;
+            unset($rowsLeftPerGroupId[$bunchId][$rowNumber]);
+
+            if (empty($rowsLeftPerGroupId[$bunchId])) {
+                $this->ids[] = $this->_dataSourceModel->saveBunch($this->getEntityTypeCode(), $this->getBehavior(), $bunches[$bunchId]);
+                unset($bunches[$bunchId]);
+                unset($rowsLeftPerGroupId[$bunchId]);
+            }
+
+            $source->next();
+        }
+
+        $this->_processedEntitiesCount = (count($skuSet)) ?: $this->_processedRowsCount;
+
+        return $this;
+    }
+
+    protected function executePrivateMethod($methodName, ...$args)
+    {
+        $method = new \ReflectionMethod(parent::class, $methodName);
+        $method->setAccessible(true);
+
+        return $method->invokeArgs($this, $args);
     }
 }

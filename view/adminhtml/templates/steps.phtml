@@ -5,7 +5,7 @@
     <div class="page-actions" data-ui-id="page-actions-toolbar-content-header">
         <div class="page-actions-inner">
             <div class="page-actions-buttons">
-                <button id="back" title="Back" type="button" class="action- scalable back" onclick="setLocation('<?= $block->getUrl('*/*/index') ?>')" data-ui-id="back-button">
+                <button id="back" title="Back" type="button" class="action- scalable back" onclick="setLocation('<?=/* @noEscape */ $block->getUrl('*/*/index') ?>')" data-ui-id="back-button">
                     <span>Back</span>
                 </button>
             </div>
@@ -16,13 +16,13 @@
 <table class="data-grid">
     <thead>
     <tr>
-        <th class="data-grid-th  no-link "><span><?=__('Step identifier')?></span></th>
-        <th class="data-grid-th  no-link "><span><?=__('Started at')?></span></th>
-        <th class="data-grid-th  no-link "><span><?=__('Finished at')?></span></th>
-        <th class="data-grid-th  no-link "><span><?=__('Status')?></span></th>
-        <th class="data-grid-th col-date last no-link"><span><?=__('Output')?></span></th>
-        <th class="data-grid-th col-date last no-link"><span><?=__('Errors')?></span></th>
-        <th class="data-grid-th col-date last no-link"><span><?=__('Server Status')?></span></th>
+        <th class="data-grid-th  no-link "><span><?=$escaper->escapeHtml(__('Step identifier'))?></span></th>
+        <th class="data-grid-th  no-link "><span><?=$escaper->escapeHtml(__('Started at'))?></span></th>
+        <th class="data-grid-th  no-link "><span><?=$escaper->escapeHtml(__('Finished at'))?></span></th>
+        <th class="data-grid-th  no-link "><span><?=$escaper->escapeHtml(__('Status'))?></span></th>
+        <th class="data-grid-th col-date last no-link"><span><?=$escaper->escapeHtml(__('Output'))?></span></th>
+        <th class="data-grid-th col-date last no-link"><span><?=$escaper->escapeHtml(__('Errors'))?></span></th>
+        <th class="data-grid-th col-date last no-link"><span><?=$escaper->escapeHtml(__('Server Status'))?></span></th>
     </tr>
     </thead>
 
@@ -31,33 +31,32 @@
     <?php foreach ($steps as $step) : ?>
     <tr data-role="row" title="#" class="even _clickable">
         <td class="a-left indexer-title col-indexer_title  ">
-            <?= $step->getIdentifier() ?>
+            <?= /* @noEscape */ $step->getIdentifier() ?>
         </td>
         <td class="a-left indexer-title col-indexer_title  ">
             <?php if (!empty($step->getStartedAt())) : ?>
-                <?= $block->getDate($step->getStartedAt()) ?>
+                <?= /* @noEscape */ $block->getDate($step->getStartedAt()) ?>
             <?php endif; ?>
         </td>
         <td class="a-left indexer-title col-indexer_title  ">
             <?php if (!empty($step->getFinishedAt())) : ?>
-                <?= $block->getDate($step->getFinishedAt()) ?>
+                <?= /* @noEscape */ $block->getDate($step->getFinishedAt()) ?>
             <?php endif; ?>
         </td>
         <td class="a-left indexer-title col-indexer_title  ">
-            <span class="<?= $block->getSeverityClass($step->getStatus()) ?>">
-                <?= $step->getReadableStatus() ?>
+            <span class="<?= /* @noEscape */ $block->getSeverityClass($step->getStatus()) ?>">
+                <?= /* @noEscape */ $step->getReadableStatus() ?>
             </span>
         </td>
         <td class="a-left indexer-title col-indexer_title  ">
-                <?= nl2br($step->getOutput()) ?>
+                <?= /* @noEscape */ nl2br($step->getOutput()) ?>
         </td>
         <td class="a-left indexer-title col-indexer_title  ">
-                <?= nl2br($step->getError()) ?>
+                <?= /* @noEscape */ nl2br($step->getError()) ?>
         </td>
         <td class="a-left indexer-title col-indexer_title  ">
-            <a href="<?=$block->getUrl('importer/import/showServerStatusLog', ['step_id' => $step->getId()])?>" target="_blank">See log</a>
+            <a href="<?= /* @noEscape */ $block->getUrl('importer/import/showServerStatusLog', ['step_id' => $step->getId()])?>" target="_blank"><?=$escaper->escapeHtml(__('See log'))?></a>
         </td>
     </tbody>
     <?php endforeach; ?>
-
 </table>

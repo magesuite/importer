@@ -53,4 +53,9 @@
     <table name="catalog_product_entity_media_gallery">
         <column xsi:type="int" name="file_size" unsigned="true" nullable="false" default="0" comment="Image file size in bytes"/>
     </table>
+
+        <table name="importexport_importdata" resource="default" engine="innodb">
+            <column xsi:type="timestamp" name="updated_at" on_update="true" nullable="false" default="CURRENT_TIMESTAMP"
+                    comment="timestamp of last update"/>
+        </table>
 </schema>

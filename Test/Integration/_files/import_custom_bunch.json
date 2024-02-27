@@ -1,0 +1,4 @@
+{"sku":"simple1","bunch_id": "1","product_type":"simple","name":"Simple Product1 Updated","price":"12","attribute_set_code":"Default","url_key": "simple1"}
+{"sku":"simple2","bunch_id": "2","product_type":"simple","name":"Simple Product2 Updated","price":"-20","attribute_set_code":"Default","url_key": "simple2","base_image":"non-existing.png"}
+{"sku":"simple3","bunch_id": "3","product_type":"simple","name":"Simple Product3 Updated","price":"12","attribute_set_code":"Default","url_key": "simple3"}
+{"sku":"simple4","bunch_id": "3","product_type":"simple","name":"Simple Product4 Updated","price":"13","attribute_set_code":"Default","url_key": "simple4"}

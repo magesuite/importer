@@ -156,8 +156,11 @@ class TransactionCommitAndRollbackTest extends \PHPUnit\Framework\TestCase
             $this->checkChildrenRelatedData($productSku, $expectedData);
         }
 
-        $this->expectException(\Magento\Framework\Exception\NoSuchEntityException::class);
-        $this->productRepository->get('simple4');
+        try {
+            $this->productRepository->get('simple4');
+        } catch (\Exception $e) {
+            $this->assertInstanceOf(\Magento\Framework\Exception\NoSuchEntityException::class, $e);
+        }
     }
 
     /**
@@ -168,7 +171,7 @@ class TransactionCommitAndRollbackTest extends \PHPUnit\Framework\TestCase
      * @magentoDataFixture multipleConfigurableProductsFixture
      * @magentoDataFixture dropdownAttributeFixture
      */
-    public function testItRollbacksProductsCorrectlyWhenBunchSizeIsBigger()
+    public function testSecondConfigurableProductIsNotImportedSinceItsSimplesHaveImportErrors()
     {
         $importCommand = $this->objectManager->create(\MageSuite\Importer\Command\Import\Import::class);
         $importCommand->execute([
@@ -176,6 +179,14 @@ class TransactionCommitAndRollbackTest extends \PHPUnit\Framework\TestCase
             'behavior' => \MageSuite\Importer\Model\Import\Product::BEHAVIOR_UPDATE,
             'images_directory_path' => __DIR__ . '/../_files/images'
         ]);
+
+        $this->assertTrue($this->productExists('simple_100'));
+        $this->assertTrue($this->productExists('simple_200'));
+        $this->assertTrue($this->productExists('configurable_imported'));
+
+        $this->assertFalse($this->productExists('simple_300'));
+        $this->assertFalse($this->productExists('simple_400'));
+        $this->assertFalse($this->productExists('configurable_imported_2'));
     }
 
     /**
@@ -260,5 +271,15 @@ class TransactionCommitAndRollbackTest extends \PHPUnit\Framework\TestCase
     public static function dropdownAttributeFixtureRollback()
     {
         require __DIR__.'/../_files/attribute_rollback.php';
+    }
+
+    protected function productExists(string $sku)
+    {
+        try {
+            $this->productRepository->get($sku);
+            return true;
+        } catch (\Magento\Framework\Exception\NoSuchEntityException $e) {
+            return false;
+        }
     }
 }

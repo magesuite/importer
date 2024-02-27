@@ -2,40 +2,27 @@
 
 namespace MageSuite\Importer\Model;
 
-class FileImporter extends \FireGento\FastSimpleImport\Model\Importer
+class FileImporter extends Importer
 {
     protected \Magento\ImportExport\Model\Import $importModel;
 
     public function processImport($filePath)
     {
         $this->importModel = $this->createImportModel();
-        $errorAgregator = $this->importModel->getErrorAggregator();
+        $errorAggregator = $this->importModel->getErrorAggregator();
+        $validationStrategy = $this->getPrivateProperty($errorAggregator, 'validationStrategy');
+        $hasFatalExceptions = $errorAggregator->hasFatalExceptions();
 
-        if (!$this->validateData($filePath) &&
-            $this->getPrivateProperty(
-                $errorAgregator,
-                'validationStrategy'
-            ) === $this->getValidationStrategyStopOnError() &&
-            $errorAgregator->hasFatalExceptions()
-        ) {
+        if (!$this->validateData($filePath) && $validationStrategy === $this->getValidationStrategyStopOnError() && $hasFatalExceptions) {
             $message = $this->getLogTrace() . PHP_EOL;
-
-            throw new \Exception($message);
+            throw new \Exception($message); // phpcs:ignore
         }
 
         $this->importData();
+        $errorMessages = $this->getErrorMessages();
 
-        if ($errorAgregator->hasToBeTerminated()) {
-            $this->importModel->addLogComment($this->getErrorMessages());
-        }
-
-        if ($this->getPrivateProperty(
-            $errorAgregator,
-            'validationStrategy'
-        ) === $this->getValidationStrategySkipErrors() &&
-            $errorAgregator->hasFatalExceptions()
-        ) {
-            $this->importModel->addLogComment($this->getErrorMessages());
+        if (!empty($errorMessages) && !($validationStrategy === $this->getValidationStrategySkipErrors() && $hasFatalExceptions)) {
+            $this->importModel->addLogComment($errorMessages);
         }
 
         return $this->importModel->getFormatedLogTrace();

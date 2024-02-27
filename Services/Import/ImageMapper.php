@@ -2,6 +2,7 @@
 
 namespace MageSuite\Importer\Services\Import;
 
+// phpcs:disable Magento2.Functions.DiscouragedFunction.Discouraged
 class ImageMapper
 {
     protected \Magento\Framework\App\Filesystem\DirectoryList $directoryList;
