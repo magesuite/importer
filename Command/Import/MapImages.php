@@ -2,6 +2,7 @@
 
 namespace MageSuite\Importer\Command\Import;
 
+// @phpcs:disable Magento2.Functions.DiscouragedFunction.Discouraged
 class MapImages implements \MageSuite\Importer\Command\Command
 {
     protected \MageSuite\Importer\Services\Import\ImageMapper $imageMapper;

@@ -2,6 +2,7 @@
 
 namespace MageSuite\Importer\Model\Import\Magento;
 
+// phpcs:disable Magento2.Functions.DiscouragedFunction.Discouraged
 class Uploader extends \Magento\CatalogImportExport\Model\Import\Uploader
 {
     /**
@@ -22,7 +23,7 @@ class Uploader extends \Magento\CatalogImportExport\Model\Import\Uploader
         $fileExtension = pathinfo($filePath, PATHINFO_EXTENSION);
 
         if (!$this->checkAllowedExtension($fileExtension)) {
-            throw new \Exception('Disallowed file type.');
+            throw new \Exception('Disallowed file type.'); // phpcs:ignore
         }
     }
 

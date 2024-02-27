@@ -4,7 +4,15 @@ namespace MageSuite\Importer\Command\Import;
 
 class Import implements \MageSuite\Importer\Command\Command
 {
-    protected $magentoBuiltInBehaviors = ['replace'];
+    const DEFAULT_ALLOWED_ERRORS_COUNT = 10;
+
+    protected $magentoBuiltInBehaviors = [
+        'replace',
+        'delete',
+        'append',
+        'add_update'
+    ];
+
     protected \MageSuite\Importer\Model\Import\Product $importer;
 
     public function __construct(\MageSuite\Importer\Model\Import\Product $importer)
@@ -28,6 +36,7 @@ class Import implements \MageSuite\Importer\Command\Command
         $validationStrategy = $this->getValidationStrategy($configuration);
         $behavior = $this->getBehavior($configuration);
         $entityCode = $this->getEntityCode($configuration);
+        $allowedErrorsCount = $this->getAllowedErrorsCount($configuration);
 
         if (in_array($behavior, $this->magentoBuiltInBehaviors)) {
             $this->importer->setBehavior($behavior);
@@ -35,6 +44,11 @@ class Import implements \MageSuite\Importer\Command\Command
 
         $this->importer->setValidationStrategy($validationStrategy);
         $this->importer->setEntityCode($entityCode);
+        $this->importer->setAllowedErrorsCount($allowedErrorsCount);
+
+        if (isset($configuration['bunch_grouping_field'])) {
+            $this->importer->setBunchGroupingField($configuration['bunch_grouping_field']);
+        }
 
         return $this->importer->importFromFile($sourcePath, $behavior);
     }
@@ -58,13 +72,11 @@ class Import implements \MageSuite\Importer\Command\Command
      */
     protected function getBehavior($configuration)
     {
-        if (isset($configuration['behavior']) && $configuration['behavior'] == 'sync') {
-            return \MageSuite\Importer\Model\Import\Product::BEHAVIOR_SYNC;
-        } elseif (isset($configuration['behavior']) && $configuration['behavior'] == 'replace') {
-            return \Magento\ImportExport\Model\Import::BEHAVIOR_REPLACE;
+        if (isset($configuration['behavior']) && !empty($configuration['behavior'])) {
+            return $configuration['behavior'];
         }
 
-        return \MageSuite\Importer\Model\Import\Product::BEHAVIOR_UPDATE;
+        return \Magento\ImportExport\Model\Import::BEHAVIOR_ADD_UPDATE;
     }
 
     protected function getEntityCode($configuration)
@@ -74,5 +86,14 @@ class Import implements \MageSuite\Importer\Command\Command
         }
 
         return 'catalog_product';
+    }
+
+    protected function getAllowedErrorsCount($configuration)
+    {
+        if (isset($configuration['allowed_errors_count']) && is_numeric($configuration['allowed_errors_count'])) {
+            return (int)$configuration['allowed_errors_count'];
+        }
+
+        return self::DEFAULT_ALLOWED_ERRORS_COUNT;
     }
 }

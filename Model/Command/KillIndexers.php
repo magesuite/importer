@@ -2,6 +2,8 @@
 
 namespace MageSuite\Importer\Model\Command;
 
+// @phpcs:disable Magento2.Functions.DiscouragedFunction.Discouraged
+// @phpcs:disable Magento2.Security.InsecureFunction.Found
 class KillIndexers
 {
     const AMOUNT_OF_ATTEMPTS_TO_KILL_PROCESSES = 10;

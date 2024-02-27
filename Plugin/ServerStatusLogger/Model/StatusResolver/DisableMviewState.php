@@ -17,7 +17,7 @@ class DisableMviewState
         \MageSuite\ServerStatusLogger\Model\StatusResolver\MviewState $subject,
         callable $proceed
     ): array {
-        if(!$this->configuration->isIndexerEnabled()) {
+        if (!$this->configuration->isIndexerEnabled()) {
             return [];
         }
 

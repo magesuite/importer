@@ -47,7 +47,7 @@ class ImportTest extends \PHPUnit\Framework\TestCase
         $this->importerMock
             ->expects($this->once())
             ->method('importFromFile')
-            ->with(BP . DIRECTORY_SEPARATOR . 'var/import', \MageSuite\Importer\Model\Import\Product::BEHAVIOR_UPDATE);
+            ->with(BP . DIRECTORY_SEPARATOR . 'var/import', \Magento\ImportExport\Model\Import::BEHAVIOR_ADD_UPDATE);
 
         $this->command->execute($configuration);
     }

@@ -43,7 +43,18 @@ class CreateDirectoriesTest extends \PHPUnit\Framework\TestCase
 
     public function testItDoesNotCreateDirectoryWhenItDoesExist()
     {
-        $this->command->execute(['directories_paths' => [$this->assetsDirectoryRelativeToMainDirectory . '/existing_directory']]);
+        $fileIoMock = $this->getMockBuilder(\Magento\Framework\Filesystem\Io\File::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $fileIoMock->expects($this->never())
+            ->method('mkdir');
+
+        $fileIoMock->method('fileExists')
+            ->willReturn(true);
+
+        $command = new \MageSuite\Importer\Command\File\CreateDirectories($fileIoMock);
+        $command->execute(['directories_paths' => [$this->assetsDirectoryRelativeToMainDirectory . '/existing_directory']]);
     }
 
     public function tearDown(): void

@@ -19,7 +19,7 @@ class Product
     protected \MageSuite\Importer\Model\Import\Adapter\FileAdapterFactory $fileAdapterFactory;
 
     public function __construct(
-        \FireGento\FastSimpleImport\Model\Importer $importer,
+        \MageSuite\Importer\Model\Importer $importer,
         \FireGento\FastSimpleImport\Model\Adapters\NestedArrayAdapterFactory $nestedArrayAdapterFactory,
         \MageSuite\Importer\Model\FileImporter $fileImporter,
         \MageSuite\Importer\Model\Import\Adapter\FileAdapterFactory $fileAdapterFactory,
@@ -56,6 +56,18 @@ class Product
         $this->fileImporter->setValidationStrategy($strategy);
     }
 
+    public function setAllowedErrorsCount($count)
+    {
+        $this->importer->setAllowedErrorCount($count);
+        $this->fileImporter->setAllowedErrorCount($count);
+    }
+
+    public function setBunchGroupingField($field)
+    {
+        $this->importer->setBunchGroupingField($field);
+        $this->fileImporter->setBunchGroupingField($field);
+    }
+
     public function importProductsFromData($productData, $behavior = self::BEHAVIOR_UPDATE)
     {
         $this->processImport($productData, self::IMPORT_DATA_TYPE, $behavior);
@@ -71,9 +83,11 @@ class Product
         try {
             if ($source === self::IMPORT_FILE_TYPE) {
                 $this->fileImporter->setImportAdapterFactory($this->fileAdapterFactory);
+                $this->fileImporter->setBehavior($behavior);
                 $returnValue = $this->fileImporter->processImport($productData);
-            } else if ($source === self::IMPORT_DATA_TYPE) {
+            } elseif ($source === self::IMPORT_DATA_TYPE) {
                 $this->importer->setImportAdapterFactory($this->nestedArrayAdapterFactory);
+                $this->importer->setBehavior($behavior);
                 $returnValue = $this->importer->processImport($productData);
             }
         } catch (\Exception $e) {
@@ -102,7 +116,7 @@ class Product
             $p = $reflectionClass->getProperty($property->name);
             $p->setAccessible(true);
             $propertyValue = $p->getValue($e);
-            if (!is_null($propertyValue)) {
+            if ($propertyValue !== null) {
                 $exceptionProperties[] = [
                     'name' => $property->name,
                     'value' => $p->getValue($e),
@@ -114,7 +128,7 @@ class Product
             return $entry['name'] . ': ' . (is_array($entry['value']) ? var_export($entry['value'], true) : $entry['value']);
         }, $exceptionProperties));
 
-        throw new \Exception($exceptionMessage);
+        throw new \Exception($exceptionMessage); // phpcs:ignore
     }
 
     public function getLogTrace()

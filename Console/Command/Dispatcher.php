@@ -41,7 +41,7 @@ class Dispatcher extends \Symfony\Component\Console\Command\Command
 
         while (true) {
             $commandDispatcher->dispatch();
-            sleep(5);
+            sleep(5); // phpcs:ignore
         }
     }
 }

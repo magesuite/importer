@@ -5,12 +5,11 @@ namespace MageSuite\Importer\Model\Import\Adapter;
 class FileAdapterFactory
 {
     protected $objectManager = null;
-
     protected $instanceName = null;
 
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $objectManager,
-        $instanceName = 'MageSuite\Importer\Model\Import\Adapter\FileAdapter'
+        $instanceName = \MageSuite\Importer\Model\Import\Adapter\FileAdapter::class
     ) {
         $this->objectManager = $objectManager;
         $this->instanceName = $instanceName;

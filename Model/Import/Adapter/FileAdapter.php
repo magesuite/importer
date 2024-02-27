@@ -2,6 +2,7 @@
 
 namespace MageSuite\Importer\Model\Import\Adapter;
 
+// phpcs:disable Magento2.Functions.DiscouragedFunction.Discouraged
 class FileAdapter extends \Magento\ImportExport\Model\Import\AbstractSource
 {
     protected $fileHandler;
@@ -14,8 +15,7 @@ class FileAdapter extends \Magento\ImportExport\Model\Import\AbstractSource
         $this->filePath = $filePath;
         $this->position = 0;
         $this->fileHandler = new \SplFileObject($filePath);
-        $this->fileHandler->seek(PHP_INT_MAX);
-        $this->numberOfLines = $this->fileHandler->key();
+        $this->numberOfLines = $this->getLastNotEmptyLine();
         $this->fileHandler->seek(0);
         $colNames = array_keys(json_decode($this->fileHandler->current(), true));
         $this->fileHandler = fopen($filePath, 'r');
@@ -26,14 +26,13 @@ class FileAdapter extends \Magento\ImportExport\Model\Import\AbstractSource
     /**
      * Go to given position and check if it is valid
      *
-     * @throws \OutOfBoundsException
      * @param int $position
      * @return void
+     * @throws \OutOfBoundsException
      */
     public function seek($position)
     {
         $this->position = $position;
-
 
         if (!$this->valid()) {
             throw new \OutOfBoundsException("invalid seek position ($position)");
@@ -114,7 +113,7 @@ class FileAdapter extends \Magento\ImportExport\Model\Import\AbstractSource
 
     protected function convertArrayToString($values)
     {
-        if (! is_array($values)) {
+        if (!is_array($values)) {
             throw new \InvalidArgumentException('array expected');
         }
 
@@ -139,5 +138,19 @@ class FileAdapter extends \Magento\ImportExport\Model\Import\AbstractSource
         }
 
         return $values;
+    }
+
+    protected function getLastNotEmptyLine()
+    {
+        $this->fileHandler->seek(PHP_INT_MAX);
+        $this->fileHandler->seek($this->fileHandler->key());
+
+        while (empty(str_replace([PHP_EOL, "\r"], "", $this->fileHandler->current()))) {
+            $this->fileHandler->seek($this->fileHandler->key()-1);
+        }
+
+        $lastNotEmptyLine = $this->fileHandler->key();
+
+        return $lastNotEmptyLine;
     }
 }

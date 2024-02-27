@@ -20,6 +20,7 @@ class Validator extends \Magento\CatalogImportExport\Model\Import\Product\Valida
      * @return bool
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
+     * phpcs:disable Standard.TooMany.IfNestedLevel.Found
      */
     public function isAttributeValid($attrCode, array $attrParams, array $rowData)
     {
