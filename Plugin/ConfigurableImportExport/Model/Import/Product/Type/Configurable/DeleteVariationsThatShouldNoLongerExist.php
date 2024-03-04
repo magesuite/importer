@@ -5,17 +5,14 @@ namespace MageSuite\Importer\Plugin\ConfigurableImportExport\Model\Import\Produc
 class DeleteVariationsThatShouldNoLongerExist
 {
     protected \Magento\CatalogImportExport\Model\Import\Product $entityModel;
-    protected \Magento\InventoryCatalogApi\Model\GetProductIdsBySkusInterface $getProductIdsBySkus;
     protected \MageSuite\Importer\Model\ResourceModel\CatalogProductRelation $catalogProductRelation;
     protected ?string $behaviorToRestore = null;
 
     public function __construct(
         \Magento\CatalogImportExport\Model\Import\Product $entityModel,
-        \Magento\InventoryCatalogApi\Model\GetProductIdsBySkusInterface $getProductIdsBySkus,
         \MageSuite\Importer\Model\ResourceModel\CatalogProductRelation $catalogProductRelation
     ) {
         $this->entityModel = $entityModel;
-        $this->getProductIdsBySkus = $getProductIdsBySkus;
         $this->catalogProductRelation = $catalogProductRelation;
     }
 
@@ -92,38 +89,32 @@ class DeleteVariationsThatShouldNoLongerExist
                 continue;
             }
 
-            $diff = array_diff($existingParentRelations[$parentSku], $variations);
+            $existingVariations = array_keys($existingParentRelations[$parentSku]);
+            $childrenSkuToDelete = array_diff($existingVariations, $variations);
 
-            if (empty($diff)) {
+            if (empty($childrenSkuToDelete)) {
                 continue;
             }
 
-            $variationsToDelete[$parentSku] = $diff;
-
-            $skusToFetchIds[] = $parentSku;
-            $skusToFetchIds = array_merge($skusToFetchIds, $variationsToDelete[$parentSku]); // phpcs:ignore
+            foreach ($childrenSkuToDelete as $childSkuToDelete) {
+                $variationsToDelete[$parentSku][$childSkuToDelete] = $existingParentRelations[$parentSku][$childSkuToDelete];
+            }
         }
 
         if (empty($variationsToDelete)) {
             return;
         }
 
-        $skuToIdMapping = $this->getProductIdsBySkus->execute($skusToFetchIds);
         $parentToChildToDelete = [];
 
-        foreach ($variationsToDelete as $parentSku => $childSkus) {
-            $parentProductId = $skuToIdMapping[$parentSku];
-            $childIds = [];
-
-            foreach ($childSkus as $childSku) {
-                if (!isset($skuToIdMapping[$childSku])) {
+        foreach ($variationsToDelete as $parentSku => $children) {
+            foreach ($children as $child) {
+                if (empty($child['child_id'])) {
                     continue;
                 }
 
-                $childIds[] = $skuToIdMapping[$childSku];
+                $parentToChildToDelete[$child['parent_id']][] = $child['child_id'];
             }
-
-            $parentToChildToDelete[$parentProductId] = $childIds;
         }
 
         if (empty($parentToChildToDelete)) {

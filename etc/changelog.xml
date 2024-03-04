@@ -48,6 +48,13 @@
                     <ticket_id>SCAFA-932</ticket_id>
                 </entry>
             </tag>
+            <tag version="3.2.1" date="2024-03-01">
+                <entry>
+                    <type>FIX</type>
+                    <overview>Fix DeleteVariationsThatShouldNoLongerExist to use proper field for Magento Commerce product entity.</overview>
+                    <ticket_id>DOG-1795</ticket_id>
+                </entry>
+            </tag>
         </changelog>
     </module>
 </config>
