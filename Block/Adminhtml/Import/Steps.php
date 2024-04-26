@@ -19,12 +19,15 @@ class Steps extends \Magento\Backend\Block\Template
         $this->timezone = $timezone;
     }
 
-    public function getSteps()
+    /**
+     * @return \MageSuite\Importer\Model\ImportStep[];
+     */
+    public function getSteps(): array
     {
         return $this->registry->registry('import_steps');
     }
 
-    public function getSeverityClass($status)
+    public function getSeverityClass($status): string
     {
         $statuses = [
             \MageSuite\Importer\Model\ImportStep::STATUS_WARNING => 'grid-severity-major',
@@ -37,7 +40,7 @@ class Steps extends \Magento\Backend\Block\Template
         return $statuses[$status];
     }
 
-    public function getDate($date)
+    public function getDate($date): string
     {
         $date = new \DateTime($date);
         return $this->timezone->date($date)->format('d-m-Y H:i:s');
