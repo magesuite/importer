@@ -10,12 +10,12 @@ class ImportStep extends \Magento\Framework\Model\AbstractModel
     public const STATUS_ERROR = 4;
     public const STATUS_WARNING = 5;
 
-    protected function _construct()
+    protected function _construct(): void
     {
         $this->_init(\MageSuite\Importer\Model\ResourceModel\ImportStep::class);
     }
 
-    public function getReadableStatus()
+    public function getReadableStatus(): string
     {
         $readableStatuses = [
             self::STATUS_PENDING => __('Pending'),

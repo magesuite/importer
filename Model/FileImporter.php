@@ -25,7 +25,10 @@ class FileImporter extends Importer
             $this->importModel->addLogComment($errorMessages);
         }
 
-        return $this->importModel->getFormatedLogTrace();
+        return new \MageSuite\Importer\Model\Command\Output([
+            'message' => $this->importModel->getFormatedLogTrace(),
+            'status' => empty($errorMessages) ? \MageSuite\Importer\Model\ImportStep::STATUS_DONE : \MageSuite\Importer\Model\ImportStep::STATUS_WARNING,
+        ]);
     }
 
     public function validateData($filePath)

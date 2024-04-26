@@ -4,15 +4,8 @@ namespace MageSuite\Importer\Observer\Command;
 
 class AbstractCommandResultObserver
 {
-    /**
-     * @var \MageSuite\Importer\Api\ImportRepositoryInterface
-     */
-    protected $importRepository;
-
-    /**
-     * @var \MageSuite\Importer\Model\ImportStatus
-     */
-    protected $importStatus;
+    protected \MageSuite\Importer\Api\ImportRepositoryInterface $importRepository;
+    protected \MageSuite\Importer\Model\ImportStatus $importStatus;
 
     public function __construct(
         \MageSuite\Importer\Api\ImportRepositoryInterface $importRepository,
