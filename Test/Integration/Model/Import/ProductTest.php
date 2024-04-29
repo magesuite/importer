@@ -238,6 +238,29 @@ class ProductTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * @magentoDbIsolation disabled
+     * @magentoAppIsolation enabled
+     * @magentoDataFixture Magento/Catalog/_files/product_simple.php
+     * @magentoDataFixture loadProductWithAdditionalImages
+     */
+    public function testAllAdditionalImagesShouldKeepFileSizeIfTheyWereNotUpdated()
+    {
+        $productSku = 'simple';
+        $additionalFields = [];
+
+        $imageData = $this->imageMapper->getImagesByProductSku($productSku, $this->directoryWithImages);
+        $additionalFields = array_merge($additionalFields, $imageData);
+
+        $productData = $this->getProductImportArray($productSku, $additionalFields);
+        $this->simpleProductImporter->importProductsFromData($productData, \Magento\ImportExport\Model\Import::BEHAVIOR_ADD_UPDATE);
+
+        $product = $this->getProductFromRepositoryBySku($productSku);
+        foreach ($product->getMediaGalleryImages() as $image) {
+            $this->assertGreaterThan(0, $image->getFileSize());
+        }
+    }
+
+    /**
      * @magentoDataFixture Magento/Catalog/_files/product_simple.php
      * @magentoDbIsolation disabled
      * @magentoAppIsolation enabled
