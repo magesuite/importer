@@ -271,12 +271,11 @@ class Product extends \Magento\CatalogImportExport\Model\Import\Product
 
         $fileSize = @filesize($uploadedFilePath); // phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
         $imagePreviouslyUploaded = $imageManager->wasImagePreviouslyUploaded($filePath, $fileSize);
+        $imageManager->addImageFileSizeForUpdate($filePath, $fileSize);
 
         if ($imagePreviouslyUploaded === \MageSuite\Importer\Services\Import\ImageManager::IMAGE_IDENTICAL) {
             return $filePath;
         }
-
-        $imageManager->addImageFileSizeForUpdate($filePath, $fileSize);
 
         return parent::uploadMediaFiles($fileName, true);
     }
