@@ -4,6 +4,7 @@
         <arguments>
             <argument name="commands" xsi:type="array">
                 <item name="importer_import_run_step" xsi:type="object">MageSuite\Importer\Console\Command\RunStep</item>
+                <item name="importer_import_run_all_steps" xsi:type="object">MageSuite\Importer\Console\Command\RunAllSteps</item>
                 <item name="importer_import_schedule" xsi:type="object">MageSuite\Importer\Console\Command\ScheduleImport</item>
                 <item name="importer_import_dispatch" xsi:type="object">MageSuite\Importer\Console\Command\Dispatcher</item>
                 <item name="importer_import_detect_failed" xsi:type="object">MageSuite\Importer\Console\Command\DetectFailedImports</item>
