@@ -55,6 +55,13 @@
                     <ticket_id>DOG-1795</ticket_id>
                 </entry>
             </tag>
+            <tag version="3.2.5" date="2024-05-22">
+                <entry>
+                    <type>FEAT</type>
+                    <overview>Import table is now being truncated after every import, regardless if it passed or not.</overview>
+                    <ticket_id>RK-1288</ticket_id>
+                </entry>
+            </tag>
         </changelog>
     </module>
 </config>

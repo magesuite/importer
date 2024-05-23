@@ -17,19 +17,22 @@ class Product
     protected \Magento\Framework\DB\Adapter\AdapterInterface $connection;
     protected \MageSuite\Importer\Model\FileImporter $fileImporter;
     protected \MageSuite\Importer\Model\Import\Adapter\FileAdapterFactory $fileAdapterFactory;
+    protected \Magento\ImportExport\Model\ResourceModel\Import\Data $importDataResource;
 
     public function __construct(
         \MageSuite\Importer\Model\Importer $importer,
         \FireGento\FastSimpleImport\Model\Adapters\NestedArrayAdapterFactory $nestedArrayAdapterFactory,
         \MageSuite\Importer\Model\FileImporter $fileImporter,
         \MageSuite\Importer\Model\Import\Adapter\FileAdapterFactory $fileAdapterFactory,
-        \Magento\Framework\App\ResourceConnection $resourceConnection
+        \Magento\Framework\App\ResourceConnection $resourceConnection,
+        \Magento\ImportExport\Model\ResourceModel\Import\Data $importDataResource
     ) {
         $this->connection = $resourceConnection->getConnection();
         $this->importer = $importer;
         $this->nestedArrayAdapterFactory = $nestedArrayAdapterFactory;
         $this->fileImporter = $fileImporter;
         $this->fileAdapterFactory = $fileAdapterFactory;
+        $this->importDataResource = $importDataResource;
     }
 
     public function setImportImagesFileDir($directory)
@@ -92,6 +95,8 @@ class Product
             }
         } catch (\Exception $e) {
             $this->processException($e);
+        } finally {
+            $this->importDataResource->cleanBunches();
         }
 
         $this->executeBehaviorSpecificTasks($behavior);

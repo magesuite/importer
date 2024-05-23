@@ -4,12 +4,9 @@ namespace MageSuite\Importer\Test\Unit\Command\Import;
 
 class ImportTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var \MageSuite\Importer\Command\Import\Import
-     */
-    private $command;
-
-    private $importerMock;
+    protected \MageSuite\Importer\Command\Import\Import $command;
+    protected \PHPUnit\Framework\MockObject\MockObject $importerMock;
+    protected \Magento\Framework\App\ResourceConnection $resourceConnection;
 
     public function setUp(): void
     {
@@ -19,6 +16,7 @@ class ImportTest extends \PHPUnit\Framework\TestCase
             ->getMock();
 
         $this->command = new \MageSuite\Importer\Command\Import\Import($this->importerMock);
+        $this->resourceConnection = \Magento\TestFramework\ObjectManager::getInstance()->get(\Magento\Framework\App\ResourceConnection::class);
     }
 
     public function testItImplementsCommandInterface()
@@ -82,5 +80,21 @@ class ImportTest extends \PHPUnit\Framework\TestCase
             ->with(BP . DIRECTORY_SEPARATOR . 'var/import', \MageSuite\Importer\Model\Import\Product::BEHAVIOR_SYNC);
 
         $this->command->execute($configuration);
+    }
+
+    public function testIfImportDataTableIsFlushedAfterImport(): void
+    {
+        $configuration = [
+            'source_path' => 'var/import',
+            'images_directory_path' => 'var/import/images',
+            'behavior' => 'sync'
+        ];
+
+        $this->command->execute($configuration);
+
+        $connection = $this->resourceConnection->getConnection();
+        $tableName = $connection->getTableName('importexport_importdata');
+        $select = $connection->select()->from($tableName);
+        $this->assertEmpty($connection->fetchAll($select));
     }
 }
