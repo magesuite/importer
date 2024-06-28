@@ -19,16 +19,16 @@ class ImportStatus
             return ImportStep::STATUS_ERROR;
         }
 
-        if ($this->atLeastOneStepHasStatus($steps, \MageSuite\Importer\Model\ImportStep::STATUS_WARNING)) {
-            return ImportStep::STATUS_WARNING;
-        }
-
         if ($this->atLeastOneStepHasStatus($steps, \MageSuite\Importer\Model\ImportStep::STATUS_IN_PROGRESS)) {
             return ImportStep::STATUS_IN_PROGRESS;
         }
 
         if ($this->atLeastOneStepHasStatus($steps, \MageSuite\Importer\Model\ImportStep::STATUS_PENDING)) {
             return ImportStep::STATUS_PENDING;
+        }
+
+        if ($this->atLeastOneStepHasStatus($steps, \MageSuite\Importer\Model\ImportStep::STATUS_WARNING)) {
+            return ImportStep::STATUS_WARNING;
         }
 
         return ImportStep::STATUS_DONE;

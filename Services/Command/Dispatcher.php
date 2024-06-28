@@ -53,16 +53,19 @@ class Dispatcher
             return true;
         }
 
-        $dependendStepsIdentifiers = explode(',', $stepDefinition['depends']);
+        $dependentStepsIdentifiers = explode(',', $stepDefinition['depends']);
 
-        return $this->allDependendStepsHaveDoneStatus($dependendStepsIdentifiers);
+        return $this->allDependentStepsHaveDoneOrWarningStatus($dependentStepsIdentifiers);
     }
 
-    protected function allDependendStepsHaveDoneStatus($dependendStepsIdentifiers)
+    protected function allDependentStepsHaveDoneOrWarningStatus($dependentStepsIdentifiers): bool
     {
-        foreach ($dependendStepsIdentifiers as $dependencyIdentifier) {
+        foreach ($dependentStepsIdentifiers as $dependencyIdentifier) {
             foreach ($this->steps as $step) {
-                if ($step->getIdentifier() == $dependencyIdentifier && $step->getStatus() != \MageSuite\Importer\Model\ImportStep::STATUS_DONE) {
+                if (
+                    $step->getIdentifier() == $dependencyIdentifier &&
+                    !in_array($step->getStatus(), [\MageSuite\Importer\Model\ImportStep::STATUS_DONE, \MageSuite\Importer\Model\ImportStep::STATUS_WARNING])
+                ) {
                     return false;
                 }
             }
