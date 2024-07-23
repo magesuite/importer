@@ -26,7 +26,7 @@ class StepRunner
     /**
      * @throws \Exception
      */
-    public function runAllSteps(int $importId, ?\Symfony\Component\Console\Output\OutputInterface $output = null): void
+    public function runAllSteps(int $importId, \Symfony\Component\Console\Output\OutputInterface $output): void
     {
         $this->state->setAreaCode(\Magento\Framework\App\Area::AREA_FRONTEND);
         $import = $this->importRepositoryFactory->create()->getById($importId);
@@ -39,14 +39,30 @@ class StepRunner
             throw new \Exception('Import was already started. Command aborted.');
         }
 
-        $commandRunnerFactory = $this->commandRunnerFactory->create();
+        $commandRunner = $this->commandRunnerFactory->create();
+        $steps = $this->getSteps($importId);
+        $output->writeln('Running ' . count($steps) . ' steps for import ' . $import->getId());
 
-        foreach ($this->getSteps($importId) as $step) {
-            $commandRunnerFactory->runCommand($importId, $import->getImportIdentifier(), $step->getIdentifier());
+        foreach ($steps as $step) {
+            /**
+             * @var \MageSuite\Importer\Services\Command\Runner $commandRunner
+             * @var \MageSuite\Importer\Model\Command\Output $commandOutput
+             */
+            $commandOutput = $commandRunner->runCommand($importId, $import->getImportIdentifier(), $step->getIdentifier());
+            $output->write($step->getIdentifier());
 
-            if ($output) {
-                $output->writeln("{$step->getIdentifier()} ✓");
+            if (
+                $commandOutput && !in_array($commandOutput->getStatus(), [
+                    \MageSuite\Importer\Model\ImportStep::STATUS_DONE,
+                    \MageSuite\Importer\Model\ImportStep::STATUS_WARNING
+                ])
+            ) {
+                $output->write(" ✗\n");
+                $output->writeln($commandOutput->getMessage());
+                break;
             }
+
+            $output->write(" ✓\n");
         }
     }
 

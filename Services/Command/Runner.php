@@ -28,7 +28,7 @@ class Runner
         $this->logger = $logger;
     }
 
-    public function runCommand($importId, $importIdentifier, $stepIdentifier)
+    public function runCommand($importId, $importIdentifier, $stepIdentifier): \MageSuite\Importer\Model\Command\Output|string|null
     {
         $this->configuration = $this->importRepository->getConfigurationById($importIdentifier);
         $this->steps = $this->importRepository->getStepsByImportId($importId);
@@ -40,17 +40,18 @@ class Runner
         /** @var \MageSuite\Importer\Model\ImportStep $step */
         foreach ($this->steps as $step) {
             if ($step->getIdentifier() == $stepIdentifier) {
-                $this->runStepCommand($step);
-                break;
+                return $this->runStepCommand($step);
             }
         }
+
+        return null;
     }
 
-    protected function runStepCommand($step)
+    protected function runStepCommand($step): \MageSuite\Importer\Model\Command\Output|string|null
     {
         if (!$this->lockManager->canAcquireLock($step->getId())) {
             $this->logger->debug(sprintf('Import step %s tried to execute concurrently.', $step->getIdentifier()));
-            return;
+            return null;
         }
 
         $this->lockManager->lock($step->getId());
@@ -78,6 +79,7 @@ class Runner
         }
 
         $this->lockManager->unlock($step->getId());
+        return $output ?? null;
     }
 
     public function getAmountOfRetries($stepConfiguration)

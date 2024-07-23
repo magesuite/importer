@@ -129,8 +129,9 @@ class RunnerTest extends \PHPUnit\Framework\TestCase
         $importId = 'import_id';
         $importIdentifier = 'import_identifier';
         $importStep = $this->prepareDoublesForEventTest($importId, $importIdentifier);
+        $output = new \MageSuite\Importer\Model\Command\Output();
 
-        $this->commandMock->method('execute')->willReturn('output');
+        $this->commandMock->method('execute')->willReturn($output);
         $this->lockManagerMock->method('canAcquireLock')->with(1)->willReturn(true);
 
         $this->commandRunner->runCommand($importId, $importIdentifier, 'download');
@@ -142,7 +143,7 @@ class RunnerTest extends \PHPUnit\Framework\TestCase
                 'eventName' => 'import_command_done',
                 'data' => [
                     'step' => $importStep,
-                    'output' => 'output'
+                    'output' => $output
                 ]
             ],
             $dispatchedEvents[1]
