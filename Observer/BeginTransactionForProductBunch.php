@@ -4,15 +4,9 @@ namespace MageSuite\Importer\Observer;
 
 class BeginTransactionForProductBunch implements \Magento\Framework\Event\ObserverInterface
 {
-    /**
-     * @var \MageSuite\Importer\Helper\Config
-     */
-    protected $config;
+    protected \MageSuite\Importer\Helper\Config $config;
 
-    /**
-     * @var \Magento\Framework\App\ResourceConnection
-     */
-    protected $resourceConnection;
+    protected \Magento\Framework\App\ResourceConnection $resourceConnection;
 
     public function __construct(
         \MageSuite\Importer\Helper\Config $config,
@@ -25,9 +19,6 @@ class BeginTransactionForProductBunch implements \Magento\Framework\Event\Observ
     public function execute(\Magento\Framework\Event\Observer $observer)
     {
         if ($this->config->shouldUseTransactions()) {
-            $adapter = $observer->getData('adapter');
-            EndTransactionForProductBunch::$errorAmount = count($adapter->getErrorAggregator()->getAllErrors());
-
             $connection = $this->resourceConnection->getConnection();
             $connection->beginTransaction();
         }

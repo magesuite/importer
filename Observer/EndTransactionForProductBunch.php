@@ -4,20 +4,9 @@ namespace MageSuite\Importer\Observer;
 
 class EndTransactionForProductBunch implements \Magento\Framework\Event\ObserverInterface
 {
-    /**
-     * @var \MageSuite\Importer\Helper\Config
-     */
-    protected $config;
+    protected \MageSuite\Importer\Helper\Config $config;
 
-    /**
-     * @var \Magento\Framework\App\ResourceConnection
-     */
-    protected $resourceConnection;
-
-    /**
-     * @var int
-     */
-    public static $errorAmount = 0;
+    protected \Magento\Framework\App\ResourceConnection $resourceConnection;
 
     public function __construct(
         \MageSuite\Importer\Helper\Config $config,
@@ -35,9 +24,10 @@ class EndTransactionForProductBunch implements \Magento\Framework\Event\Observer
 
         /** @var \Magento\CatalogImportExport\Model\Import\Product $adapter */
         $adapter = $observer->getAdapter();
+        $bunch = $observer->getBunch();
         $connection = $this->resourceConnection->getConnection();
 
-        if ($this->isErrorInImportedBunch($adapter)) {
+        if ($this->isErrorInImportedBunch($bunch, $adapter)) {
             $connection->rollBack();
             $this->doRollbackInImportAdapter($adapter);
         } else {
@@ -45,10 +35,15 @@ class EndTransactionForProductBunch implements \Magento\Framework\Event\Observer
         }
     }
 
-    protected function isErrorInImportedBunch(\Magento\CatalogImportExport\Model\Import\Product $adapter) : bool
+    protected function isErrorInImportedBunch(array $bunch, \Magento\CatalogImportExport\Model\Import\Product $adapter) : bool
     {
-        $currentErrorAmount = count($adapter->getErrorAggregator()->getAllErrors());
-        return self::$errorAmount < $currentErrorAmount;
+        foreach ($bunch as $rowNumber => $rowData) {
+            if ($adapter->getErrorAggregator()->getErrorByRowNumber($rowNumber)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     protected function doRollbackInImportAdapter(\Magento\CatalogImportExport\Model\Import\Product $adapter)
