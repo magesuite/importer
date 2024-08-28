@@ -8,6 +8,8 @@ class EndTransactionForProductBunch implements \Magento\Framework\Event\Observer
 
     protected \Magento\Framework\App\ResourceConnection $resourceConnection;
 
+    public static array $bunch = [];
+
     public function __construct(
         \MageSuite\Importer\Helper\Config $config,
         \Magento\Framework\App\ResourceConnection $resourceConnection
@@ -24,10 +26,9 @@ class EndTransactionForProductBunch implements \Magento\Framework\Event\Observer
 
         /** @var \Magento\CatalogImportExport\Model\Import\Product $adapter */
         $adapter = $observer->getAdapter();
-        $bunch = $observer->getBunch();
         $connection = $this->resourceConnection->getConnection();
 
-        if ($this->isErrorInImportedBunch($bunch, $adapter)) {
+        if ($this->isErrorInImportedBunch($adapter)) {
             $connection->rollBack();
             $this->doRollbackInImportAdapter($adapter);
         } else {
@@ -35,10 +36,12 @@ class EndTransactionForProductBunch implements \Magento\Framework\Event\Observer
         }
     }
 
-    protected function isErrorInImportedBunch(array $bunch, \Magento\CatalogImportExport\Model\Import\Product $adapter) : bool
+    protected function isErrorInImportedBunch(\Magento\CatalogImportExport\Model\Import\Product $adapter) : bool
     {
-        foreach ($bunch as $rowNumber => $rowData) {
-            if ($adapter->getErrorAggregator()->getErrorByRowNumber($rowNumber)) {
+        foreach (self::$bunch as $rowNumber => $rowData) {
+            if ($adapter->getErrorAggregator()->isRowInvalid($rowNumber) ||
+                $adapter->getErrorAggregator()->getErrorByRowNumber($rowNumber)
+            ) {
                 return true;
             }
         }
