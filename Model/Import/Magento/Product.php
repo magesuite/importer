@@ -377,7 +377,7 @@ class Product extends \Magento\CatalogImportExport\Model\Import\Product
             }
 
             $rowData = $this->_prepareRowForDb($rowData);
-            $bunches[$bunchId][] = $rowData;
+            $bunches[$bunchId][$rowNumber] = $rowData;
             unset($rowsLeftPerGroupId[$bunchId][$rowNumber]);
 
             if (empty($rowsLeftPerGroupId[$bunchId])) {
