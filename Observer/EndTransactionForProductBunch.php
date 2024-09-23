@@ -4,20 +4,11 @@ namespace MageSuite\Importer\Observer;
 
 class EndTransactionForProductBunch implements \Magento\Framework\Event\ObserverInterface
 {
-    /**
-     * @var \MageSuite\Importer\Helper\Config
-     */
-    protected $config;
+    protected \MageSuite\Importer\Helper\Config $config;
 
-    /**
-     * @var \Magento\Framework\App\ResourceConnection
-     */
-    protected $resourceConnection;
+    protected \Magento\Framework\App\ResourceConnection $resourceConnection;
 
-    /**
-     * @var int
-     */
-    public static $errorAmount = 0;
+    public static array $bunch = [];
 
     public function __construct(
         \MageSuite\Importer\Helper\Config $config,
@@ -47,8 +38,15 @@ class EndTransactionForProductBunch implements \Magento\Framework\Event\Observer
 
     protected function isErrorInImportedBunch(\Magento\CatalogImportExport\Model\Import\Product $adapter) : bool
     {
-        $currentErrorAmount = count($adapter->getErrorAggregator()->getAllErrors());
-        return self::$errorAmount < $currentErrorAmount;
+        foreach (self::$bunch as $rowNumber => $rowData) {
+            if ($adapter->getErrorAggregator()->isRowInvalid($rowNumber) ||
+                $adapter->getErrorAggregator()->getErrorByRowNumber($rowNumber)
+            ) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     protected function doRollbackInImportAdapter(\Magento\CatalogImportExport\Model\Import\Product $adapter)
