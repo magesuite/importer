@@ -52,7 +52,7 @@ class StepRunner
             $output->write($step->getIdentifier());
 
             if (
-                $commandOutput && !in_array($commandOutput->getStatus(), [
+                is_object($commandOutput) && !in_array($commandOutput->getStatus(), [
                     \MageSuite\Importer\Model\ImportStep::STATUS_DONE,
                     \MageSuite\Importer\Model\ImportStep::STATUS_WARNING
                 ])

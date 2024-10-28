@@ -401,4 +401,13 @@ class Product extends \Magento\CatalogImportExport\Model\Import\Product
 
         return $method->invokeArgs($this, $args);
     }
+
+    public function parseMultiselectValues($values, $delimiter = '')
+    {
+        if (empty($delimiter)) {
+            $delimiter = self::PSEUDO_MULTI_LINE_SEPARATOR;
+        }
+
+        return parent::parseMultiselectValues($values, $delimiter);
+    }
 }
