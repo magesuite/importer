@@ -35,10 +35,8 @@ class ProductTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @magentoAppIsolation enabled
-     * @magentoDataFixture MageSuite_Importer::Test/Integration/_files/products_cleanup.php
-     * @magentoDataFixture Magento/Catalog/_files/second_product_simple.php
      * @magentoDataFixture Magento/Catalog/_files/product_simple.php
+     * @magentoDataFixture Magento/Catalog/_files/second_product_simple.php
      */
     public function testItImportsNewProductAndDeletesOldOnes()
     {
@@ -98,7 +96,6 @@ class ProductTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @magentoDataFixture MageSuite_Importer::Test/Integration/_files/products_cleanup.php
      * @magentoDataFixture Magento/Catalog/_files/products_upsell.php
      * @magentoDataFixture Magento/Catalog/_files/second_product_simple.php
      */
@@ -137,9 +134,9 @@ class ProductTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @magentoDataFixture Magento/Catalog/_files/product_simple.php
      * @magentoAppIsolation enabled
-     * @magentoDataFixture loadProductWithImage
+     * @magentoDataFixture Magento/Catalog/_files/product_simple.php
+     * @magentoDataFixture MageSuite_Importer::Test/Integration/Model/Import/_files/product_with_images.php
      * @dataProvider productNewImagesDataProvider
      */
     public function testImageShouldBeRemovedBecauseItIsReplacedEverywhere(array $productDataArray)
@@ -166,7 +163,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
     /**
      * @magentoDbIsolation disabled
      * @magentoDataFixture Magento/Catalog/_files/product_simple.php
-     * @magentoDataFixture loadProductWithImage
+     * @magentoDataFixture MageSuite_Importer::Test/Integration/Model/Import/_files/product_with_images.php
      * @dataProvider emptyProductDataProvider
      */
     public function testSpecialImagesShouldBeEmpty(array $productDataArray)
@@ -197,7 +194,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
     /**
      * @magentoDbIsolation disabled
      * @magentoDataFixture Magento/Catalog/_files/product_simple.php
-     * @magentoDataFixture loadProductWithImage
+     * @magentoDataFixture MageSuite_Importer::Test/Integration/Model/Import/_files/product_with_images.php
      */
     public function testImageShouldNotBeRemovedBecauseItIsStillAThumbnailImage()
     {
@@ -216,10 +213,10 @@ class ProductTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @magentoDbIsolation disabled
      * @magentoAppIsolation enabled
+     * @magentoDbIsolation disabled
      * @magentoDataFixture Magento/Catalog/_files/product_simple.php
-     * @magentoDataFixture loadProductWithAdditionalImages
+     * @magentoDataFixture MageSuite_Importer::Test/Integration/Model/Import/_files/product_with_additional_images.php
      */
     public function testAllAdditionalImagesShouldBeRemovedButSpecialImagesShouldStay()
     {
@@ -238,10 +235,10 @@ class ProductTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @magentoDbIsolation disabled
      * @magentoAppIsolation enabled
+     * @magentoDbIsolation disabled
      * @magentoDataFixture Magento/Catalog/_files/product_simple.php
-     * @magentoDataFixture loadProductWithAdditionalImages
+     * @magentoDataFixture MageSuite_Importer::Test/Integration/Model/Import/_files/product_with_additional_images.php
      */
     public function testAllAdditionalImagesShouldKeepFileSizeIfTheyWereNotUpdated()
     {
@@ -261,9 +258,9 @@ class ProductTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @magentoDataFixture Magento/Catalog/_files/product_simple.php
-     * @magentoDbIsolation disabled
      * @magentoAppIsolation enabled
+     * @magentoDbIsolation disabled
+     * @magentoDataFixture Magento/Catalog/_files/product_simple.php
      * @dataProvider productDataProvider
      */
     public function testImagesShouldBeAddedToProductWithoutImages(array $productDataArray)
@@ -457,26 +454,6 @@ class ProductTest extends \PHPUnit\Framework\TestCase
         $productData = array_merge($productData, $additionalFields);
 
         return [$productData];
-    }
-
-    public static function loadProductWithImage()
-    {
-        require __DIR__ . '/_files/product_with_images.php';
-    }
-
-    public static function loadProductWithImageRollback()
-    {
-        require __DIR__ . '/_files/product_with_images_rollback.php';
-    }
-
-    public static function loadProductWithAdditionalImages()
-    {
-        require __DIR__ . '/_files/product_with_additional_images.php';
-    }
-
-    public static function loadProductWithAdditionalImagesRollback()
-    {
-        require __DIR__ . '/_files/product_with_images_rollback.php';
     }
 
     protected function productIsInRepository($sku)
