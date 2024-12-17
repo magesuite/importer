@@ -32,7 +32,7 @@ class LockManager
     public function unlock($stepId)
     {
         $lockName = $this->getLockName($stepId);
-        $this->lockProxy->lock($lockName);
+        $this->lockProxy->unlock($lockName);
     }
 
     protected function getLockName($stepId)
