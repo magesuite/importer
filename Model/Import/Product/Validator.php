@@ -64,6 +64,10 @@ class Validator extends \Magento\CatalogImportExport\Model\Import\Product\Valida
             return true;
         }
 
+        if ($rowData[$attrCode] === $this->context->getEmptyAttributeValueConstant() && !$attrParams['is_required']) {
+            return true;
+        }
+
         switch ($attrParams['type']) {
             case 'varchar':
             case 'text':
