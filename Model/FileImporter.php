@@ -1,12 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MageSuite\Importer\Model;
 
 class FileImporter extends Importer
 {
     protected \Magento\ImportExport\Model\Import $importModel;
 
-    public function processImport($filePath)
+    /**
+     * @param string[] $filePath
+     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws \ReflectionException
+     */
+    public function processImport($filePath): \MageSuite\Importer\Model\Command\Output
     {
         $this->importModel = $this->createImportModel();
         $errorAggregator = $this->importModel->getErrorAggregator();
@@ -25,13 +32,16 @@ class FileImporter extends Importer
             $this->importModel->addLogComment($errorMessages);
         }
 
-        return new \MageSuite\Importer\Model\Command\Output([
-            'message' => $this->importModel->getFormatedLogTrace(),
-            'status' => empty($errorMessages) ? \MageSuite\Importer\Model\ImportStep::STATUS_DONE : \MageSuite\Importer\Model\ImportStep::STATUS_WARNING,
-        ]);
+        return $this->outputFactory->create()
+            ->setMessage($this->importModel->getFormatedLogTrace())
+            ->setStatus(empty($errorMessages) ? \MageSuite\Importer\Model\ImportStep::STATUS_DONE : \MageSuite\Importer\Model\ImportStep::STATUS_WARNING);
     }
 
-    public function validateData($filePath)
+    /**
+     * @param string[] $filePath
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    public function validateData($filePath): bool
     {
         $source = $this->importAdapterFactory->create(['filePath' => $filePath]);
         $this->validationResult = $this->importModel->validateSource($source);
@@ -40,13 +50,13 @@ class FileImporter extends Importer
         return $this->validationResult;
     }
 
-    protected function importData()
+    protected function importData(): void
     {
         $this->importModel->importSource();
         $this->_handleImportResult($this->importModel);
     }
 
-    protected function getErrorMessage()
+    protected function getErrorMessage(): string
     {
         $message = '';
         $errors = $this->importModel->getErrorAggregator()->getAllErrors();
@@ -58,7 +68,10 @@ class FileImporter extends Importer
         return $message;
     }
 
-    protected function getPrivateProperty($object, $propertyName)
+    /**
+     * @throws \ReflectionException
+     */
+    protected function getPrivateProperty(object|string $object, string $propertyName): mixed
     {
         $reflection = new \ReflectionClass($object);
 
@@ -68,12 +81,12 @@ class FileImporter extends Importer
         return $property->getValue($object);
     }
 
-    protected function getValidationStrategyStopOnError():string
+    protected function getValidationStrategyStopOnError(): string
     {
         return \Magento\ImportExport\Model\Import\ErrorProcessing\ProcessingErrorAggregatorInterface::VALIDATION_STRATEGY_STOP_ON_ERROR;
     }
 
-    protected function getValidationStrategySkipErrors():string
+    protected function getValidationStrategySkipErrors(): string
     {
         return \Magento\ImportExport\Model\Import\ErrorProcessing\ProcessingErrorAggregatorInterface::VALIDATION_STRATEGY_SKIP_ERRORS;
     }

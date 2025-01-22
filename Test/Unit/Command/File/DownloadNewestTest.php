@@ -6,12 +6,13 @@ class DownloadNewestTest extends AbstractDownloader
 {
     public function setUp(): void
     {
+        $objectManager = \Magento\TestFramework\ObjectManager::getInstance();
         $this->fileDownloaderDouble = $this
             ->getMockBuilder(\Creativestyle\LFTP\File\Downloader::class)
             ->disableOriginalConstructor()
             ->getMock();
-
-        $this->command = new \MageSuite\Importer\Command\File\DownloadNewest($this->fileDownloaderDouble);
+        $objectManager->addSharedInstance($this->fileDownloaderDouble, \Creativestyle\LFTP\File\Downloader::class);
+        $this->command = $objectManager->create(\MageSuite\Importer\Command\File\DownloadNewest::class);
     }
 
     public function testItDownloadsNewestFile()

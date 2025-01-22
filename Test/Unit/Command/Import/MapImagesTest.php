@@ -7,18 +7,19 @@ class MapImagesTest extends \PHPUnit\Framework\TestCase
     protected ?\MageSuite\Importer\Command\Import\MapImages $command = null;
     protected ?\PHPUnit\Framework\MockObject\MockObject $imageMapperStub = null;
     protected ?\Magento\Framework\Filesystem\Io\File $fileIo = null;
-    protected $assetsDirectoryRelativeToMainDirectory;
-    protected $assetsDirectory;
+    protected string $assetsDirectoryRelativeToMainDirectory;
+    protected string $assetsDirectory;
 
     public function setUp(): void
     {
+        $objectManager = \Magento\TestFramework\ObjectManager::getInstance();
         $this->imageMapperStub = $this
             ->getMockBuilder(\MageSuite\Importer\Services\Import\ImageMapper::class)
             ->disableOriginalConstructor()
             ->getMock();
-
-        $this->command = new \MageSuite\Importer\Command\Import\MapImages($this->imageMapperStub);
-        $this->fileIo = new \Magento\Framework\Filesystem\Io\File();
+        $objectManager->addSharedInstance($this->imageMapperStub, \MageSuite\Importer\Services\Import\ImageMapper::class);
+        $this->command = $objectManager->create(\MageSuite\Importer\Command\Import\MapImages::class);
+        $this->fileIo = $objectManager->create(\Magento\Framework\Filesystem\Io\File::class);
 
         $this->assetsDirectory = realpath(__DIR__.'/../assets');
         $this->assetsDirectoryRelativeToMainDirectory = str_replace(

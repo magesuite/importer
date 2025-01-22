@@ -5,21 +5,25 @@ namespace MageSuite\Importer\Command\File;
 class CreateDirectories implements \MageSuite\Importer\Command\Command
 {
     protected \Magento\Framework\Filesystem\Io\File $fileIo;
+    protected \MageSuite\Importer\Model\Command\OutputFactory $outputFactory;
 
-    public function __construct(\Magento\Framework\Filesystem\Io\File $fileIo)
-    {
+    public function __construct(
+        \Magento\Framework\Filesystem\Io\File $fileIo,
+        \MageSuite\Importer\Model\Command\OutputFactory $outputFactory,
+    ) {
         $this->fileIo = $fileIo;
+        $this->outputFactory = $outputFactory;
     }
 
     /**
      * Creates directories specified in configuration
      */
-    public function execute($configuration)
+    public function execute(array $configuration): \MageSuite\Importer\Model\Command\Output
     {
-        $directoriesPaths = isset($configuration['directories_paths']) ? $configuration['directories_paths'] : null;
+        $directoriesPaths = $configuration['directories_paths'] ?? null;
 
         if ($directoriesPaths == null) {
-            return;
+            return $this->outputFactory->create();
         }
 
         foreach ($directoriesPaths as $directoryPath) {
@@ -31,5 +35,7 @@ class CreateDirectories implements \MageSuite\Importer\Command\Command
 
             $this->fileIo->mkdir($directoryPath, 0777, true);
         }
+
+        return $this->outputFactory->create();
     }
 }

@@ -6,15 +6,16 @@ class MoveTest extends \PHPUnit\Framework\TestCase
 {
     protected ?\MageSuite\Importer\Command\File\Move $command = null;
     protected ?\Magento\Framework\Filesystem\Io\File $fileIo = null;
-    protected $assetsDirectory;
-    protected $assetsDirectoryRelativeToMainDirectory;
+    protected string $assetsDirectory;
+    protected string $assetsDirectoryRelativeToMainDirectory;
 
     public function setUp(): void
     {
+        $objectManager = \Magento\TestFramework\ObjectManager::getInstance();
+        $this->fileIo = $objectManager->get(\Magento\Framework\Filesystem\Io\File::class);
+        $this->command = $objectManager->get(\MageSuite\Importer\Command\File\Move::class);
         $this->assetsDirectory = realpath(__DIR__ . '/../assets');
         $this->assetsDirectoryRelativeToMainDirectory = str_replace(BP . '/', '', $this->assetsDirectory);
-        $this->fileIo = new \Magento\Framework\Filesystem\Io\File();
-        $this->command = new \MageSuite\Importer\Command\File\Move($this->fileIo);
     }
 
     public function testItThrowsExceptionWhenSourcePathIsNotDefined()

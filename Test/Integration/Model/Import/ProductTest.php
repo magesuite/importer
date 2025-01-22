@@ -35,6 +35,61 @@ class ProductTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * @magentoDbIsolation disabled
+     * @magentoDataFixture Magento/ConfigurableProduct/_files/product_configurable.php
+     */
+    public function testConfigurableVariationsShouldBeReplaced()
+    {
+        $productSku = 'configurable';
+
+        $productData = [
+            [
+                'sku' => $productSku,
+                'name' => 'Test Product',
+                'price' => 22,
+                'attribute_set_code' => 'Default',
+                'product_type' => 'configurable',
+                'product_websites' => 'base',
+                'configurable_variation_labels' => 'Test',
+                'configurable_variations' => [
+                    ['sku' => 'simple_20', 'test_configurable' => 'Option 2']
+                ]
+            ]
+        ];
+
+        $this->simpleProductImporter->importProductsFromData($productData, \Magento\ImportExport\Model\Import::BEHAVIOR_ADD_UPDATE);
+
+        $product = $this->getProductFromRepositoryBySku($productSku);
+
+        $configurableInstance = $product->getTypeInstance();
+
+        $configurableVariations = $configurableInstance->getUsedProducts($product);
+
+        $this->assertCount(1, $configurableVariations);
+        $this->assertEquals(20, reset($configurableVariations)->getId());
+    }
+
+    /**
+     * @magentoDataFixture MageSuite_Importer::Test/Integration/_files/products_cleanup.php
+     * @magentoDataFixture Magento/Catalog/_files/products_crosssell.php
+     * @magentoDataFixture Magento/Catalog/_files/second_product_simple.php
+     */
+    public function testItReplacesCrosssellProducts()
+    {
+        $productSku = 'simple_with_cross';
+
+        $productData = $this->getProductImportArray($productSku, [
+            'crosssell_skus' => 'simple2'
+        ]);
+
+        $this->simpleProductImporter->importProductsFromData($productData, \Magento\ImportExport\Model\Import::BEHAVIOR_ADD_UPDATE);
+
+        $product = $this->getProductFromRepositoryBySku($productSku);
+
+        $this->assertEquals(['6'], $product->getCrossSellProductIds());
+    }
+
+    /**
      * @magentoDataFixture Magento/Catalog/_files/product_simple.php
      * @magentoDataFixture Magento/Catalog/_files/second_product_simple.php
      */
@@ -112,25 +167,6 @@ class ProductTest extends \PHPUnit\Framework\TestCase
         $product = $this->getProductFromRepositoryBySku($productSku);
 
         $this->assertEquals(['6'], $product->getUpSellProductIds());
-    }
-
-    /**
-     * @magentoDataFixture Magento/Catalog/_files/products_crosssell.php
-     * @magentoDataFixture Magento/Catalog/_files/second_product_simple.php
-     */
-    public function testItReplacesCrosssellProducts()
-    {
-        $productSku = 'simple_with_cross';
-
-        $productData = $this->getProductImportArray($productSku, [
-            'crosssell_skus' => 'simple2'
-        ]);
-
-        $this->simpleProductImporter->importProductsFromData($productData, \Magento\ImportExport\Model\Import::BEHAVIOR_ADD_UPDATE);
-
-        $product = $this->getProductFromRepositoryBySku($productSku);
-
-        $this->assertEquals(['6'], $product->getCrossSellProductIds());
     }
 
     /**
@@ -324,41 +360,6 @@ class ProductTest extends \PHPUnit\Framework\TestCase
 
         $this->assertTrue($this->isImageInGallery($product, '/m/a/magento_image_new.jpg'));
         $this->assertTrue($this->isImageInGallery($product, '/m/a/magento_image.jpg'));
-    }
-
-    /**
-     * @magentoDbIsolation disabled
-     * @magentoDataFixture Magento/ConfigurableProduct/_files/product_configurable.php
-     */
-    public function testConfigurableVariationsShouldBeReplaced()
-    {
-        $productSku = 'configurable';
-
-        $productData = [
-            [
-                'sku' => $productSku,
-                'name' => 'Test Product',
-                'price' => 22,
-                'attribute_set_code' => 'Default',
-                'product_type' => 'configurable',
-                'product_websites' => 'base',
-                'configurable_variation_labels' => 'Test',
-                'configurable_variations' => [
-                    ['sku' => 'simple_20', 'test_configurable' => 'Option 2']
-                ]
-            ]
-        ];
-
-        $this->simpleProductImporter->importProductsFromData($productData, \Magento\ImportExport\Model\Import::BEHAVIOR_ADD_UPDATE);
-
-        $product = $this->getProductFromRepositoryBySku($productSku);
-
-        $configurableInstance = $product->getTypeInstance();
-
-        $configurableVariations = $configurableInstance->getUsedProducts($product);
-
-        $this->assertCount(1, $configurableVariations);
-        $this->assertEquals(20, reset($configurableVariations)->getId());
     }
 
     public function testImportWithImagesFromDirectory()

@@ -4,21 +4,17 @@ namespace MageSuite\Importer\Test\Unit\Command\Import;
 
 class ParseTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var \MageSuite\Importer\Command\Import\Parse
-     */
-    private $command;
-
-    /**
-     * @var \Magento\Framework\ObjectManagerInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $objectManagerMock;
+    protected ?\MageSuite\Importer\Command\Import\Parse $command = null;
+    protected ?\Magento\Framework\ObjectManagerInterface $objectManagerMock = null;
 
     public function setUp(): void
     {
+        $objectManager = \Magento\TestFramework\ObjectManager::getInstance();
         $this->objectManagerMock = $this->getMockBuilder(\Magento\Framework\ObjectManagerInterface::class)->getMock();
-
-        $this->command = new \MageSuite\Importer\Command\Import\Parse($this->objectManagerMock);
+        $this->command = $objectManager->create(\MageSuite\Importer\Command\Import\Parse::class, [
+            'objectManager' => $this->objectManagerMock,
+            'outputFactory' => $objectManager->get(\MageSuite\Importer\Model\Command\OutputFactory::class),
+        ]);
     }
 
     public function testItImplementsCommandInterface()

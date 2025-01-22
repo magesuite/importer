@@ -48,8 +48,8 @@ class StepRunner
              * @var \MageSuite\Importer\Services\Command\Runner $commandRunner
              * @var \MageSuite\Importer\Model\Command\Output $commandOutput
              */
-            $commandOutput = $commandRunner->runCommand($importId, $import->getImportIdentifier(), $step->getIdentifier());
             $output->write($step->getIdentifier());
+            $commandOutput = $commandRunner->runCommand($importId, $import->getImportIdentifier(), $step->getIdentifier());
 
             if (
                 is_object($commandOutput) && !in_array($commandOutput->getStatus(), [

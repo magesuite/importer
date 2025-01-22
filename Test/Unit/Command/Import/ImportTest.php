@@ -4,19 +4,20 @@ namespace MageSuite\Importer\Test\Unit\Command\Import;
 
 class ImportTest extends \PHPUnit\Framework\TestCase
 {
-    protected \MageSuite\Importer\Command\Import\Import $command;
-    protected \PHPUnit\Framework\MockObject\MockObject $importerMock;
-    protected \Magento\Framework\App\ResourceConnection $resourceConnection;
+    protected ?\MageSuite\Importer\Command\Import\Import $command = null;
+    protected ?\PHPUnit\Framework\MockObject\MockObject $importerMock = null;
+    protected ?\Magento\Framework\App\ResourceConnection $resourceConnection = null;
 
     public function setUp(): void
     {
+        $objectManager = \Magento\TestFramework\ObjectManager::getInstance();
         $this->importerMock = $this
             ->getMockBuilder(\MageSuite\Importer\Model\Import\Product::class)
             ->disableOriginalConstructor()
             ->getMock();
-
-        $this->command = new \MageSuite\Importer\Command\Import\Import($this->importerMock);
-        $this->resourceConnection = \Magento\TestFramework\ObjectManager::getInstance()->get(\Magento\Framework\App\ResourceConnection::class);
+        $objectManager->addSharedInstance($this->importerMock, \MageSuite\Importer\Model\Import\Product::class);
+        $this->command = $objectManager->create(\MageSuite\Importer\Command\Import\Import::class);
+        $this->resourceConnection = $objectManager->get(\Magento\Framework\App\ResourceConnection::class);
     }
 
     public function testItImplementsCommandInterface()

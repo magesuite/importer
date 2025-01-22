@@ -14,12 +14,12 @@ class DownloadFromUrl extends AbstractDownload implements \MageSuite\Importer\Co
     /**
      * Downloads file from remote URL
      */
-    public function execute($configuration)
+    public function execute(array $configuration): \MageSuite\Importer\Model\Command\Output
     {
         $this->setServerConfiguration($configuration);
         $contents = $this->fileIo->read($configuration['remote_url']);
         $this->fileIo->write($configuration['target_path'], $contents);
 
-        return true;
+        return $this->outputFactory->create();
     }
 }
