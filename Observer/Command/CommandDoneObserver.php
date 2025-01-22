@@ -7,14 +7,17 @@ namespace MageSuite\Importer\Observer\Command;
 class CommandDoneObserver extends AbstractCommandResultObserver implements \Magento\Framework\Event\ObserverInterface
 {
     protected \Magento\Framework\Event\ManagerInterface $eventManager;
+    protected \MageSuite\Importer\Model\Command\OutputFactory $outputFactory;
 
     public function __construct(
         \MageSuite\Importer\Api\ImportRepositoryInterface $importRepository,
         \MageSuite\Importer\Model\ImportStatus $importStatus,
         \Magento\Framework\Event\ManagerInterface $eventManager,
+        \MageSuite\Importer\Model\Command\OutputFactory $outputFactory,
     ) {
         parent::__construct($importRepository, $importStatus);
         $this->eventManager = $eventManager;
+        $this->outputFactory = $outputFactory;
     }
 
     public function execute(\Magento\Framework\Event\Observer $observer): void
@@ -24,7 +27,7 @@ class CommandDoneObserver extends AbstractCommandResultObserver implements \Mage
         $output = $observer->getData('output');
 
         if (!$output instanceof \MageSuite\Importer\Model\Command\Output) {
-            $output = new \MageSuite\Importer\Model\Command\Output(['message' => $output]);
+            $output = $this->outputFactory->create()->setMessage($output);
         }
 
         $step->setStatus($output->getStatus());

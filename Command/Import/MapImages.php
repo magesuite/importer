@@ -6,20 +6,26 @@ namespace MageSuite\Importer\Command\Import;
 class MapImages implements \MageSuite\Importer\Command\Command
 {
     protected \MageSuite\Importer\Services\Import\ImageMapper $imageMapper;
+    protected \MageSuite\Importer\Model\Command\OutputFactory $outputFactory;
+    protected \Magento\Framework\Filesystem\DriverInterface $driver;
 
-    public function __construct(\MageSuite\Importer\Services\Import\ImageMapper $imageMapper)
-    {
+    public function __construct(
+        \MageSuite\Importer\Services\Import\ImageMapper $imageMapper,
+        \MageSuite\Importer\Model\Command\OutputFactory $outputFactory,
+        \Magento\Framework\Filesystem\DriverInterface $driver,
+    ) {
         $this->imageMapper = $imageMapper;
+        $this->outputFactory = $outputFactory;
+        $this->driver = $driver;
     }
 
     /**
-     * @param $configuration
-     * @return mixed
+     * @throws \Magento\Framework\Exception\FileSystemException
      */
-    public function execute($configuration)
+    public function execute(array $configuration): \MageSuite\Importer\Model\Command\Output
     {
-        $sourceFileHandle = fopen(BP . DIRECTORY_SEPARATOR . $configuration['source_path'], "r");
-        $targetFileHandle = fopen(BP . DIRECTORY_SEPARATOR . $configuration['target_path'], "w");
+        $sourceFileHandle = $this->driver->fileOpen(BP . DIRECTORY_SEPARATOR . $configuration['source_path'], 'r');
+        $targetFileHandle = $this->driver->fileOpen(BP . DIRECTORY_SEPARATOR . $configuration['target_path'], 'w');
         $imagesDirectoryPath = BP . DIRECTORY_SEPARATOR . $configuration['images_directory_path'];
 
         if ($sourceFileHandle) {
@@ -33,10 +39,15 @@ class MapImages implements \MageSuite\Importer\Command\Command
                     $this->imageMapper->getImagesByProductSku($row['sku'], $imagesDirectoryPath)
                 );
 
-                fwrite($targetFileHandle, !$firstLine ? PHP_EOL . json_encode($row) : json_encode($row));
+                $this->driver->fileWrite($targetFileHandle, !$firstLine ? PHP_EOL . json_encode($row) : json_encode($row));
 
                 $firstLine = false;
             }
         }
+
+        $this->driver->fileClose($sourceFileHandle);
+        $this->driver->fileClose($targetFileHandle);
+
+        return $this->outputFactory->create();
     }
 }

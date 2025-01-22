@@ -1,32 +1,30 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MageSuite\Importer\Command\Magento;
 
 class Reindex implements \MageSuite\Importer\Command\Command
 {
-    /**
-     * @var \Magento\Indexer\Model\IndexerFactory
-     */
-    protected $indexerFactory;
-
-    /**
-     * @var \Magento\Indexer\Model\Indexer\CollectionFactory
-     */
-    protected $indexerCollectionFactory;
+    protected \Magento\Indexer\Model\IndexerFactory $indexerFactory;
+    protected \Magento\Indexer\Model\Indexer\CollectionFactory $indexerCollectionFactory;
+    protected \MageSuite\Importer\Model\Command\OutputFactory $outputFactory;
 
     public function __construct(
         \Magento\Indexer\Model\IndexerFactory $indexerFactory,
-        \Magento\Indexer\Model\Indexer\CollectionFactory $indexerCollectionFactory
+        \Magento\Indexer\Model\Indexer\CollectionFactory $indexerCollectionFactory,
+        \MageSuite\Importer\Model\Command\OutputFactory $outputFactory,
     ) {
         $this->indexerFactory = $indexerFactory;
         $this->indexerCollectionFactory = $indexerCollectionFactory;
+        $this->outputFactory = $outputFactory;
     }
 
-    public function execute($configuration)
+    public function execute(array $configuration): \MageSuite\Importer\Model\Command\Output
     {
-        $indexes = isset($configuration['indexes']) ? $configuration['indexes'] : $this->getAllAvailableIndexes();
+        $indexes = $configuration['indexes'] ?? $this->getAllAvailableIndexes();
 
-        $output = '';
+        $message = '';
 
         foreach ($indexes as $indexId) {
             $indexer = $this->indexerFactory->create();
@@ -42,13 +40,16 @@ class Reindex implements \MageSuite\Importer\Command\Command
 
             $elapsed = microtime(true) - $startTime;
 
-            $output .= $indexer->getTitle() . ' index has been rebuilt successfully in ' . gmdate('H:i:s', ceil($elapsed)) . PHP_EOL;
+            $message .= $indexer->getTitle() . ' index has been rebuilt successfully in ' . gmdate('H:i:s', (int)ceil($elapsed)) . PHP_EOL;
         }
 
-        return $output;
+        return $this->outputFactory->create()->setMessage($message);
     }
 
-    protected function getAllAvailableIndexes()
+    /**
+     * @return string[]
+     */
+    protected function getAllAvailableIndexes(): array
     {
         $collection = $this->indexerCollectionFactory->create();
 

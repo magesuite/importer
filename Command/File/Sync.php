@@ -7,10 +7,10 @@ class Sync extends AbstractDownload implements \MageSuite\Importer\Command\Comma
     /**
      * Syncs folders
      */
-    public function execute($configuration)
+    public function execute(array $configuration): \MageSuite\Importer\Model\Command\Output
     {
         $this->setServerConfiguration($configuration);
-
-        return $this->fileDownloader->sync($configuration['remote_directory'], $configuration['target_directory']);
+        $this->fileDownloader->sync($configuration['remote_directory'], $configuration['target_directory']);
+        return $this->outputFactory->create();
     }
 }

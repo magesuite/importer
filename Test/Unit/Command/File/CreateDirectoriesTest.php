@@ -6,23 +6,26 @@ class CreateDirectoriesTest extends \PHPUnit\Framework\TestCase
 {
     protected ?\MageSuite\Importer\Command\File\CreateDirectories $command = null;
     protected ?\Magento\Framework\Filesystem\Io\File $fileIo = null;
-    protected $assetsDirectory;
-    protected $assetsDirectoryRelativeToMainDirectory;
+    protected ?\MageSuite\Importer\Model\Command\OutputFactory $outputFactory = null;
+    protected string $assetsDirectory;
+    protected string $assetsDirectoryRelativeToMainDirectory;
 
-    protected $directoriesPaths = [
+    protected array $directoriesPaths = [
         '/var/images',
         '/var/import'
     ];
 
     public function setUp(): void
     {
-        $this->fileIo = new \Magento\Framework\Filesystem\Io\File();
-        $this->command = new \MageSuite\Importer\Command\File\CreateDirectories($this->fileIo);
+        $objectManager = \Magento\TestFramework\ObjectManager::getInstance();
+        $this->fileIo = $objectManager->get(\Magento\Framework\Filesystem\Io\File::class);
+        $this->command = $objectManager->get(\MageSuite\Importer\Command\File\CreateDirectories::class);
+        $this->outputFactory = $objectManager->get(\MageSuite\Importer\Model\Command\OutputFactory::class);
         $this->assetsDirectory = realpath(__DIR__.'/../assets');
         $this->assetsDirectoryRelativeToMainDirectory = str_replace(BP . '/', '', $this->assetsDirectory);
     }
 
-    public function testItCreatesMultipleDirectoriesProperly()
+    public function testItCreatesMultipleDirectoriesProperly(): void
     {
         $directories = [];
 
@@ -41,7 +44,7 @@ class CreateDirectoriesTest extends \PHPUnit\Framework\TestCase
         }
     }
 
-    public function testItDoesNotCreateDirectoryWhenItDoesExist()
+    public function testItDoesNotCreateDirectoryWhenItDoesExist(): void
     {
         $fileIoMock = $this->getMockBuilder(\Magento\Framework\Filesystem\Io\File::class)
             ->disableOriginalConstructor()
@@ -53,7 +56,7 @@ class CreateDirectoriesTest extends \PHPUnit\Framework\TestCase
         $fileIoMock->method('fileExists')
             ->willReturn(true);
 
-        $command = new \MageSuite\Importer\Command\File\CreateDirectories($fileIoMock);
+        $command = new \MageSuite\Importer\Command\File\CreateDirectories($fileIoMock, $this->outputFactory);
         $command->execute(['directories_paths' => [$this->assetsDirectoryRelativeToMainDirectory . '/existing_directory']]);
     }
 

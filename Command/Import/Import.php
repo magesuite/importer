@@ -14,17 +14,17 @@ class Import implements \MageSuite\Importer\Command\Command
     ];
 
     protected \MageSuite\Importer\Model\Import\Product $importer;
+    protected \MageSuite\Importer\Model\Command\OutputFactory $outputFactory;
 
-    public function __construct(\MageSuite\Importer\Model\Import\Product $importer)
-    {
+    public function __construct(
+        \MageSuite\Importer\Model\Import\Product $importer,
+        \MageSuite\Importer\Model\Command\OutputFactory $outputFactory
+    ) {
         $this->importer = $importer;
+        $this->outputFactory = $outputFactory;
     }
 
-    /**
-     * @param $configuration
-     * @return mixed
-     */
-    public function execute($configuration)
+    public function execute(array $configuration): \MageSuite\Importer\Model\Command\Output
     {
         $sourcePath = BP . DIRECTORY_SEPARATOR . $configuration['source_path'];
 
@@ -50,14 +50,19 @@ class Import implements \MageSuite\Importer\Command\Command
             $this->importer->setBunchGroupingField($configuration['bunch_grouping_field']);
         }
 
-        return $this->importer->importFromFile($sourcePath, $behavior);
+        $result = $this->importer->importFromFile($sourcePath, $behavior);
+
+        if ($result instanceof \MageSuite\Importer\Model\Command\Output) {
+            return $result;
+        }
+
+        return $this->outputFactory->create()->setMessage($result);
     }
 
     /**
-     * @param $configuration
-     * @return string
+     * @param string[] $configuration
      */
-    protected function getValidationStrategy($configuration)
+    protected function getValidationStrategy(array $configuration): string
     {
         if (isset($configuration['validation_strategy']) && $configuration['validation_strategy'] == 'skip') {
             return \Magento\ImportExport\Model\Import\ErrorProcessing\ProcessingErrorAggregatorInterface::VALIDATION_STRATEGY_SKIP_ERRORS;

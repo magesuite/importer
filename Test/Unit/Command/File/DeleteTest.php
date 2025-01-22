@@ -6,15 +6,16 @@ class DeleteTest extends \PHPUnit\Framework\TestCase
 {
     protected ?\MageSuite\Importer\Command\File\Delete $command = null;
     protected ?\Magento\Framework\Filesystem\Io\File $fileIo = null;
-    protected $assetsDirectory;
-    protected $assetsDirectoryRelativeToMainDirectory;
+    protected ?string $assetsDirectory = null;
+    protected ?string $assetsDirectoryRelativeToMainDirectory = null;
 
     public function setUp(): void
     {
+        $objectManager = \Magento\TestFramework\ObjectManager::getInstance();
+        $this->fileIo = $objectManager->get(\Magento\Framework\Filesystem\Io\File::class);
+        $this->command = $objectManager->get(\MageSuite\Importer\Command\File\Delete::class);
         $this->assetsDirectory = realpath(__DIR__ . '/../assets');
         $this->assetsDirectoryRelativeToMainDirectory = str_replace(BP . '/', '', $this->assetsDirectory);
-        $this->fileIo = new \Magento\Framework\Filesystem\Io\File();
-        $this->command = new \MageSuite\Importer\Command\File\Delete($this->fileIo);
     }
 
     public function testItThrowsExceptionWhenPathIsNotDefined()

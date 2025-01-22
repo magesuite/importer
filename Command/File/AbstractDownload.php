@@ -5,13 +5,20 @@ namespace MageSuite\Importer\Command\File;
 abstract class AbstractDownload implements \MageSuite\Importer\Command\Command
 {
     protected \Creativestyle\LFTP\File\Downloader $fileDownloader;
+    protected \MageSuite\Importer\Model\Command\OutputFactory $outputFactory;
 
-    public function __construct(\Creativestyle\LFTP\File\Downloader $fileDownloader)
-    {
+    public function __construct(
+        \Creativestyle\LFTP\File\Downloader $fileDownloader,
+        \MageSuite\Importer\Model\Command\OutputFactory $outputFactory,
+    ) {
         $this->fileDownloader = $fileDownloader;
+        $this->outputFactory = $outputFactory;
     }
 
-    protected function setServerConfiguration($configuration)
+    /**
+     * @param string[] $configuration
+     */
+    protected function setServerConfiguration(array $configuration): void
     {
         if (isset($configuration['host'])) {
             $this->fileDownloader->setHost($configuration['host']);
@@ -30,5 +37,5 @@ abstract class AbstractDownload implements \MageSuite\Importer\Command\Command
         }
     }
 
-    abstract public function execute($configuration);
+    abstract public function execute(array $configuration): \MageSuite\Importer\Model\Command\Output;
 }
