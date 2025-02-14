@@ -26,6 +26,7 @@ class Product extends \Magento\CatalogImportExport\Model\Import\Product
 
     protected function _saveValidatedBunches()
     {
+        $this->_dataSourceModel->cleanBunches();
         $source = $this->_getSource();
         $source->rewind();
 
