@@ -2,10 +2,6 @@
 
 namespace MageSuite\Importer\Test\Integration\Model\Import;
 
-/**
- * @magentoDbIsolation enabled
- * @magentoAppIsolation enabled
- */
 class ProductTest extends \PHPUnit\Framework\TestCase
 {
     public const MAGENTO_IMAGE_URL_FORMAT = '/%s/%s/%s';
@@ -35,7 +31,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @magentoDbIsolation disabled
+     * @group importer
      * @magentoDataFixture Magento/ConfigurableProduct/_files/product_configurable.php
      */
     public function testConfigurableVariationsShouldBeReplaced()
@@ -70,6 +66,9 @@ class ProductTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * @group importer
+     * @magentoAppIsolation enabled
+     * @magentoDbIsolation enabled
      * @magentoDataFixture MageSuite_Importer::Test/Integration/_files/products_cleanup.php
      * @magentoDataFixture Magento/Catalog/_files/products_crosssell.php
      * @magentoDataFixture Magento/Catalog/_files/second_product_simple.php
@@ -90,6 +89,9 @@ class ProductTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * @group importer
+     * @magentoAppIsolation enabled
+     * @magentoDbIsolation enabled
      * @magentoDataFixture Magento/Catalog/_files/product_simple.php
      * @magentoDataFixture Magento/Catalog/_files/second_product_simple.php
      */
@@ -111,6 +113,9 @@ class ProductTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * @group importer
+     * @magentoAppIsolation enabled
+     * @magentoDbIsolation disabled
      * @magentoDataFixture Magento/Catalog/_files/categories.php
      */
     public function testItReplacesCategories()
@@ -133,6 +138,9 @@ class ProductTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * @group importer
+     * @magentoAppIsolation enabled
+     * @magentoDbIsolation enabled
      * @magentoDataFixture Magento/Catalog/_files/products_related_multiple.php
      */
     public function testItReplacesRelatedProducts()
@@ -151,6 +159,9 @@ class ProductTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * @group importer
+     * @magentoAppIsolation enabled
+     * @magentoDbIsolation enabled
      * @magentoDataFixture Magento/Catalog/_files/products_upsell.php
      * @magentoDataFixture Magento/Catalog/_files/second_product_simple.php
      */
@@ -170,7 +181,9 @@ class ProductTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * @group importer
      * @magentoAppIsolation enabled
+     * @magentoDbIsolation enabled
      * @magentoDataFixture Magento/Catalog/_files/product_simple.php
      * @magentoDataFixture MageSuite_Importer::Test/Integration/Model/Import/_files/product_with_images.php
      * @dataProvider productNewImagesDataProvider
@@ -197,7 +210,9 @@ class ProductTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @magentoDbIsolation disabled
+     * @group importer
+     * @magentoAppIsolation enabled
+     * @magentoDbIsolation enabled
      * @magentoDataFixture Magento/Catalog/_files/product_simple.php
      * @magentoDataFixture MageSuite_Importer::Test/Integration/Model/Import/_files/product_with_images.php
      * @dataProvider emptyProductDataProvider
@@ -228,7 +243,9 @@ class ProductTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @magentoDbIsolation disabled
+     * @group importer
+     * @magentoAppIsolation enabled
+     * @magentoDbIsolation enabled
      * @magentoDataFixture Magento/Catalog/_files/product_simple.php
      * @magentoDataFixture MageSuite_Importer::Test/Integration/Model/Import/_files/product_with_images.php
      */
@@ -249,6 +266,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * @group importer
      * @magentoAppIsolation enabled
      * @magentoDbIsolation disabled
      * @magentoDataFixture Magento/Catalog/_files/product_simple.php
@@ -271,6 +289,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * @group importer
      * @magentoAppIsolation enabled
      * @magentoDbIsolation disabled
      * @magentoDataFixture Magento/Catalog/_files/product_simple.php
@@ -294,6 +313,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * @group importer
      * @magentoAppIsolation enabled
      * @magentoDbIsolation disabled
      * @magentoDataFixture Magento/Catalog/_files/product_simple.php
@@ -339,6 +359,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * @group importer
      * @magentoDataFixture Magento/Catalog/_files/product_simple.php
      * @magentoDbIsolation disabled
      * @magentoAppIsolation enabled
@@ -362,6 +383,11 @@ class ProductTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($this->isImageInGallery($product, '/m/a/magento_image.jpg'));
     }
 
+    /**
+     * @group importer
+     * @magentoAppIsolation enabled
+     * @magentoDbIsolation enabled
+     */
     public function testImportWithImagesFromDirectory()
     {
         $productSku = 'new_product';
@@ -390,8 +416,10 @@ class ProductTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * @group importer
+     * @magentoAppIsolation enabled
+     * @magentoDbIsolation enabled
      * @magentoDataFixture MageSuite_Importer::Test/Integration/_files/url_rewrite.php
-     * @magentoDbIsolation disabled
      */
     public function testProductHasUrlConflictException()
     {
