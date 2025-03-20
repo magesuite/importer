@@ -418,7 +418,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
     /**
      * @group importer
      * @magentoAppIsolation enabled
-     * @magentoDbIsolation enabled
+     * @magentoDbIsolation disabled
      * @magentoDataFixture MageSuite_Importer::Test/Integration/_files/url_rewrite.php
      */
     public function testProductHasUrlConflictException()
