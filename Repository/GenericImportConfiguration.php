@@ -4,17 +4,17 @@ namespace MageSuite\Importer\Repository;
 
 class GenericImportConfiguration implements ImportConfiguration
 {
-    protected \Magento\Framework\Filesystem\DriverInterface $driver;
-
-    public function __construct(\Magento\Framework\Filesystem\DriverInterface $driver)
-    {
-        $this->driver = $driver;
-    }
+    public function __construct(
+        protected \Magento\Framework\Filesystem\DriverPool $driverPool,
+        protected \Magento\Framework\Serialize\SerializerInterface $serializer
+    ) {}
 
     public function getById($id)
     {
-        $jsonConfiguration = $this->driver->fileGetContents(BP . DIRECTORY_SEPARATOR . 'import.json');
+        $jsonConfiguration = $this->driverPool
+            ->getDriver(\Magento\Framework\Filesystem\DriverPool::FILE)
+            ->fileGetContents(BP . DIRECTORY_SEPARATOR . 'import.json');
 
-        return json_decode($jsonConfiguration, true);
+        return $this->serializer->unserialize($jsonConfiguration);
     }
 }
