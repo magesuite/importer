@@ -32,6 +32,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @group importer
+     * @magentoDbIsolation disabled
      * @magentoDataFixture Magento/ConfigurableProduct/_files/product_configurable.php
      */
     public function testConfigurableVariationsShouldBeReplaced()
