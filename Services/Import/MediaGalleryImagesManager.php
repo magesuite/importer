@@ -7,6 +7,7 @@ class MediaGalleryImagesManager
     protected \Magento\Framework\App\ResourceConnection $resourceConnection;
     protected \Magento\Framework\DB\Adapter\AdapterInterface $connection;
     protected \Magento\Framework\EntityManager\MetadataPool $metadataPool;
+    protected \Magento\Eav\Model\Config $eavConfig;
     protected string $productEntityLinkField = '';
     protected array $attributesIdsToCodes;
     protected array $keysContainingImageChanges;
@@ -15,12 +16,14 @@ class MediaGalleryImagesManager
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Magento\Framework\EntityManager\MetadataPool $metadataPool,
+        \Magento\Eav\Model\Config $eavConfig,
         array $keysContainingImageChanges = [],
         array $importArrayToAttributeCodesMapping = []
     ) {
         $this->resourceConnection = $resourceConnection;
         $this->connection = $resourceConnection->getConnection();
         $this->metadataPool = $metadataPool;
+        $this->eavConfig = $eavConfig;
         $this->keysContainingImageChanges = $keysContainingImageChanges;
         $this->importArrayToAttributeCodesMapping = $importArrayToAttributeCodesMapping;
         $this->attributesIdsToCodes = $this->getAttributesIdsToCodes();
@@ -83,12 +86,13 @@ class MediaGalleryImagesManager
 
     protected function getAttributesIdsToCodes()
     {
+        $entityTypeId = $this->eavConfig->getEntityType(\Magento\Catalog\Model\Product::ENTITY)->getEntityTypeId();
         $select = $this->connection->select()
             ->from(
                 ['ea' => $this->resourceConnection->getTableName('eav_attribute')],
                 ['attribute_id', 'attribute_code']
             )
-            ->where('entity_type_id = ?', '4')
+            ->where('entity_type_id = ?', $entityTypeId)
             ->where('attribute_code IN (?)', array_values($this->importArrayToAttributeCodesMapping));
 
         return $this->connection->fetchPairs($select);
