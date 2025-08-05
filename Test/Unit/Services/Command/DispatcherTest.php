@@ -63,10 +63,20 @@ class DispatcherTest extends \PHPUnit\Framework\TestCase
             ]
         ]);
 
-        $this->shellMock->expects($this->exactly(2))->method('execute')->withConsecutive(
+        $expectedCalls = [
             [BP.'/bin/magento importer:import:run_step %s %s > /dev/null &', [1, 'download']],
             [BP.'/bin/magento importer:import:run_step %s %s > /dev/null &', [1, 'download_images']]
-        );
+        ];
+        $callIndex = 0;
+
+        $this->shellMock
+            ->expects($this->exactly(2))
+            ->method('execute')
+            ->willReturnCallback(function($command, $params) use (&$callIndex, $expectedCalls) {
+                $this->assertEquals($expectedCalls[$callIndex][0], $command);
+                $this->assertEquals($expectedCalls[$callIndex][1], $params);
+                $callIndex++;
+            });
 
         $this->importRepositoryStub
             ->method('getActiveImport')
