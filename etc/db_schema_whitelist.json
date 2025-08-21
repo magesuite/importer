@@ -29,7 +29,9 @@
             "server_status_log": true
         },
         "index": {
-            "IMPORT_LOG_STEP_IMPORT_ID": true
+            "IMPORT_LOG_STEP_IMPORT_ID": true,
+            "import_id": true,
+            "IMPORT_LOG_STEP_STATUS": true
         },
         "constraint": {
             "PRIMARY": true,
@@ -50,6 +52,11 @@
     "catalog_product_entity_media_gallery": {
         "column": {
             "file_size": true
+        }
+    },
+    "importexport_importdata": {
+        "column": {
+            "updated_at": true
         }
     }
 }
