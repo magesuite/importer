@@ -30,8 +30,11 @@
         <constraint xsi:type="primary" referenceId="PRIMARY">
             <column name="id"/>
         </constraint>
-        <index referenceId="import_id" indexType="btree">
+        <index referenceId="IMPORT_LOG_STEP_IMPORT_ID" indexType="btree">
             <column name="import_id"/>
+        </index>
+        <index referenceId="IMPORT_LOG_STEP_STATUS" indexType="btree">
+            <column name="status"/>
         </index>
         <constraint xsi:type="foreign" referenceId="IMPORT_LOG_STEP_IMPORT_ID_IMPORT_LOG_IMPORT_ID"
                     table="import_log_step" column="import_id" referenceTable="import_log"
