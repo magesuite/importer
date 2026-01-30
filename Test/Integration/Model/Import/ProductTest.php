@@ -116,7 +116,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
     /**
      * @group importer
      * @magentoAppIsolation enabled
-     * @magentoDbIsolation disabled
+     * @magentoDbIsolation enabled
      * @magentoDataFixture Magento/Catalog/_files/categories.php
      */
     public function testItReplacesCategories()
