@@ -28,29 +28,29 @@ class Config
         $this->scopeConfig = $scopeConfig;
     }
 
-    public function getFailedImportThreshold()
+    public function getFailedImportThreshold(): int
     {
-        return $this->scopeConfig->getValue(self::FAILED_IMPORT_THRESHOLD_XML_PATH);
+        return (int)$this->scopeConfig->getValue(self::FAILED_IMPORT_THRESHOLD_XML_PATH);
     }
 
-    public function shouldUseCronToRunSteps()
+    public function shouldUseCronToRunSteps(): bool
     {
-        return $this->scopeConfig->getValue(self::USE_CRON_TO_RUN_STEPS_XML_PATH);
+        return $this->scopeConfig->isSetFlag(self::USE_CRON_TO_RUN_STEPS_XML_PATH);
     }
 
-    public function shouldUseTransactions()
+    public function shouldUseTransactions(): bool
     {
-        return $this->scopeConfig->getValue(self::XML_PATH_USE_TRANSACTIONS);
+        return $this->scopeConfig->isSetFlag(self::XML_PATH_USE_TRANSACTIONS);
     }
 
-    public function shouldLogsBeCleared()
+    public function shouldLogsBeCleared(): bool
     {
-        return (bool)$this->scopeConfig->getValue(self::XML_PATH_LOGS_ENABLE_CLEARING);
+        return $this->scopeConfig->isSetFlag(self::XML_PATH_LOGS_ENABLE_CLEARING);
     }
 
-    public function getDeleteOlderThanValue()
+    public function getDeleteOlderThanValue(): int
     {
-        return $this->scopeConfig->getValue(self::XML_PATH_LOGS_DELETE_OLDER_THAN);
+        return (int)$this->scopeConfig->getValue(self::XML_PATH_LOGS_DELETE_OLDER_THAN);
     }
 
     public function getAdminNotificationSenderName(): ?string
@@ -64,13 +64,13 @@ class Config
         return $storeAdminEmails ? array_map('trim', explode("\n", $storeAdminEmails)) : null;
     }
 
-    public function isIndexerEnabled()
+    public function isIndexerEnabled(): bool
     {
         $indexerConfig = $this->getIndexerConfigFromDatabase();
         return empty($indexerConfig) ? false : $indexerConfig->getValue() === '1';
     }
 
-    public function getIndexerConfigFromDatabase()
+    public function getIndexerConfigFromDatabase(): mixed
     {
         $configCollection = $this->configCollectionFactory->create();
         $configCollection->addScopeFilter(
