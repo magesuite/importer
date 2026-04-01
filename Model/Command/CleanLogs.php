@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MageSuite\Importer\Model\Command;
 
 class CleanLogs
@@ -29,13 +31,16 @@ class CleanLogs
         $this->connection = $resource->getConnection();
     }
 
-    public function execute($loggingRetentionPeriod)
+    public function execute(int $loggingRetentionPeriod): void
     {
         $importRow = $this->importStep->getFirstRowOlderThan($loggingRetentionPeriod);
 
         if ($importRow['import_id']) {
             $tableName = $this->connection->getTableName('import_log');
-            $this->connection->delete($tableName, 'import_id < ' . $importRow['import_id']);
+            $this->connection->delete(
+                $tableName,
+                $this->connection->quoteInto('import_id < ?', $importRow['import_id'], \Zend_Db::INT_TYPE)
+            );
         }
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MageSuite\Importer\Model\ResourceModel;
 
 class CatalogProductRelation
@@ -8,7 +10,7 @@ class CatalogProductRelation
     protected \Magento\Framework\DB\Adapter\AdapterInterface $connection;
     protected \Magento\InventoryCatalogApi\Model\GetProductIdsBySkusInterface $getProductIdsBySkus;
     protected \Magento\Framework\EntityManager\MetadataPool $metadataPool;
-    protected $productEntityLinkField;
+    protected ?string $productEntityLinkField = null;
 
     public function __construct(
         \Magento\CatalogImportExport\Model\Import\Product $entityModel,
@@ -56,19 +58,31 @@ class CatalogProductRelation
         $wheresCatalogProductSuperLink = [];
 
         foreach ($parentToChildToDelete as $parentProductId => $childIds) {
-            $wheresCatalogProductRelation[] = sprintf('(parent_id = %d AND child_id IN(%s))', $parentProductId, implode(',', $childIds));
-            $wheresCatalogProductSuperLink[] = sprintf('(parent_id = %d AND product_id IN(%s))', $parentProductId, implode(',', $childIds));
+            $wheresCatalogProductRelation[] = implode(' AND ', [
+                $this->connection->quoteInto('parent_id = ?', $parentProductId, \Zend_Db::INT_TYPE),
+                $this->connection->quoteInto('child_id IN (?)', $childIds, \Zend_Db::INT_TYPE)
+            ]);
+            $wheresCatalogProductSuperLink[] = implode(' AND ', [
+                $this->connection->quoteInto('parent_id = ?', $parentProductId, \Zend_Db::INT_TYPE),
+                $this->connection->quoteInto('product_id IN (?)', $childIds, \Zend_Db::INT_TYPE)
+            ]);
         }
 
         if (empty($wheresCatalogProductRelation)) {
             return;
         }
 
-        $this->connection->delete($this->connection->getTableName('catalog_product_relation'), implode(' OR ', $wheresCatalogProductRelation));
-        $this->connection->delete($this->connection->getTableName('catalog_product_super_link'), implode(' OR ', $wheresCatalogProductSuperLink));
+        $this->connection->delete(
+            $this->connection->getTableName('catalog_product_relation'),
+            implode(' OR ', $wheresCatalogProductRelation)
+        );
+        $this->connection->delete(
+            $this->connection->getTableName('catalog_product_super_link'),
+            implode(' OR ', $wheresCatalogProductSuperLink)
+        );
     }
 
-    protected function getProductEntityLinkField()
+    protected function getProductEntityLinkField(): string
     {
         if (!$this->productEntityLinkField) {
             $this->productEntityLinkField = $this->metadataPool
