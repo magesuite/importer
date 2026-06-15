@@ -71,7 +71,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
      * @magentoAppIsolation enabled
      * @magentoDbIsolation enabled
      * @magentoDataFixture MageSuite_Importer::Test/Integration/_files/products_cleanup.php
-     * @magentoDataFixture Magento/Catalog/_files/products_crosssell.php
+     * @magentoDataFixture MageSuite_Importer::Test/Integration/_files/products_crosssell.php
      * @magentoDataFixture Magento/Catalog/_files/second_product_simple.php
      */
     public function testItReplacesCrosssellProducts()
