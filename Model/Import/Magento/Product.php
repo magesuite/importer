@@ -79,7 +79,7 @@ class Product extends \Magento\CatalogImportExport\Model\Import\Product
             }
         }
 
-        $skus = array_unique($skus);
+        $skus = array_map('strval', array_unique($skus));
 
         $linkField = $this->getProductEntityLinkField();
         $select = $this->getConnection()->select()->from(
