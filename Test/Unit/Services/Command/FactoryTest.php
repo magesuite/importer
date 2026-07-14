@@ -22,9 +22,7 @@ class CommandFactoryTest extends \PHPUnit\Framework\TestCase
         $this->assertNull($this->factory->create('non_existing_command'));
     }
 
-    /**
-     * @dataProvider getTypesToCommandClassesMapping
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getTypesToCommandClassesMapping')]
     public function testItReturnsCorrectCommand($type, $expectedClass)
     {
         $this->assertInstanceOf($expectedClass, $this->factory->create($type));
