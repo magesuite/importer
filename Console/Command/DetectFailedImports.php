@@ -27,7 +27,7 @@ class DetectFailedImports extends \Symfony\Component\Console\Command\Command
     protected function execute(
         \Symfony\Component\Console\Input\InputInterface $input,
         \Symfony\Component\Console\Output\OutputInterface $output
-    ) {
+    ): int {
         try {
             $this->state->setAreaCode(\Magento\Framework\App\Area::AREA_FRONTEND);
         } catch (\Exception $e) {

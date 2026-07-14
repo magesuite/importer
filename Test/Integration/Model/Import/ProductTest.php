@@ -187,8 +187,8 @@ class ProductTest extends \PHPUnit\Framework\TestCase
      * @magentoDbIsolation enabled
      * @magentoDataFixture Magento/Catalog/_files/product_simple.php
      * @magentoDataFixture MageSuite_Importer::Test/Integration/Model/Import/_files/product_with_images.php
-     * @dataProvider productNewImagesDataProvider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('productNewImagesDataProvider')]
     public function testImageShouldBeRemovedBecauseItIsReplacedEverywhere(array $productDataArray)
     {
         $productSku = 'simple';
@@ -202,7 +202,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse($this->isImageInGallery($product, '/m/a/magento_image.jpg'));
     }
 
-    public function productNewImagesDataProvider(): array
+    public static function productNewImagesDataProvider(): array
     {
         return [
             [['base_image' => 'magento_image_replaced.jpg', 'small_image' => 'magento_image_replaced.jpg', 'thumbnail_image' => 'magento_image_replaced.jpg']],
@@ -216,8 +216,8 @@ class ProductTest extends \PHPUnit\Framework\TestCase
      * @magentoDbIsolation enabled
      * @magentoDataFixture Magento/Catalog/_files/product_simple.php
      * @magentoDataFixture MageSuite_Importer::Test/Integration/Model/Import/_files/product_with_images.php
-     * @dataProvider emptyProductDataProvider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('emptyProductDataProvider')]
     public function testSpecialImagesShouldBeEmpty(array $productDataArray)
     {
         $productSku = 'simple';
@@ -235,7 +235,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse($this->isImageInGallery($product, '/m/a/magento_image.jpg'));
     }
 
-    public function emptyProductDataProvider(): array
+    public static function emptyProductDataProvider(): array
     {
         return [
             [['base_image' => '', 'small_image' => '', 'thumbnail_image' => '']],
@@ -318,8 +318,8 @@ class ProductTest extends \PHPUnit\Framework\TestCase
      * @magentoAppIsolation enabled
      * @magentoDbIsolation disabled
      * @magentoDataFixture Magento/Catalog/_files/product_simple.php
-     * @dataProvider productDataProvider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('productDataProvider')]
     public function testImagesShouldBeAddedToProductWithoutImages(array $productDataArray)
     {
         $productSku = 'simple';
@@ -337,7 +337,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($this->isImageInGallery($product, '/m/a/magento_image.jpg'));
     }
 
-    public function productDataProvider(): array
+    public static function productDataProvider(): array
     {
         return [
             [

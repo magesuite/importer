@@ -23,9 +23,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $this->cronScheduler = new \MageSuite\Importer\Cron\Scheduler($this->schedulerMock);
     }
 
-    /**
-     * @dataProvider getImportIdentifiers
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getImportIdentifiers')]
     public function testItSchedulesImportWithProperIdentifier($methodName, $importIdentifier)
     {
         $this->schedulerMock->expects($this->once())

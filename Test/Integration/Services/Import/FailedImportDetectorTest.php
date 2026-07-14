@@ -36,8 +36,8 @@ class FailedImportDetectorTest extends \PHPUnit\Framework\TestCase
     /**
      * @magentoDbIsolation enabled
      * @magentoDataFixture loadInProgressImport
-     * @dataProvider currentTimeWithExpectedStatus
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('currentTimeWithExpectedStatus')]
     public function testItMarksImportWithCorrectStatusDependingOnCurrentTime($currentDateTime, $expectedStatus)
     {
         $this->dateTimeStub
@@ -61,7 +61,7 @@ class FailedImportDetectorTest extends \PHPUnit\Framework\TestCase
         require __DIR__ . '/../../_files/in_progress_import.php';
     }
 
-    public function currentTimeWithExpectedStatus()
+    public static function currentTimeWithExpectedStatus()
     {
         return [
             ['2018-07-19 12:30:00', \MageSuite\Importer\Model\ImportStep::STATUS_ERROR],

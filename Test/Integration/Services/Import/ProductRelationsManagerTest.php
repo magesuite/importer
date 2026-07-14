@@ -14,16 +14,14 @@ class ProductRelationsManagerTest extends \PHPUnit\Framework\TestCase
         $this->relationsManager = $objectManager->create(\MageSuite\Importer\Services\Import\ProductRelationsManager::class);
     }
 
-    /**
-     * @dataProvider importRequest
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('importRequest')]
     public function testItProperlyDetectsChangedImages($importRequest, $expectedResult)
     {
         $actualResult = $this->relationsManager->getProductImagesChanges($importRequest);
         $this->assertEquals($expectedResult, $actualResult);
     }
 
-    public function importRequest(): array
+    public static function importRequest(): array
     {
         return [
             [
